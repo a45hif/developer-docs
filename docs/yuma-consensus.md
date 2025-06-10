@@ -14,6 +14,7 @@ The algorithm is designed to more heavily weight the inputs of more trusted vali
 
 See:
 - [How Yuma Consensus 3 Makes Bittensor More Fair](./yc3-blog)
+- [Yuma Consensus 3 Migration Guide](./yc3-migration)
 - [Emissions](./emissions)
 - [Subtensor Docs: Yuma Consensus](https://github.com/opentensor/subtensor/blob/main/docs/consensus.md)
 
