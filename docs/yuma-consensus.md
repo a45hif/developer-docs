@@ -97,12 +97,6 @@ Validators who stay near consensus build stronger EMA bonds and thus extract mor
 The $\alpha$ variable here is unrelated to the concept of subnet specific currencies, referred to as alpha $\alpha$ tokens. Here $\alpha$ refers to a factor used in this EMA smoothing function&mdash;see [consensus-based weights, a.k.a. liquid alpha](./subnets/consensus-based-weights.md).
 :::
 
-:::info
-Yuma Consensus 3 introduces **per-bond alpha scaling** where each validator-miner pair gets its own α value rather than using a uniform rate. When Liquid Alpha is enabled, the system calculates individual alpha values using a sigmoid function based on the difference between a validator's current weights and network consensus. This allows validators to start accumulating bonds independently, rewarding early recognition of promising miners while maintaining anti-fraud protection.
-
-See [How Yuma Consensus 3 Makes Bittensor More Fair](./yc3-blog)
-:::
-
 ## Validator emissions
 
 Each validator $i$’s share $V_i$ of validator emissions (41% of each subnet's total emissions) is the sum of all of its bonds to miners, weighted by the miner's total emissions:
