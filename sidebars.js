@@ -42,7 +42,6 @@ const sidebars = {
         "emissions",
         "yuma-consensus",
         "subnets/yc3-blog",
-        "subnets/yuma3-migration-guide"
       ],
     },
     {
@@ -97,6 +96,7 @@ const sidebars = {
         "subnets/walkthrough-prompting",
         "tutorials/basic-subnet-tutorials",
         "tutorials/ocr-subnet-tutorial",
+        "subnets/yuma3-migration-guide"
       ],
     },
         {
