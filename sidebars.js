@@ -41,9 +41,8 @@ const sidebars = {
         "learn/anatomy-of-incentive-mechanism",
         "emissions",
         "yuma-consensus",
-        "yc3-blog",
-        "yc3-migration"
-
+        "subnets/yc3-blog",
+        "subnets/yuma3-migration-guide"
       ],
     },
     {
