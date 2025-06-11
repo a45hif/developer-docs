@@ -66,6 +66,7 @@ Deregistration only occurs on subnets where all 256 UID slots are occupied. If a
 
 Each tempo, the '[neuron](../learn/neurons)' (miner _or_ validator node) with the lowest 'pruning score' (based solely on emissions), and that is no longer within its [immunity period](../subnets/subnet-hyperparameters.md#immunityperiod), risks being replaced by a newly registered neuron, who takes over that UID.
 
+
 :::info Deregistration is based on emissions
 The subnet does not distinguish between miners and validators for the purpose of deregistration. The chain only looks at emissions (represented as 'pruning score'). Whenever a new registration occurs in the subnet, the neuron with the lowest emissions will get deregistered.
 :::
