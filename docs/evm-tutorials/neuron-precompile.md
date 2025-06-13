@@ -130,7 +130,11 @@ This function allows a neuron to expose a Prometheus metrics endpoint for monito
 
 ### Setup
 
-Before using the neuron precompile, you'll need to set up the basic infrastructure:
+Before using the neuron precompile, you'll need a basic setup.
+
+:::note
+The following setup code is adapted from the test implementation in [neuron.precompile.emission-check.test.ts](https://github.com/opentensor/subtensor/blob/main/evm-tests/test/neuron.precompile.emission-check.test.ts)
+:::
 
 ```javascript
 import { ethers } from "ethers";
@@ -383,6 +387,10 @@ const neuronContract = new ethers.Contract(INEURON_ADDRESS, INeuronABI, wallet);
 
 #### Register a Neuron by Burning TAO
 
+:::note
+The following registration example is adapted from the test implementation in [neuron.precompile.emission-check.test.ts](https://github.com/opentensor/subtensor/blob/main/evm-tests/test/neuron.precompile.emission-check.test.ts)
+:::
+
 ```javascript
 async function registerNeuron() {
   try {
@@ -403,6 +411,10 @@ async function registerNeuron() {
 ### Weight Management
 
 #### Setting Weights Directly
+
+:::note
+The following weight setting example is adapted from the test implementation in [neuron.precompile.set-weights.test.ts](https://github.com/opentensor/subtensor/blob/main/evm-tests/test/neuron.precompile.set-weights.test.ts)
+:::
 
 ```javascript
 async function setNeuronWeights() {
@@ -425,7 +437,9 @@ async function setNeuronWeights() {
 
 #### Commit-Reveal Weight Setting
 
-For subnets with commit-reveal enabled, you must first commit a hash of your weights, then reveal them later:
+:::note
+The following commit-reveal weight setting example is adapted from the test implementation in [neuron.precompile.reveal-weights.test.ts](https://github.com/opentensor/subtensor/blob/main/evm-tests/test/neuron.precompile.reveal-weights.test.ts)
+:::
 
 ```javascript
 import { blake2AsU8a } from "@polkadot/util-crypto";
@@ -536,6 +550,10 @@ The commit-reveal mechanism requires generating a proper hash commitment using s
 
 #### Serve Axon Endpoint
 
+:::note
+The following axon service configuration example is adapted from the test implementation in [neuron.precompile.serve.axon-prometheus.test.ts](https://github.com/opentensor/subtensor/blob/main/evm-tests/test/neuron.precompile.serve.axon-prometheus.test.ts)
+:::
+
 ```javascript
 async function serveAxon() {
   try {
@@ -569,6 +587,10 @@ async function serveAxon() {
 ```
 
 #### Serve Axon with TLS
+
+:::note
+The following TLS axon service configuration example is adapted from the test implementation in [neuron.precompile.serve.axon-prometheus.test.ts](https://github.com/opentensor/subtensor/blob/main/evm-tests/test/neuron.precompile.serve.axon-prometheus.test.ts)
+:::
 
 ```javascript
 async function serveAxonTls() {
@@ -613,6 +635,10 @@ async function serveAxonTls() {
 
 #### Serve Prometheus Metrics
 
+:::note
+The following Prometheus metrics configuration example is adapted from the test implementation in [neuron.precompile.serve.axon-prometheus.test.ts](https://github.com/opentensor/subtensor/blob/main/evm-tests/test/neuron.precompile.serve.axon-prometheus.test.ts)
+:::
+
 ```javascript
 async function servePrometheus() {
   try {
@@ -640,6 +666,8 @@ async function servePrometheus() {
 ```
 
 ### Complete Neuron Setup Example
+
+
 
 ```javascript
 async function setupCompleteNeuron() {

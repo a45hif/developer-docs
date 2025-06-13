@@ -570,7 +570,7 @@ Toggles transfers on/off for a subnet.
 - None (payable function)
 
 ## Example Scripts
-
+[Example source on GitHub](https://github.com/opentensor/evm-bittensor/blob/main/examples/subnet.js)
 ### Javascript
 ```js
 const { ethers, assert } = require("ethers");
@@ -870,6 +870,9 @@ main().catch(console.error);
 
 ```
 ### Solidity
+
+[Example source on GitHub](https://github.com/opentensor/evm-bittensor/blob/main/solidity/subnet.sol)
+
 ```sol
 // SPDX-License-Identifier: GPL-3.0
 //
