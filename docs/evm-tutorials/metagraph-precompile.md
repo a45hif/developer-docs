@@ -12,7 +12,7 @@ The metagraph precompile allows you to query information about neurons, their re
 
 ## Overview
 
-The metagraph precompile is a powerful tool that enables smart contracts to interact with the Bittensor network's metagraph data. It provides access to various metrics and information about neurons including stakes, ranks, trust scores, consensus values, and more.
+The metagraph precompile enables smart contracts to query metagraph data. It provides access to metrics on a subnets' miners and validators neurons, including stakes, ranks, trust scores, consensus values, and more.
 
 All functions in this precompile are view-only operations that don't modify state and consume minimal gas.
 
@@ -25,7 +25,7 @@ All functions in this precompile are view-only operations that don't modify stat
 
 ### Network Information
 
-#### `getUidCount(uint16 netuid) → uint16`
+#### `getUidCount`
 
 Returns the total number of UIDs (neurons) in a specific subnetwork.
 
@@ -38,7 +38,7 @@ Returns the total number of UIDs (neurons) in a specific subnetwork.
 
 ### Token and Consensus Metrics
 
-#### `getStake(uint16 netuid, uint16 uid) → uint64`
+#### `getStake`
 
 Retrieves the total stake amount for a specific neuron.
 
@@ -54,7 +54,7 @@ Retrieves the total stake amount for a specific neuron.
 
 
 
-#### `getEmission(uint16 netuid, uint16 uid) → uint64`
+#### `getEmission`
 
 Gets the emission value for a specific neuron, representing its reward allocation.
 
@@ -66,7 +66,7 @@ Gets the emission value for a specific neuron, representing its reward allocatio
 - `uint64`: Emission value for the neuron
 
 
-#### `getRank(uint16 netuid, uint16 uid) → uint16`
+#### `getRank`
 
 Returns the rank score of a neuron, indicating its performance relative to others.
 
@@ -78,7 +78,7 @@ Returns the rank score of a neuron, indicating its performance relative to other
 - `uint16`: Rank score of the neuron
 
 
-#### `getTrust(uint16 netuid, uint16 uid) → uint16`
+#### `getTrust`
 
 Retrieves the trust score of a neuron, representing how much other neurons trust its outputs.
 
@@ -91,7 +91,7 @@ Retrieves the trust score of a neuron, representing how much other neurons trust
 
 
 
-#### `getConsensus(uint16 netuid, uint16 uid) → uint16`
+#### `getConsensus`
 
 Gets the consensus score of a neuron, indicating agreement with network consensus.
 
@@ -103,7 +103,7 @@ Gets the consensus score of a neuron, indicating agreement with network consensu
 - `uint16`: Consensus score of the neuron
 
 
-#### `getIncentive(uint16 netuid, uint16 uid) → uint16`
+#### `getIncentive`
 
 Returns the incentive score of a neuron, representing its contribution to the network.
 
@@ -115,7 +115,7 @@ Returns the incentive score of a neuron, representing its contribution to the ne
 - `uint16`: Incentive score of the neuron
 
 
-#### `getDividends(uint16 netuid, uint16 uid) → uint16`
+#### `getDividends`
 
 Retrieves the dividends score of a neuron, indicating its reward distribution.
 
@@ -129,7 +129,7 @@ Retrieves the dividends score of a neuron, indicating its reward distribution.
 
 ### Validator-Specific Functions
 
-#### `getVtrust(uint16 netuid, uint16 uid) → uint16`
+#### `getVtrust`
 
 Gets the validator trust score for a neuron, specific to validator operations.
 
@@ -142,7 +142,7 @@ Gets the validator trust score for a neuron, specific to validator operations.
 
 
 
-#### `getValidatorStatus(uint16 netuid, uint16 uid) → bool`
+#### `getValidatorStatus`
 
 Checks if a neuron has validator permit status.
 
@@ -156,7 +156,7 @@ Checks if a neuron has validator permit status.
 
 ### Neuron State Information
 
-#### `getLastUpdate(uint16 netuid, uint16 uid) → uint64`
+#### `getLastUpdate`
 
 Returns the block number of the last update for a neuron.
 
@@ -169,7 +169,7 @@ Returns the block number of the last update for a neuron.
 
 
 
-#### `getIsActive(uint16 netuid, uint16 uid) → bool`
+#### `getIsActive`
 
 Checks if a neuron is currently active in the network.
 
@@ -184,7 +184,7 @@ Checks if a neuron is currently active in the network.
 
 ### Network Connection Information
 
-#### `getAxon(uint16 netuid, uint16 uid) → AxonInfo`
+#### `getAxon`
 
 Retrieves the axon information for a neuron, including network connection details.
 
@@ -213,7 +213,7 @@ struct AxonInfo {
 
 ### Key Management
 
-#### `getHotkey(uint16 netuid, uint16 uid) → bytes32`
+#### `getHotkey`
 
 Returns the hotkey (public key) associated with a neuron.
 
@@ -227,7 +227,7 @@ Returns the hotkey (public key) associated with a neuron.
 **Errors:**
 - Reverts with `InvalidRange` if the UID doesn't exist
 
-#### `getColdkey(uint16 netuid, uint16 uid) → bytes32`
+#### `getColdkey`
 
 Returns the coldkey (owner key) associated with a neuron's hotkey.
 
@@ -248,11 +248,19 @@ Returns the coldkey (owner key) associated with a neuron's hotkey.
 
 First, set up your client to interact with the metagraph precompile:
 
+Fill in the RPC URL for the desired network: [EVM Network Details](./subtensor-networks).
+
+
+Full source: https://github.com/opentensor/evm-bittensor/blob/main/examples/metagraph.js
+Cribbed from: https://github.com/opentensor/subtensor/blob/main/evm-tests/src/contracts/metagraph.ts
+
 ```javascript
 import { getPublicClient } from "viem";
 
 // Source: https://github.com/opentensor/subtensor/blob/main/evm-tests/src/contracts/metagraph.ts
 const IMETAGRAPH_ADDRESS = "0x0000000000000000000000000000000000000802";
+// Initialize the public client
+const publicClient = await getPublicClient("YOUR_RPC_URL");
 
 const IMetagraphABI = [
     {
@@ -644,10 +652,9 @@ const IMetagraphABI = [
     },
 ];
 
-// Initialize the public client
-const publicClient = await getPublicClient("YOUR_RPC_URL");
-const METAGRAPH_ADDRESS = "0x0000000000000000000000000000000000000802"; // Precompile address 2050
+
 ```
+
 
 ### Getting Network Information
 
@@ -656,7 +663,7 @@ const METAGRAPH_ADDRESS = "0x0000000000000000000000000000000000000802"; // Preco
 const subnetId = 1; // Example subnet ID
 const uidCount = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getUidCount",
     args: [subnetId]
 });
@@ -673,7 +680,7 @@ const uid = 26; // Example neuron UID
 // Get stake amount
 const stake = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getStake",
     args: [subnetId, uid]
 });
@@ -681,7 +688,7 @@ const stake = await publicClient.readContract({
 // Get emission value
 const emission = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getEmission",
     args: [subnetId, uid]
 });
@@ -689,7 +696,7 @@ const emission = await publicClient.readContract({
 // Get trust score
 const trust = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getTrust",
     args: [subnetId, uid]
 });
@@ -703,7 +710,7 @@ console.log(`Neuron ${uid} - Stake: ${stake}, Emission: ${emission}, Trust: ${tr
 // Get axon information for network connectivity
 const axon = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getAxon",
     args: [subnetId, uid]
 });
@@ -724,7 +731,7 @@ console.log("Axon Info:", {
 // Check if a neuron is a validator
 const isValidator = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getValidatorStatus",
     args: [subnetId, uid]
 });
@@ -732,7 +739,7 @@ const isValidator = await publicClient.readContract({
 // Get validator trust score
 const vtrust = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getVtrust",
     args: [subnetId, uid]
 });
@@ -746,14 +753,14 @@ console.log(`Neuron ${uid} - Is Validator: ${isValidator}, VTrust: ${vtrust}`);
 // Get hotkey and coldkey for a neuron
 const hotkey = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getHotkey",
     args: [subnetId, uid]
 });
 
 const coldkey = await publicClient.readContract({
     abi: IMetagraphABI,
-    address: METAGRAPH_ADDRESS,
+    address: IMETAGRAPH_ADDRESS,
     functionName: "getColdkey",
     args: [subnetId, uid]
 });
@@ -781,61 +788,61 @@ async function analyzeNeuron(subnetId, uid) {
         ] = await Promise.all([
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getStake",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getEmission",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getRank",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getTrust",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getConsensus",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getIncentive",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getDividends",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getLastUpdate",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getIsActive",
                 args: [subnetId, uid]
             }),
             publicClient.readContract({
                 abi: IMetagraphABI,
-                address: METAGRAPH_ADDRESS,
+                address: IMETAGRAPH_ADDRESS,
                 functionName: "getValidatorStatus",
                 args: [subnetId, uid]
             })
@@ -865,24 +872,3 @@ const neuronData = await analyzeNeuron(1, 0);
 console.log("Neuron Analysis:", neuronData);
 ```
 
-### Error Handling
-
-```javascript
-async function safeGetStake(subnetId, uid) {
-    try {
-        const stake = await publicClient.readContract({
-            abi: IMetagraphABI,
-            address: METAGRAPH_ADDRESS,
-            functionName: "getStake",
-            args: [subnetId, uid]
-        });
-        return stake;
-    } catch (error) {
-        if (error.message.includes("InvalidRange")) {
-            console.error(`UID ${uid} does not exist in subnet ${subnetId}`);
-            return null;
-        }
-        throw error;
-    }
-}
-```
