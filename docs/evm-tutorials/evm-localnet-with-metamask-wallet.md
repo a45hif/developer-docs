@@ -12,7 +12,8 @@ This page covers getting set up to use EVM on a locally deployed Bittensor block
 Consider first trying [EVM with Bittensor testnet](./evm-testnet-with-metamask-wallet.md). This allows you to try EVM without having to deploy a blockchain locally, but you will have to obtain testnet TAO by inquiring in discord, or by completing the [BTCLI playground](../btcli/btcli-playground)challenge to obtain testnet TAO.
 
 Key values:
-- **EVM Subtensor Mainnet Chain ID:**: `964` (UTF-8 encoded TAO symbol) 
+
+- **EVM Subtensor Mainnet Chain ID:**: `964` (UTF-8 encoded TAO symbol)
 - **EVM Subtensor Testnet Chain ID:**: `945` (UTF-8 encoded alpha character)
 - **Opentensor EVM-Bittensor GitHub repo with code examples:** https://github.com/opentensor/evm-bittensor/tree/main
 
@@ -31,7 +32,7 @@ The bare local network doesn't have the Chain ID setup and it needs to be config
 adminUtils >> sudoSetEvmChainId
 ```
 
-## Step 3. Create a Metamask wallet 
+## Step 3. Create a Metamask wallet
 
 1. If you don't already have it, [install Metamask wallet](https://metamask.io/download/) browser extension.
 2. Create a new account.
@@ -40,17 +41,17 @@ adminUtils >> sudoSetEvmChainId
 
 Follow the below steps:
 
-1. Open Metamask Wallet extension on your browser. Click on the drop-down **Select a network** menu at the top left. 
-2. Click on **+ Add a Custom Network** button. 
+1. Open Metamask Wallet extension on your browser. Click on the drop-down **Select a network** menu at the top left.
+2. Click on **+ Add a Custom Network** button.
 3. Enter the following details:
-    - **Network name:** "Subtensor Local"
-    - **Default RPC URL:** http://localhost:9944/
-    - **Chain ID:** `964` or `945`, depending on your setting in Step 2
-    - **Currency symbol:** TAO 
-6. Click **Save**.
-7. Click on **Select a network** again and switch to the Subtensor Local network.
+   - **Network name:** "Subtensor Local"
+   - **Default RPC URL:** http://localhost:9944/
+   - **Chain ID:** `964` or `945`, depending on your setting in Step 2
+   - **Currency symbol:** TAO
+4. Click **Save**.
+5. Click on **Select a network** again and switch to the Subtensor Local network.
 
-With the above steps, you have successfully configured your Metamask wallet with the EVM localnet. 
+With the above steps, you have successfully configured your Metamask wallet with the EVM localnet.
 
 ## Step 5. Configure private key and RPC endpoint
 
@@ -58,42 +59,42 @@ With the above steps, you have successfully configured your Metamask wallet with
 Before you proceed, make sure you finished the [Install](./install.md) step.
 :::
 
-In this step you will copy the private key from your Metamask wallet account and paste it into the configuration file in the repo. This step will ensure that you are not prompted with password each and every step as you run these tutorials. 
-
+In this step you will copy the private key from your Metamask wallet account and paste it into the configuration file in the repo. This step will ensure that you are not prompted with password each and every step as you run these tutorials.
 
 1. Navigate to the `examples` directory of the EVM-Bittensor repo:
 
-    ```bash
-    cd examples
-    ```
+   ```bash
+   cd examples
+   ```
 
 2. Create `config.js` file by copying the `config-example.js` file:
 
-    ```bash
-    cp config-example.js config.js
-    ```
+   ```bash
+   cp config-example.js config.js
+   ```
 
-3. On Metamask wallet extension, your wallet account will have a H160 account address, starting with the `0x` prefix (for example: `0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf`), and also your wallet account name. 
-4. Click on your wallet account name, which will open the drop-down menu. 
-5. Click on the &#8942; (three vertical dots, i.e., vertical ellipsis) next to the wallet account and select **Account details**. It will open a view with a QR code, your wallet account H160 address and a **Show private key** button.
+3. On Metamask wallet extension, your wallet account will have a H160 account address, starting with the `0x` prefix (for example: `0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf`), and also your wallet account name.
+4. Click on your wallet account name, which will open the drop-down menu.
+5. Click on the **&#8942;** (three vertical dots, i.e., vertical ellipsis) next to the wallet account and select **Account details**. It will open a view with a QR code, your wallet account H160 address and a **Show private key** button.
 6. Click on the **Show private key** button, enter the password. You will then see the private key for your wallet account. Copy this private key.
-7.  Paste this private key into `ethPrivateKey` string in your `config.js` file as shown below (mangled for security):
+7. Paste this private key into `ethPrivateKey` string in your `config.js` file as shown below (mangled for security):
 
-    ```javascript
-    const ethPrivateKey = "02c1c4112233snipsnipsnipgh933aca491e090e0b7xxyy1b124b86d9382b01a8";
-    ```
+   ```javascript
+   const ethPrivateKey =
+     "02c1c4112233snipsnipsnipgh933aca491e090e0b7xxyy1b124b86d9382b01a8";
+   ```
 
-8.  Finally, edit the `module.exports` section of the `config.js` file to use the localnet URLs, as shown below:
-    ```javascript
-    module.exports = {
-    ethPrivateKey,
-    subSeed,
-    rpcUrl: rpcUrlLocal,
-    wsUrl: wsUrlLocal,
-    }
-    ```
+8. Finally, edit the `module.exports` section of the `config.js` file to use the localnet URLs, as shown below:
+   ```javascript
+   module.exports = {
+     ethPrivateKey,
+     subSeed,
+     rpcUrl: rpcUrlLocal,
+     wsUrl: wsUrlLocal,
+   };
+   ```
 
-Save the `config.js` file. Now your setup is ready to run the tutorials with EVM localnet. 
+Save the `config.js` file. Now your setup is ready to run the tutorials with EVM localnet.
 
 ## Step 6 (Optional). Disable white list for contract deployment
 

@@ -4,19 +4,19 @@ title: "EVM on Testnet"
 
 import ThemedImage from '@theme/ThemedImage';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { CreatePartial } from "./_create-mm-wallet.mdx";
+import { CreatePartial } from "./\_create-mm-wallet.mdx";
 
 # EVM on Testnet
 
-
-This page covers how to set up your Metamask wallet to use with the testnet on Bittensor. You must run this step before you can run other tutorials in this section. 
-
+This page covers how to set up your Metamask wallet to use with the testnet on Bittensor. You must run this step before you can run other tutorials in this section.
 
 Key values:
 
 - The **Bittensor Testnet URL:** `https://test.chain.opentensor.ai`
 - **EVM Subtensor Chain ID:** `945` (UTF-8 encoded alpha character)
 - **Opentensor EVM-Bittensor GitHub repo:** `https://github.com/opentensor/evm-bittensor/tree/main`
+
+## Create Wallet with MetaMask
 
 <CreatePartial />
 
@@ -30,9 +30,11 @@ curl  -X POST \
   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
   https://test.chain.opentensor.ai
 ```
+
 ```console
 {"jsonrpc":"2.0","id":1,"result":"0x460943"}
 ```
+
 ### Add testnet to Metamask
 
 Add the testnet to Metamask from within the Metamask wallet. Follow the below steps:

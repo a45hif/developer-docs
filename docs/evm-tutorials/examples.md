@@ -2,7 +2,7 @@
 title: "Bittensor EVM: Examples and Precompiles"
 ---
 
-import { InstallPartial } from "./_install.mdx";
+import { InstallPartial } from "./\_install.mdx";
 
 # Bittensor EVM: Examples and Precompiles
 
@@ -11,12 +11,11 @@ import { InstallPartial } from "./_install.mdx";
 The following precompiled smart contracts are available on the Bittensor EVM.
 The source code can be found [on GitHub](https://github.com/opentensor/subtensor/blob/main/precompiles).
 
-Code examples used throughout are provided by OTF, and come from [this repository.](https://github.com/opentensor/evm-bittensor/tree/main/examples).
+Code examples used throughout this section are provided by the _Opentensor Foundation_ (_OTF_), and come from [this repository](https://github.com/opentensor/evm-bittensor/tree/main/examples).
 
 ## Examples
 
 - [Convert Ethereum (H160) Address to Substrate (SS58)](./convert-h160-to-ss58): Learn how to convert between H160 and SS58 address formats
-- [Converting Between Ethereum and Substrate Addresses](./convert-h160-to-ss58): Learn how to convert between H160 and SS58 address formats
 
 ## Standard Ethereum Precompiles
 
@@ -29,6 +28,8 @@ Code examples used throughout are provided by OTF, and come from [this repositor
 - `ECRecoverPublicKey` (0x401): Recover the public key from an elliptic curve signature
 
 ## Bittensor-Specific Precompiles
+
+The following list consists of Bittensor-specific precompiles with links to their respective documentation:
 
 - [`Ed25519Verify`](./ed25519-verify-precompile.md): Verify Ed25519 signatures
 - [`BalanceTransfer`](./transfer-between-two-h160-accounts.md): Transfer TAO between accounts
@@ -46,4 +47,3 @@ Code examples used throughout are provided by OTF, and come from [this repositor
 - [`SubnetPrecompile`](./subnet-precompile.md): Manage subnet operations
 - [`MetagraphPrecompile`](./metagraph-precompile.md): Interact with the metagraph
 - [`NeuronPrecompile`](./neuron-precompile.md): Manage neuron operations
-
