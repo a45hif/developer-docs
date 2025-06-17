@@ -1,6 +1,7 @@
 ---
 title: "Transfer TAO from Metamask to SS58 Address"
 ---
+
 import ThemedImage from '@theme/ThemedImage';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
@@ -15,14 +16,14 @@ In this tutorial you will learn how to transfer TAO from your Metamask wallet to
 
 - **Node.js** (v16 or later recommended)
 - **npm** or **yarn**
-- [Clone the Bittensor EVM examples repo](./install.md)
+- [Clone and install the Bittensor EVM examples repo](./install.md)
 - [Get set up for using EVM wallet on testnet](./evm-testnet-with-metamask-wallet)
-- [Install](./install) the EVM-Bittensor repo, containing scripts and examples.
-
 
 ## Option 1: Transfer using a Precompiled Contract
 
-**Best for:** Most users. You do NOT need the private key or seed for your SS58 address.
+:::tip
+This is the best option for most users. You do NOT need the private key or seed for your SS58 address.
+:::
 
 This option uses a precompiled contract to transfer TAO from your Metamask wallet to any SS58 address (coldkey or hotkey).
 
@@ -41,8 +42,9 @@ Replace it with your own SS58 address:
 const destinationAddress = "5HgU7B3xfSfisR1A7wDMt7FHX5Uizj6xtWWHwhwJMZSrdN7y";
 ```
 
-
 ### Run the transfer script
+
+Run the `transfer.js` script by navigating to the `examples` folder and running the following command:
 
 ```bash
 node transfer.js
@@ -50,12 +52,16 @@ node transfer.js
 
 :::tip 1 TAO = 1e18
 In Bittensor EVM, 1 TAO is written as `1e18` (just like on Ethereum). For example, to send 0.5 TAO:
+
 ```js
 const value = BigInt(0.5 * 1e18).toString();
 ```
+
 :::
 
 ### Run the withdraw script
+
+Run the `withdraw.js` script by navigating to the `examples` folder and running the following command:
 
 ```bash
 node withdraw.js
@@ -87,7 +93,9 @@ btcli wallet balance --ss58 5HgU7B3xfSfisR1A7wDMt7FHX5Uizj6xtWWHwhwJMZSrdN7y
 
 ## Option 2: Transfer using the `withdraw` Extrinsic in the Subtensor EVM Pallet
 
-**Best for:** Advanced users. You WILL need the private key for your SS58 address.
+:::tip
+This option is best for advanced users. You WILL need the private key for your SS58 address.
+:::
 
 This option uses the `withdraw` extrinsic in the EVM pallet, allowing you to transfer from an EVM address to an SS58 address using Polkadot.js Apps.
 
@@ -104,6 +112,8 @@ const ss58Address = "<your SS58 address>";
 ```
 
 ### Run the withdraw-address script
+
+Run the `withdraw-address.js` script by navigating to the `examples` folder and running the following command:
 
 ```bash
 node withdraw-address.js

@@ -25,7 +25,7 @@ In what follows, we'll create a wallet in Metamask and convert it's public key t
 
 ### Convert Address for Bittensor
 
-Run the address conversion script by navigating to the `examples` folder and running the following command:
+Run the `convert-address.js` script by navigating to the `examples` folder and running the following command:
 
 ```bash
 node convert-address.js
