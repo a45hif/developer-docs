@@ -16,10 +16,8 @@ In this tutorial you will learn how to interact with staking precompile in two w
 
 ## Prerequisites
 
-1. Read [EVM on Subtensor](./) for a basic introduction to Bittensor EVM
+1. Read [Bittensor EVM Smart Contracts](./) for a basic introduction to Bittensor EVM
 1. You should also be comfortable using [Remix IDE](https://remix.ethereum.org/).
-1. Read [EVM on Subtensor](./evm-on-subtensor.md) for a basic understanding of what an ABI is and how to use it.
-
 
 ## Setup EVM localnet, subnet and delegate
 
