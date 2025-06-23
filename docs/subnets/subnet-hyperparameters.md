@@ -61,8 +61,10 @@ Using the specified network test from config
    alpha_high                      58982                  0.9000076295
    alpha_low                       45875                  0.7000076295
    liquid_alpha_enabled            False                  False
+   yuma3_enabled                   False                  False
+   alpha_sigmoid_steepness         1000                   0.0152590219
  ────────────────────────────────────────────────────────────────────────
- ```
+```
 
 :::tip
 
@@ -118,7 +120,6 @@ The number of blocks for the stake to become inactive for the purpose of epoch i
 **Description**:
 `AdjustmentAlpha` is the rate at which difficulty and burn are adjusted up or down.
 
-
 ### AdjustmentInterval
 
 **Type**: u16
@@ -135,12 +136,26 @@ The number of blocks for the stake to become inactive for the purpose of epoch i
 
 `AdjustmentInterval` is number of blocks that pass between difficulty and burn adjustments. So, I was wrong about "next block" when I said that if root sets difficulty outside of range, it will get back in range. Difficulty will get back in range at most after `AdjustmentInterval` blocks pass.
 
+### AlphaSigmoidSteepness
+
+**Type**: u16
+
+**Default**: 1000
+
+**`btcli` setter**: `btcli sudo set --param alpha_sigmoid_steepness`
+
+**Setter extrinsic**: `sudo_set_alpha_sigmoid_steepness`
+
+**Permissions required to set**: Subnet Creator
+
+**Description**:
+`AlphaSigmoidSteepness` determines how the consensus mechanism assigns an alpha value for a given miner-validator pair based on voting alignment. Lower steepness values result in moderate alpha values, while higher steepness values push alpha values closer to the defined `alpha_low` or `alpha_high` values.
 
 ### BondsMovingAverage
 
-**Type**: 
+**Type**:
 
-**Default**: 
+**Default**:
 
 **`btcli` setter**: bonds_moving_avg
 
@@ -154,7 +169,6 @@ The moving average of bonds. The higher bonds yield to higher dividends for vali
 
 See [Yuma Consensus: bonding mechanics](../yuma-consensus#bonding-mechanics).
 
-
 ### BondsPenalty
 
 **Type**: u16
@@ -166,6 +180,7 @@ See [Yuma Consensus: bonding mechanics](../yuma-consensus#bonding-mechanics).
 **Setter extrinsic**: `sudo_set_bonds_penalty`
 
 **Permissions required to set**: root
+
 <!-- Is this configurable??? ^^ -->
 
 **Description**:
@@ -173,11 +188,12 @@ The magnitude of the penalty subtracted from weights for exceeding consensus, fo
 
 See [Yuma Consensus: Penalizing out-of-consensus bonds](../yuma-consensus#penalizing-out-of-consensus-bonds).
 
-
 ### CommitRevealPeriod
 
-**Type**: u16 
+**Type**: u16
+
 <!-- fact check ^^ for some reason I could not identify this in https://github.com/opentensor/subtensor/blob/main/runtime/src/lib.rs#L1038 -->
+
 **Default**: 1
 
 **`btcli` setter**: `btcli sudo set --param commit_reveal_period`
@@ -206,8 +222,7 @@ See [Commit Reveal](./commit-reveal)
 
 **Description**:
 
- Enables [Commit Reveal](./commit-reveal)
-
+Enables [Commit Reveal](./commit-reveal)
 
 ### Difficulty
 
@@ -217,7 +232,7 @@ See [Commit Reveal](./commit-reveal)
 
 **`btcli` setter**: none
 
-**Setter extrinsic**: `sudo_set_difficulty` 
+**Setter extrinsic**: `sudo_set_difficulty`
 
 **Permissions required to set**: Root
 
@@ -227,9 +242,7 @@ Current dynamically computed value for the proof-of-work (POW) requirement for P
 
 <!-- What are the units here? What does this actually mean, how are miners supposed to read/understand this? -->
 
-
 ### ImmunityPeriod
-
 
 **Type**: u16
 
@@ -237,7 +250,7 @@ Current dynamically computed value for the proof-of-work (POW) requirement for P
 
 **`btcli` setter**: yes
 
-**Setter extrinsic**: `sudo_set_immunity_period` 
+**Setter extrinsic**: `sudo_set_immunity_period`
 
 **Permissions required to set**: Subnet creator
 
@@ -245,13 +258,11 @@ Current dynamically computed value for the proof-of-work (POW) requirement for P
 
 The number of blocks after registration when a miner is protected from deregistration
 
-
 ### Kappa
-
 
 **Type**: u16
 
-**Default**:  32767 ( or approximately 0.5 normalized )
+**Default**: 32767 ( or approximately 0.5 normalized )
 
 **`btcli` setter**: yes
 
@@ -262,8 +273,6 @@ The number of blocks after registration when a miner is protected from deregistr
 **Description**:
 
 The consensus majority ratio: The weights set by validators who have lower normalized stake than Kappa are not used in calculating consensus, which affects ranks, which affect incentives.
-
-   
 
 the consensus threshold for bond-clipping during [Yuma Consensus](../yuma-consensus)
 
@@ -283,11 +292,7 @@ the consensus threshold for bond-clipping during [Yuma Consensus](../yuma-consen
 
 Enables the [liquid alpha ](./consensus-based-weights) feature.
 
-
-
- 
 ### MaxAllowedValidators
-
 
 **Type**: u16
 
@@ -302,7 +307,6 @@ Enables the [liquid alpha ](./consensus-based-weights) feature.
 **Description**:
 
 Maximum validators on a subnet.
-
 
 ### MaxBurn
 
@@ -319,7 +323,6 @@ Maximum validators on a subnet.
 **Description**:
 
 The maximum of the dynamic range for TAO cost of burn registration on the subnet.
- 
 
 ### MaxDifficulty
 
@@ -329,7 +332,7 @@ The maximum of the dynamic range for TAO cost of burn registration on the subnet
 
 **`btcli` setter**: `btcli sudo set --param min_difficulty`
 
-**Setter extrinsic**: 
+**Setter extrinsic**:
 
 **Permissions required to set**: Subnet creator
 
@@ -353,9 +356,7 @@ The maximum of the dynamic range for difficulty of proof-of-work registration on
 
 Maximum neuron registrations per block. Note: Actual limit may be lower, as there is also per interval limit `TargetRegistrationsPerInterval`.
 
-
 ### MaxWeightsLimit
-
 
 **Type**: u16
 
@@ -386,7 +387,6 @@ Minimum number of weights for a validator to set when setting weights.
 
 ### MinBurn
 
-
 **Type**: u64
 
 **Default**: 500000 normalized to 0.0005(τ)
@@ -396,7 +396,7 @@ Minimum number of weights for a validator to set when setting weights.
 **Setter extrinsic**: `sudo_set_min_burn`
 
 **Permissions required to set**: Subnet creator
- 
+
 **Description**:
 
 The minimum of the range of the dynamic burn cost for registering on the subnet.
@@ -435,9 +435,7 @@ The minimum of the range of the proof-of-work for registering on the subnet
 
 `NetworkPowRegistrationAllowed` is a flag that toggles PoW registrations on a subnet
 
-
 ### NetworkRateLimit
-
 
 **Type**: u64
 
@@ -445,14 +443,13 @@ The minimum of the range of the proof-of-work for registering on the subnet
 
 **`btcli` setter**: none
 
-**Setter extrinsic**: 
+**Setter extrinsic**:
 
 **Permissions required to set**: root
 
 **Description**:
 
 Rate limit for network registrations expressed in blocks
-
 
 ### NetworkRegistrationAllowed
 
@@ -462,7 +459,7 @@ Rate limit for network registrations expressed in blocks
 
 **`btcli` setter**: `btcli sudo set --param registration_allowed`
 
-**Setter extrinsic**: `sudo_set_network_registration_allowed` 
+**Setter extrinsic**: `sudo_set_network_registration_allowed`
 
 **Permissions required to set**: Subnet creator
 
@@ -470,10 +467,7 @@ Rate limit for network registrations expressed in blocks
 
 `NetworkRegistrationAllowed` determines if burned registrations are allowed. If both burned and pow registrations are disabled, the subnet will not get emissions.
 
-
-
 ### Rho
-
 
 **Type**: u16
 
@@ -481,7 +475,7 @@ Rate limit for network registrations expressed in blocks
 
 **`btcli` setter**: yes
 
-**Setter extrinsic**:  `sudo_set_rho`
+**Setter extrinsic**: `sudo_set_rho`
 
 **Permissions required to set**: Subnet creator
 
@@ -493,14 +487,13 @@ Deprecated.
 
 ### ServingRateLimit
 
-
 **Type**: u16
 
 **Default**: 50
 
-**`btcli` setter**: 
+**`btcli` setter**:
 
-**Setter extrinsic**: `sudo_set_serving_rate_limit` 
+**Setter extrinsic**: `sudo_set_serving_rate_limit`
 
 **Permissions required to set**: Subnet creator
 
@@ -508,9 +501,7 @@ Deprecated.
 
 Rate limit for calling `serve_axon` and `serve_prometheus` extrinsics used by miners.
 
-
 ### TargetRegistrationsPerInterval
-
 
 **Type**: u16
 
@@ -525,7 +516,6 @@ Rate limit for calling `serve_axon` and `serve_prometheus` extrinsics used by mi
 **Description**:
 
 Maximum number of neuron registrations allowed per interval. Interval is `AdjustmentInterval`
-
 
 ### Tempo
 
@@ -546,14 +536,13 @@ See [Emission](../emissions.md)
 
 ### ToggleTransfer
 
-
 **Type**: Boolean
 
 **Default**: True
 
 **`btcli` setter**: none
 
-**Setter extrinsic**: `sudo_set_toggle_transfer` 
+**Setter extrinsic**: `sudo_set_toggle_transfer`
 
 **Permissions required to set**: Subnet creator
 
@@ -587,13 +576,29 @@ If the version key specified in `set_weights` extrinsic is lower than this syste
 
 **`btcli` setter**: `btcli sudo set --param weights_rate_limit`
 
-**Setter extrinsic**: 
+**Setter extrinsic**:
 
 **Permissions required to set**: Root
 
 **Description**:
 
 How long, in blocks, a validator must wait between weight commits on a subnet.
+
+### Yuma3On
+
+**Type**: Bool
+
+**Default**: False
+
+**`btcli` setter**: `btcli sudo set --param yuma3_enabled`
+
+**Setter extrinsic**: `sudo_set_yuma3_enabled`
+
+**Permissions required to set**: Subnet Creator
+
+**Description**:
+
+Determines if the Yuma Consensus 3 mechanism is applied to the subnet.
 
 ## Global/Root State Variables
 
@@ -603,7 +608,7 @@ The following variables are global and/or can only be configured with `root` per
 
 **Type**: u12
 
-**Default**: 
+**Default**:
 
 **`btcli` setter**: no
 
@@ -617,6 +622,25 @@ The duration in blocks of the waiting period before a coldkey swap.
 
 See [Rotate/Swap your Coldkey](./schedule-coldkey-swap)
 
+<!-- fact check what is this on chain -->
+
+### DissolveNetworkScheduleDuration
+
+Deprecated
+
+### EmissionValue
+
+**Description**:
+
+Deprecated. replaced with SubnetAlphaInEmission, SubnetAlphaOutEmission, and SubnetTaoInEmission.
+
+### EvmChainId
+
+**Permissions required to set**: root
+
+**Description**:
+
+The Chain ID. `945` for Bittensor mainnet, a.k.a. Finney.
 
 ### Issuance
 
@@ -625,17 +649,15 @@ See [Rotate/Swap your Coldkey](./schedule-coldkey-swap)
 **Description**:
 Refers to total issuance, the amount of TAO in circulation.
 
-
 ### LockReductionInterval
-
 
 **Type**: u64
 
-**Default**: 14 * 7200
+**Default**: 14 \* 7200
 
-**`btcli` setter**: 
+**`btcli` setter**:
 
-**Setter extrinsic**: 
+**Setter extrinsic**:
 
 **Permissions required to set**: root
 
@@ -643,9 +665,7 @@ Refers to total issuance, the amount of TAO in circulation.
 
 The number of blocks that need to pass in order for the network lock cost to half.
 
-`sudo_set_lock_reduction_interval`| root 
-
-
+`sudo_set_lock_reduction_interval`| root
 
 ### NetworkMinLockCost
 
@@ -659,33 +679,15 @@ The number of blocks that need to pass in order for the network lock cost to hal
 
 `NetworkMinLockCost` is the minimum TAO to pay for subnet registration
 
-### StakeThreshold
-
-
-**Type**: u12
-
-**Default**: 1000
-
-**`btcli` setter**: none
-
-**Setter extrinsic**: `sudo_set_stake_threshold`
-
-**Permissions required to set**: root
-
-**Description**:
-
-The minimum stake required for validating. Currently 1000
-
 ### TxDelegateTakeRateLimit
-
 
 **Type**: u64
 
 **Default**: 216000
 
-**`btcli` setter**: 
+**`btcli` setter**:
 
-**Setter extrinsic**: 
+**Setter extrinsic**:
 
 **Permissions required to set**: root
 
@@ -693,29 +695,7 @@ The minimum stake required for validating. Currently 1000
 
 Rate limit of how frequently can a delegate take be increased
 
-<!-- fact check what is this on chain -->
-
-### DissolveNetworkScheduleDuration
-
-Deprecated
-
-### EmissionValue
-
-**Description**:
-
-Deprecated. replaced with SubnetAlphaInEmission, SubnetAlphaOutEmission, and SubnetTaoInEmission. 
-
-### EvmChainId
-
-**Permissions required to set**: root
-
-**Description**:
-
-The Chain ID. `945` for Bittensor mainnet, a.k.a. Finney.
-
-
 ### TxRateLimit
-
 
 **Type**: u64
 
@@ -731,16 +711,30 @@ The Chain ID. `945` for Bittensor mainnet, a.k.a. Finney.
 
 Rate limit for `swap_hotkey` extrinsic.
 
-
 ### SubnetOwnerCut
 
 **`btcli` setter**: none
 
 **Setter extrinsic**: `sudo_set_subnet_owner_cut`
 
-**Permissions required to set**: root 
+**Permissions required to set**: root
 
 **Description**:
 
 The ratio of all subnet alpha emissions that is given to subnet owner as stake. (Global, fixed at 18%.)
 
+### StakeThreshold
+
+**Type**: u12
+
+**Default**: 1000
+
+**`btcli` setter**: none
+
+**Setter extrinsic**: `sudo_set_stake_threshold`
+
+**Permissions required to set**: root
+
+**Description**:
+
+The minimum stake required for validating. Currently 1000

@@ -3307,44 +3307,50 @@ btcli stake [OPTIONS] COMMAND [ARGS]...
 
 ### `btcli stake add`
 
-Stake TAO to one or more hotkeys on specific netuids with your coldkey.
+Stake TAO to one or more hotkeys on specific or multiple netuids with your coldkey.
 
-Stake is always added through your coldkey's free balance. For stake movement, see the `btcli stake move` command.
+Stakes are always added through your coldkey's free balance. For stake movement, see the [`btcli stake move`](#btcli-stake-move) command.
 
 Common Examples:
 
 1. Interactive staking (guided prompts):
 
-   ```
+   ```sh
    btcli stake add
    ```
 
 2. Safe staking with rate tolerance of 10% with partial transaction disabled:
 
-   ```
+   ```sh
    btcli stake add --amount 100 --netuid 1 --safe --tolerance 0.1 --no-partial
    ```
 
 3. Allow partial stake if rates change with tolerance of 10%:
 
-   ```
+   ```sh
    btcli stake add --amount 300 --safe --partial --tolerance 0.1
    ```
 
 4. Unsafe staking with no rate protection:
 
-   ```
+   ```sh
    btcli stake add --amount 300 --netuid 1 --unsafe
    ```
 
 5. Stake to multiple hotkeys:
 
-   ```
+   ```sh
    btcli stake add --amount 200 --include-hotkeys hk_ss58_1,hk_ss58_2,hk_ss58_3
    ```
 
-6. Stake all balance to a subnet:
+6. Stake the same amount of TAO into multiple subnets:
+
+   ```sh
+   btcli stake add -n 4,14,64 --amount 100
    ```
+
+7. Stake all balance to a subnet:
+   ```sh
    btcli stake add --all --netuid 3
    ```
 
@@ -4044,7 +4050,13 @@ Common Examples:
    btcli stake add --amount 200 --include-hotkeys hk_ss58_1,hk_ss58_2,hk_ss58_3
    ```
 
-6. Stake all balance to a subnet:
+6. Stake the same amount of TAO into multiple subnets
+
+   ```sh
+   btcli stake add -n 4,14,64 --amount 100
+   ```
+
+7. Stake all balance to a subnet:
    ```
    btcli stake add --all --netuid 3
    ```
