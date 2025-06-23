@@ -15,13 +15,12 @@ Prerequisites:
 
 ## Create subnet
 
-To access the handy pre-provisioned development "Alice" account on your local chain, use:
 
 ```shell
 btcli subnet create \
 --subnet-name awesome-first-subnet \
 --wallet.name sn-creator \
---subtensor.chain_endpoint ws://127.0.0.1:9945
+--network ws://127.0.0.1:9945
 ```
 
 ### Trouble shoot
@@ -44,7 +43,7 @@ btcli wallet transfer \
 --amount 1001 \
 --wallet.name alice \
 --destination "5C9xw4..." \
---subtensor.chain_endpoint ws://127.0.0.1:9945
+--network ws://127.0.0.1:9945
 ```
 
 #### Network Rate Limit Error
@@ -85,32 +84,33 @@ btcli subnet burn-cost --network test
 To remedy your liquidity shortfall, transfer $\tau$ from the Alice account and try again.
 
 1. First, get the ss58 address for the destination wallet for the transfer:
-   ```shell
-   btcli w list
-   ```
-   ```shell
-   ...
-   ── Coldkey sn-creator  ss58_address 5C9xw4gDyu11ocdpWrmhT1sbi4xEHCpzEMsyMA4jGfAZQofQ
-   └── Hotkey default  ss58_address 5GVsCAY6RuSuoAA1E77xsHJ9PjdZJjJrRkNFDxVtRKPnw7TR
-   ```
+    ```shell
+    btcli w list
+    ```
+    ```shell
+    ...
+    ── Coldkey sn-creator  ss58_address 5C9xw4gDyu11ocdpWrmhT1sbi4xEHCpzEMsyMA4jGfAZQofQ
+    └── Hotkey default  ss58_address 5GVsCAY6RuSuoAA1E77xsHJ9PjdZJjJrRkNFDxVtRKPnw7TR
+    ```
 1. Execute the transfer from `alice` to the sn-creator wallet
 
-   ```console
-   btcli wallet transfer \
-   --amount 1001 \
-   --wallet.name alice \
-   --destination "5GVsCAY6RuSuoAA1E77xsHJ9PjdZJjJrRkNFDxVtRKPnw7TR" \
-   --subtensor.chain_endpoint ws://127.0.0.1:9945
-   ```
+    ```console
+    btcli wallet transfer \
+    --amount 1001 \
+    --wallet.name alice \
+    --destination "5GVsCAY6RuSuoAA1E77xsHJ9PjdZJjJrRkNFDxVtRKPnw7TR" \
+    --subtensor.chain_endpoint ws://127.0.0.1:9945
+    ```
 
-   ```shell
-   Do you want to transfer:
-   amount: τ 1,001.0000
-   from: alice : 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
-   to: 5GVsCAY6RuSuoAA1E77xsHJ9PjdZJjJrRkNFDxVtRKPnw7TR
-   for fee: τ 0.0001 [y/n]: y
-   🌏  📡 Transferring...
-   ```
+    ```shell
+    Do you want to transfer:
+    amount: τ 1,001.0000
+    from: alice : 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
+    to: 5GVsCAY6RuSuoAA1E77xsHJ9PjdZJjJrRkNFDxVtRKPnw7TR
+    for fee: τ 0.0001 [y/n]: y
+    🌏  📡 Transferring...
+    ```
+
 
 ## Success
 
@@ -122,7 +122,7 @@ For example:
 btcli subnet create \
 --subnet-name awesome-first-subnet \
 --wallet.name sn-creator \
---subtensor.chain_endpoint ws://127.0.0.1:9945
+--network ws://127.0.0.1:9945
 ```
 
 ```console
@@ -138,7 +138,7 @@ Decrypting...
  btcli subnet create \
 --subnet-name awesome-second-subnet \
 --wallet.name sn-creator \
---subtensor.chain_endpoint ws://127.0.0.1:9945
+--network ws://127.0.0.1:9945
 ```
 
 ```console
@@ -156,7 +156,7 @@ Decrypting...
 
 ```shell
 btcli subnet list \
---subtensor.chain_endpoint ws://127.0.0.1:9945
+--network ws://127.0.0.1:9945
 ```
 
 ```console

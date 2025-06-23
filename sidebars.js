@@ -22,25 +22,26 @@ const sidebars = {
     // },
     "index",
     {
-      type: 'doc',
-      id: 'bittensor-rel-notes',
-      label: 'Releases',
+      type: "doc",
+      id: "bittensor-rel-notes",
+      label: "Releases",
     },
     "btcli/btcli-playground",
     {
       type: "category",
       label: "Understand Bittensor",
-      link: {type: "doc", id: "learn/introduction"},
+      link: { type: "doc", id: "learn/introduction" },
       collapsible: true,
       collapsed: true,
       items: [
         "learn/introduction",
         "questions-and-answers",
-        "subnets/understanding-subnets", 
-        "learn/bittensor-building-blocks",
+        "subnets/understanding-subnets",
+        "learn/neurons",
         "learn/anatomy-of-incentive-mechanism",
         "emissions",
         "yuma-consensus",
+
       ],
     },
     {
@@ -48,26 +49,24 @@ const sidebars = {
       label: "Staking/Delegation",
       collapsible: true,
       collapsed: true,
-      link: {type: "doc", id: "staking-and-delegation/delegation",},
+      link: { type: "doc", id: "staking-and-delegation/delegation" },
       items: [
-      "staking-and-delegation/delegation",
-      "staking-and-delegation/stakers-btcli-guide",
-      "dynamic-tao/staking-unstaking-dtao",
-      "staking-and-delegation/managing-stake-btcli",
-      "staking-and-delegation/managing-stake-sdk",
-      "staking-and-delegation/staking-polkadot-js",
-      "staking-and-delegation/using-ledger-hw-wallet"],
+        "staking-and-delegation/delegation",
+        "staking-and-delegation/stakers-btcli-guide",
+        "dynamic-tao/staking-unstaking-dtao",
+        "staking-and-delegation/managing-stake-btcli",
+        "staking-and-delegation/managing-stake-sdk",
+        "staking-and-delegation/staking-polkadot-js",
+        "staking-and-delegation/using-ledger-hw-wallet",
+      ],
     },
     {
       type: "category",
       label: "Mining",
       collapsible: true,
       collapsed: true,
-      link: {type: "doc", id: "miners/index",},
-      items: [
-      "miners/index",
-      "miners/miners-btcli-guide"
-      ],
+      link: { type: "doc", id: "miners/index" },
+      items: ["miners/index", "miners/miners-btcli-guide"],
     },
 
     {
@@ -75,11 +74,11 @@ const sidebars = {
       label: "Validating",
       collapsible: true,
       collapsed: true,
-      link: {type: "doc", id: "validators/index",},
+      link: { type: "doc", id: "validators/index" },
       items: [
-      "validators/index",
-      "subnets/child-hotkeys",
-      "validators/validators-btcli-guide"
+        "validators/index",
+        "subnets/child-hotkeys",
+        "validators/validators-btcli-guide",
       ],
     },
     {
@@ -97,63 +96,62 @@ const sidebars = {
         "tutorials/ocr-subnet-tutorial",
       ],
     },
-        {
-          type: "category",
-          label: "BTCLI: The Bittensor CLI",
-          collapsible: true,
-          collapsed: true,
-          link: {type: "doc", id: "btcli/overview",},
-          items: [
-            "getting-started/install-btcli",
-            "btcli/btcli-playground",
-            "btcli-permissions",
-            "btcli",
-            "staking-and-delegation/managing-stake-btcli",            
-          ]
-        },
-        {
-          type: "category",
-          label: "Bittensor Python SDK",
-          collapsible: true,
-          collapsed: true,
-          items: [
-            "getting-started/installation",
-            "sdk/env-vars",
-            "bt-api-ref",          
-            "sdk/subtensor-api",
-            "getting-started/install-wallet-sdk",        
-            "migration_guide",
-            "subnets/asyncio",
-            "sdk/managing-subtensor-connections",
+    {
+      type: "category",
+      label: "BTCLI: The Bittensor CLI",
+      collapsible: true,
+      collapsed: true,
+      link: { type: "doc", id: "btcli/overview" },
+      items: [
+        "getting-started/install-btcli",
+        "btcli/btcli-playground",
+        "btcli-permissions",
+        "btcli",
+        "staking-and-delegation/managing-stake-btcli",
+      ],
+    },
+    {
+      type: "category",
+      label: "Bittensor Python SDK",
+      collapsible: true,
+      collapsed: true,
+      items: [
+        "getting-started/installation",
+        "sdk/env-vars",
+        "bt-api-ref",
+        "sdk/subtensor-api",
+        "getting-started/install-wallet-sdk",
+        "migration_guide",
+        "subnets/asyncio",
+        "sdk/managing-subtensor-connections",
+      ],
+    },
 
-          ]
-        },        
-        
-        {
-          type: "category",
-          label: "Wallets and Keys",
-          collapsible: true,
-          collapsed: true,
-          items: [
-            "getting-started/wallets",
-            "keys/handle-seed-phrase",
-            "getting-started/coldkey-hotkey-security",
-            "working-with-keys",
-            "keys/multisig",
-            "subnets/schedule-coldkey-swap",
-          ]
-        },
+    {
+      type: "category",
+      label: "Wallets and Keys",
+      collapsible: true,
+      collapsed: true,
+      items: [
+        "getting-started/wallets",
+        "keys/handle-seed-phrase",
+        "getting-started/coldkey-hotkey-security",
+        "working-with-keys",
+        "keys/multisig",
+        "subnets/schedule-coldkey-swap",
+      ],
+    },
     {
       type: "category",
       label: "Tools and Special Features",
-      link: {type: "doc", id: "tools",},
+      link: { type: "doc", id: "tools" },
       collapsible: true,
       collapsed: true,
       items: [
         "bittensor-networks",
         "subnets/commit-reveal",
-        "subnets/consensus-based-weights",                
-          "subnets/bt-logging-levels",        
+        "subnets/consensus-based-weights",
+        "subnets/bt-logging-levels",
         "utilities",
       ],
     },
@@ -161,7 +159,7 @@ const sidebars = {
     {
       type: "category",
       label: "Local Development",
-      link: {type: "doc", id: "local-build/deploy",},
+      link: { type: "doc", id: "local-build/deploy" },
       collapsible: true,
       collapsed: true,
       items: [
@@ -172,11 +170,10 @@ const sidebars = {
       ],
     },
 
-
-{
+    {
       type: "category",
       label: "Subtensor Nodes",
-      link: {type: "doc", id: "subtensor-nodes/index",},
+      link: { type: "doc", id: "subtensor-nodes/index" },
       collapsible: true,
       collapsed: true,
       items: [
@@ -187,47 +184,68 @@ const sidebars = {
         "subtensor-nodes/subtensor-storage-query-examples",
       ],
     },
-    
     {
       type: "category",
-      label: "EVM smart contracts on Bittensor",
-      link: {type: "doc", id: "evm-tutorials/index",},
-      collapsible: true,
-      collapsed: true,
+      label: "Bittensor EVM",
+      link: { type: "doc", id: "evm-tutorials/index" },
       items: [
-        "evm-tutorials/evm-on-subtensor",
-        "evm-tutorials/install",
+        "evm-tutorials/index",
+        "evm-tutorials/subtensor-networks",
+
         "evm-tutorials/evm-testnet-with-metamask-wallet",
         "evm-tutorials/evm-localnet-with-metamask-wallet",
         "evm-tutorials/evm-mainnet-with-metamask-wallet",
-        "evm-tutorials/transfer-from-metamask-to-ss58",
-        "evm-tutorials/transfer-between-two-h160-accounts",
         "evm-tutorials/hardhat-config-for-subtensor-evm",
-        "evm-tutorials/staking-precompile",
-        "evm-tutorials/ed25519-verify-precompile",
+        "evm-tutorials/remix-config-for-subtensor-evm",
+        "evm-tutorials/troubleshooting",
       ],
     },
+    {
+      type: "category",
+      link: { type: "doc", id: "evm-tutorials/examples" },
+      label: "Bittensor EVM: Examples and Precompiles",
+      items: [
+        "evm-tutorials/examples",
+        "evm-tutorials/convert-h160-to-ss58",
+        "evm-tutorials/transfer-from-metamask-to-ss58",
+        "evm-tutorials/transfer-between-two-h160-accounts",
+        "evm-tutorials/withdraw-from-alice",
+        "evm-tutorials/ed25519-verify-precompile",
+        "evm-tutorials/staking-precompile",
+        "evm-tutorials/subnet-precompile",
+        "evm-tutorials/metagraph-precompile",
+        "evm-tutorials/neuron-precompile",
+      ],
+    },
+    // {
+    //   type: "category",
+    //   label: "Bittensor EVM Smart Contracts",
+    //   link: {type: "doc", id: "evm-tutorials/index",},
+    //   collapsible: true,
+    //   collapsed: true,
+    //   items: [
+    //     "evm-tutorials/install",
+    //     ,
+
+    //   ],
+    // },
     {
       type: "category",
       label: "Governance",
       collapsible: true,
       collapsed: true,
-      items: [
-      "governance",
-      "senate",
-      "governance/senators-btcli-guide"
-      ],
-    },            {
+      items: ["governance", "senate", "governance/senators-btcli-guide"],
+    },
+    {
       type: "category",
       label: "Dynamic TAO",
-      link: {type: "doc", id: "dynamic-tao/index",},
+      link: { type: "doc", id: "dynamic-tao/index" },
       collapsible: true,
       collapsed: true,
       items: [
-      "dynamic-tao/dtao-guide",
-      "dynamic-tao/dtao-faq",
-      "dynamic-tao/sdk-cheat-sheet",
-      
+        "dynamic-tao/dtao-guide",
+        "dynamic-tao/dtao-faq",
+        "dynamic-tao/sdk-cheat-sheet",
       ],
     },
 
@@ -236,7 +254,7 @@ const sidebars = {
       label: "Errors and Troubleshooting",
       collapsible: true,
       collapsed: true,
-      link: {type: "doc", id: "errors/index",},
+      link: { type: "doc", id: "errors/index" },
       items: [
         "errors/index",
         "errors/custom",
@@ -246,9 +264,7 @@ const sidebars = {
     },
     "media-assets",
     "glossary",
-
   ],
-
 };
 
 module.exports = sidebars;
