@@ -4,7 +4,7 @@ title: "Install"
 
 # Install
 
-Before you can run any EVM tutorials, you must install the dependencies. Follow the below steps: 
+Before you can run any EVM tutorials, you must install the dependencies. Follow the below steps:
 
 1. Clone the Opentensor EVM-Bittensor GitHub repo:
 
@@ -14,13 +14,12 @@ Before you can run any EVM tutorials, you must install the dependencies. Follow 
 
 2. Navigate to `evm-bittensor` directory:
 
-    ```bash
-    cd evm-bittensor
-    ```
-
-3. Install the dependencies:
-   
    ```bash
-   npm install
+   cd evm-bittensor
    ```
 
+3. Install the dependencies:
+
+   ```bash
+   yarn install
+   ```
