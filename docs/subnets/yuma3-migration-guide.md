@@ -47,18 +47,18 @@ The most significant innovation in YC3 is per-bond EMA scaling: each validator-m
 
 ## Migration Process
 
-### Automatic Migration
-YC3 is designed as a drop-in replacement. For most subnet owners:
+:::tip no-op
+Validators and miners do not need to update their code.
+:::
 
-1. No action required - Your subnet will continue to function normally
-2. Validators and miners don't need to update their code
-3. Existing configurations remain valid
+### Subnet Creators
+Your subnet will continue to function as before until YC3 is enabled.
 
-<!-- ### Enabling YC3 (Optional)
+To upgrade your subnet to YC3, use the coldkey with subnet creator permissions to run:
 
-
-How do you actually do this, not w btcli yet... polkadot? python?
-what is the hyperparam? -->
+```
+btcli sudo set --param yuma3_enabled
+```
 
 ### Liquid Alpha Integration
 YC3 works with Liquid Alpha when specific conditions are met:
