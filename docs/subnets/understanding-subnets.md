@@ -95,6 +95,20 @@ This exchange rate can change every block when staking or unstaking or emissions
 
 </details>
 
+## Subnet Emissions
+
+Liquidity is steadily emitted into the Bittensor token economy according to an algorithm intended to foster growth while stabilizing prices and protecting them from manipulation.
+
+Each block:
+
+- the chain emits TAO and injects it into the TAO reserves of the subnets.
+<!-- (how much TAO, is this still 1/block for the whole network ???) -->
+- the chain emits alpha tokens at twice the base alpha emission rate (which starts at 1 α/block and follows the same halving schedule as TAO). These emitted alpha tokens are allocated between:
+  - the subnet's alpha reserve (increasing available liquidity)
+  - alpha outstanding (incentives for miners, validators, and subnet creators)
+
+See [Emissions](../emissions.md).
+
 ## Decentralized evaluation of subnets
 
 The relative value or _weight_ of subnets within Bittensor is critically important as it determines emissions to different subnets and their participant miners and validators. Prior to Dynamic TAO, relative weight among subnets within the Bittensor network were determined by Yuma Consensus over the evaluations of the Root Network validators. This gives a fundamentally centralizing role to the holders of Root Network validator keys.
