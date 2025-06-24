@@ -95,7 +95,7 @@ This exchange rate can change every block when staking or unstaking or emissions
 
 </details>
 
-## Emissions in Dynamic TAO
+## Emissions in Bittensor
 
 Liquidity is steadily emitted into the Bittensor token economy according to an algorithm intended to foster growth while stabilizing prices and protecting them from manipulation.
 
@@ -107,7 +107,7 @@ Each block:
   - the subnet's alpha reserve (increasing available liquidity)
   - alpha outstanding (incentives for miners, validators, and subnet creators)
 
-See the main article: [Emissions in Dynamic TAO](../emissions.md)
+See [Emissions](../emissions.md).
 
 ## Decentralized evaluation of subnets
 
