@@ -133,8 +133,7 @@ The number of blocks for the stake to become inactive for the purpose of epoch i
 
 **Description**:
 
-`AdjustmentInterval` is number of blocks that pass between difficulty and burn adjustments. So, I was wrong about "next block" when I said that if root sets difficulty outside of range, it will get back in range. Difficulty will get back in range at most after `AdjustmentInterval` blocks pass.
-
+`AdjustmentInterval` is number of blocks that pass for difficulty and burn adjustments.
 
 ### BondsMovingAverage
 
