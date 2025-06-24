@@ -95,7 +95,7 @@ This exchange rate can change every block when staking or unstaking or emissions
 
 </details>
 
-## Subnet Emissions
+## Emissions in Bittensor
 
 Liquidity is steadily emitted into the Bittensor token economy according to an algorithm intended to foster growth while stabilizing prices and protecting them from manipulation.
 
