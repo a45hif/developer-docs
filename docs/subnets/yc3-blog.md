@@ -10,11 +10,11 @@ YC3 is the next evolution of Bittensor's consensus mechanism. It optimizes emiss
 
 At the heart of every Bittensor subnet lies a fundamental challenge: how do you fairly distribute rewards for work, when that work can include a wide range of different digitial commodities or services? Bittensor approaches this as a distributed judgment problem: **Validators** serve as judges for the whole community, with trust in them being measured by the total stake they have been delegated. Their ratings of the performance of **miners** (who produce the commodities and services for each subnet) determine emissions to those miners.
 
-But how can we keep validators honest and hard-working to make sure that they do their best effort to accurately judge the miners? 
+But how can we keep validators honest and hard-working to make sure that they do their best effort to accurately judge the miners?
 
 Yuma Consensus is Bittensor's solution. Validators continuously rank the quality of work done by miners in their subnet, with the rankings of validators being trusted in proportion to how much stake they have received from the community. Lazy or dishonest validators lose emissions for submitting inaccurate rankings, which is likely to cause the community to move their stake to more relabile validators. Hence the community's trust in a given validator, embodied as stake, is linked over time to the emissions earned by the miners that validator rates. Hence validators are kept honest and miners are kept working hard to produce the best commodities possible.
 
-But how does this work in detail? Each validator submits their rankings of miners they've evaluated. The algorithm then looks at all these rankings and tries to figure out which validators are giving the most reliable, honest evaluations. Validators who consistently make good predictions about which miners *other* validators will *eventually* recognize as the best, get *more* influence in the system. Meanwhile, validators give stale or otherwise inaccurate evaluations lose out.
+But how does this work in detail? Each validator submits their rankings of miners they've evaluated. The algorithm then looks at all these rankings and tries to figure out which validators are giving the most reliable, honest evaluations. Validators who consistently make good predictions about which miners _other_ validators will _eventually_ recognize as the best, get _more_ influence in the system. Meanwhile, validators that give stale or otherwise inaccurate evaluations lose out.
 
 The system builds "bonds" between validators and miners over time. When a validator consistently recognizes a miner's good work, their bond with that miner strengthens, leading to better rewards for both parties. This creates a powerful incentive for validators to be diligent, honest, and forward-thinking in their evaluations.
 
@@ -29,12 +29,14 @@ The Yuma Consensus mechanism, which determines how emissions are distributed, ha
 #### Yuma Consensus V1
 
 The first version of the algorithm distributed validator rewards based on stake and consensus weight, but had significant limitations:
+
 - Small validators faced unfair rounding issues
 - Limited mechanisms for recognizing early adopters of promising miners
 
 #### Yuma Consensus V2
 
 The second version introduced a more sophisticated bonding mechanism with exponential moving averages, but still struggled with:
+
 - Unfair penalties for small validators due to rounding errors
 - Insufficient rewards for validators who recognized good miners early
 - Uniform alpha parameters that didn't account for individual validator-miner relationships
@@ -74,16 +76,16 @@ The [alpha sigmoid function](https://github.com/opentensor/subtensor/blob/main/p
 Bonds held by a validator for a given miner, produce emissions in proportion to the strength of the bond and the emissions to the miner. See [source code.](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L712)
 
 **The Technical Implementation:**
+
 1. **Storage**: Bonds are stored as [sparse matrices](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L948-L964) on a 0-65535 scale for efficiency
 2. **Computation**: Each epoch, bonds are updated via [Exponential Moving Average (EMA)](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L651-L658) based on validator weights and previous bond values
 3. **Rewards**: Validator dividends are computed by multiplying bonds with miner incentives
 
-**Mathematical Foundation:** Under the hood, bonds following the EMA equation. Here, $\Delta B_{ij}$ is the "instant bond" based on a validator's stake-weighted evaluation of a miner.
+**Mathematical Foundation:** Under the hood, bonds follow the EMA equation. Here, $\Delta B_{ij}$ is the "instant bond" based on a validator's stake-weighted evaluation of a miner.
 
 $$
 B_{ij}^{(t)} = \alpha \,\Delta B_{ij} + (1-\alpha)\,B_{ij}^{(t-1)}
 $$
-
 
 However, YC3's innovation is that α can now be different for each validator-miner pair rather than uniform across all bonds. The system also applies a bonds penalty factor β when validator weights exceed consensus, helping maintain anti-fraud protection. For the complete mathematical treatment, see the main article on [Yuma Consensus](../yuma-consensus.md#bonding-mechanics).
 
@@ -95,10 +97,11 @@ However, YC3's innovation is that α can now be different for each validator-min
 
 ### Liquid Alpha Integration
 
-YC3 works seamlessly with Liquid Alpha, providing additional rewards for validators who vote for 
-miners that aren't yet receiving votes from others. This further encourages independent evaluation 
+YC3 works seamlessly with Liquid Alpha, providing additional rewards for validators who vote for
+miners that aren't yet receiving votes from others. This further encourages independent evaluation
 and early recognition.
 YC3 integrates with Liquid Alpha when [specific conditions are met](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L633-L640):
+
 1. Liquid Alpha must be enabled for the subnet
 2. Consensus values must exist and contain non-zero values
 3. The network must have sufficient activity
@@ -116,7 +119,7 @@ The system maintains strong anti-fraud protection while providing smoother bond 
 YC3 creates a healthier ecosystem by encouraging validators to:
 
 - **Make independent evaluations** rather than copying popular validators
-- **Recognize promising miners early** through differentiated bond adjustment rates  
+- **Recognize promising miners early** through differentiated bond adjustment rates
 - **Maintain consistent evaluations** while being rewarded for good prediction accuracy
 - **Participate meaningfully regardless of stake size** through fair scaling mechanisms
 
@@ -129,8 +132,9 @@ Yuma 3 works best in subnets where validators can independently evaluate miners 
 YC3 can be [toggled per subnet](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L628) through governance mechanisms. The [alpha parameter controls](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L1316-L1356) allow fine-tuning of the sigmoid steepness and adjustment ranges for your specific subnet needs.
 
 **Important considerations:**
+
 - Liquid Alpha must be enabled to get full YC3 benefits
-- The system requires active consensus formation to function optimally  
+- The system requires active consensus formation to function optimally
 - Bond reset functionality is available for subnets that need it
 
 ## Looking Forward
