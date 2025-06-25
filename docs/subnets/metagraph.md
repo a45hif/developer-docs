@@ -25,62 +25,40 @@ The metagraph is continuously updated as the blockchain progresses, reflecting t
 
 You can access metagraph data through multiple interfaces:
 
-### 1. Bittensor CLI (btcli)
+### Bittensor CLI (btcli)
 
 The `btcli` command-line interface provides easy access to metagraph information:
 
 ```bash
 # View metagraph for a specific subnet
-btcli subnets metagraph --netuid 1
-
-# View root network metagraph (netuid 0)
-btcli subnets metagraph --netuid 0
-
-# View metagraph on testnet
-btcli subnets metagraph --netuid 1 --network test
-
-# Configure metagraph display columns
-btcli config metagraph --reset
+btcli subnets metagraph --netuid 14 --network finney
 ```
+```console
+                                                    Subnet 14: TAOHash
+                                                     Network: finney
 
-**Available btcli metagraph commands:**
-- `btcli subnets metagraph` - Display subnet metagraph
-- `btcli subnet metagraph` - Alternative syntax
-- `btcli s metagraph` - Short alias
-- `btcli config metagraph` - Configure display columns
+ UID ┃ Stake (ξ) ┃ Alpha (ξ) ┃   Tao (τ) ┃ Dividends ┃ Incentive ┃ Emissions (ξ) ┃ Hotk… ┃ Coldkey ┃ Identity
+━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━
+ 29  │ 271.67k ξ │ 254.83k ξ │  τ 16.84k │ 0.129183  │ 0.000000  │  19.122456 ξ  │ 5Cf4… │ 5CKhH8  │ Owner14 (*Owner)
+  3  │ 387.08k ξ │  61.46k ξ │ τ 325.62k │ 0.184314  │ 0.000000  │  27.280861 ξ  │ 5C59… │ 5GZSAg  │ 
 
-### 2. Python SDK
+...
+ ```
 
-The Bittensor Python SDK provides programmatic access to metagraph data:
+### Python SDK
+
+The Bittensor Python SDK [Metagraph module](pathname:///python-api/html/autoapi/bittensor/core/metagraph/index.html) provides programmatic access to metagraph data:
 
 ```python
-import bittensor as bt
+from bittensor.core.metagraph import Metagraph
+from bittensor.core.subtensor import Subtensor
 
-# Create and sync metagraph
-metagraph = bt.metagraph(netuid=1)
-metagraph.sync()
-
-# Access metagraph properties
-total_stake = metagraph.S
-neuron_ranks = metagraph.R
-neuron_incentives = metagraph.I
-neuron_emissions = metagraph.E
-neuron_consensus = metagraph.C
-neuron_trust = metagraph.T
-neuron_validator_trust = metagraph.Tv
-neuron_dividends = metagraph.D
-neuron_bonds = metagraph.B
-neuron_weights = metagraph.W
-
-# Access neuron information
-hotkeys = metagraph.hotkeys
-coldkeys = metagraph.coldkeys
-addresses = metagraph.addresses
-axons = metagraph.axons
-neurons = metagraph.neurons
+# Initialize metagraph for subnet 1
+metagraph = Metagraph(netuid=1, network="finney", sync=True)
 ```
 
-### 3. Smart Contract Access (Metagraph Precompile)
+
+### Smart Contract Access (Metagraph Precompile)
 
 For smart contract integration, you can access metagraph data through the **Metagraph Precompile** at address `0x0000000000000000000000000000000000000802`. This provides read-only access to individual neuron metrics and network information.
 
@@ -105,7 +83,7 @@ For smart contract integration, you can access metagraph data through the **Meta
 For detailed smart contract examples and complete ABI, see the [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) documentation.
 :::
 
-### 4. Polkadot Extrinsics
+### Polkadot Extrinsics
 
 For advanced users, you can query metagraph data directly through Polkadot extrinsics using the Substrate API.
 
@@ -186,96 +164,7 @@ The metagraph also contains subnet-level information:
 
 ## Working with the Metagraph
 
-### Basic Usage
 
-```python
-import bittensor as bt
-
-# Initialize metagraph
-metagraph = bt.metagraph(netuid=1, network='finney')
-
-# Sync with latest block
-metagraph.sync()
-
-# Access basic information
-print(f"Subnet has {metagraph.n.item()} neurons")
-print(f"Current block: {metagraph.block.item()}")
-
-# Get neuron stakes
-stakes = metagraph.S
-print(f"Total stake: {stakes.sum().item()}")
-
-# Find top-ranked neurons
-ranks = metagraph.R
-top_neurons = ranks.argsort(descending=True)[:5]
-print(f"Top 5 neurons: {top_neurons.tolist()}")
-```
-
-### Historical Analysis
-
-```python
-# Sync to specific block for historical analysis
-metagraph.sync(block=100000)
-
-# Save metagraph state
-metagraph.save()
-
-# Load saved metagraph
-metagraph.load()
-
-# Load from specific directory
-metagraph.load_from_path("/path/to/metagraphs/")
-```
-
-### Advanced Usage
-
-```python
-# Use lite mode for faster syncing (excludes weights/bonds)
-metagraph = bt.metagraph(netuid=1, lite=True)
-
-# Full sync with weights and bonds
-metagraph.sync(lite=False)
-
-# Access weight matrix
-weights = metagraph.W
-print(f"Weight matrix shape: {weights.shape}")
-
-# Get neuron connections
-for i, neuron_weights in enumerate(weights):
-    connections = (neuron_weights > 0).sum()
-    print(f"Neuron {i} has {connections} connections")
-
-# Access axon information
-for axon in metagraph.axons:
-    print(f"Neuron at {axon.ip_str()}:{axon.port}")
-```
-
-### Async Usage
-
-```python
-import asyncio
-import bittensor as bt
-
-async def analyze_metagraph():
-    # Create async metagraph
-    metagraph = bt.AsyncMetagraph(netuid=1)
-    
-    async with metagraph as mg:
-        # Metagraph is automatically synced
-        print(f"Synced metagraph with {mg.n.item()} neurons")
-        
-        # Perform analysis
-        total_stake = mg.S.sum().item()
-        print(f"Total subnet stake: {total_stake}")
-
-# Run async analysis
-asyncio.run(analyze_metagraph())
-
-# Alternative: Use factory function
-async def use_factory():
-    metagraph = await bt.async_metagraph(netuid=1, sync=True)
-    print(f"Factory metagraph has {metagraph.n.item()} neurons")
-```
 
 ## Metagraph Data Structure
 
@@ -400,97 +289,6 @@ metagraph.load()
 metagraph.save(root_dir=['/custom', 'path'])
 ```
 
-### Archive Network
-
-For historical data beyond 300 blocks:
-
-```python
-# Use archive network for historical analysis
-subtensor = bt.subtensor(network='archive')
-metagraph = bt.metagraph(netuid=1, subtensor=subtensor)
-metagraph.sync(block=historical_block)
-```
-
-## Common Use Cases
-
-### 1. Subnet Analysis
-
-```python
-# Analyze subnet health
-def analyze_subnet(netuid):
-    metagraph = bt.metagraph(netuid=netuid)
-    metagraph.sync()
-    
-    total_neurons = metagraph.n.item()
-    active_neurons = metagraph.active.sum().item()
-    total_stake = metagraph.S.sum().item()
-    
-    print(f"Subnet {netuid} Analysis:")
-    print(f"  Total neurons: {total_neurons}")
-    print(f"  Active neurons: {active_neurons}")
-    print(f"  Total stake: {total_stake}")
-    print(f"  Activity rate: {active_neurons/total_neurons:.2%}")
-```
-
-### 2. Validator Selection
-
-```python
-# Find top validators
-def get_top_validators(netuid, top_k=10):
-    metagraph = bt.metagraph(netuid=netuid)
-    metagraph.sync()
-    
-    # Get validator permits
-    validator_mask = metagraph.validator_permit
-    
-    # Get ranks for validators only
-    validator_ranks = metagraph.R[validator_mask]
-    validator_uids = metagraph.uids[validator_mask]
-    
-    # Sort by rank
-    sorted_indices = validator_ranks.argsort(descending=True)
-    top_validators = validator_uids[sorted_indices][:top_k]
-    
-    return top_validators.tolist()
-```
-
-### 3. Network Monitoring
-
-```python
-# Monitor network changes
-def monitor_network(netuid, interval=60):
-    import time
-    
-    while True:
-        metagraph = bt.metagraph(netuid=netuid)
-        metagraph.sync()
-        
-        print(f"Block {metagraph.block.item()}: {metagraph.n.item()} neurons")
-        time.sleep(interval)
-```
-
-### 4. Weight Analysis
-
-```python
-# Analyze weight distribution
-def analyze_weights(netuid):
-    metagraph = bt.metagraph(netuid=netuid, lite=False)
-    metagraph.sync()
-    
-    weights = metagraph.W
-    print(f"Weight matrix shape: {weights.shape}")
-    
-    # Find neurons with most incoming weights
-    incoming_weights = weights.sum(dim=0)
-    top_receivers = incoming_weights.argsort(descending=True)[:10]
-    print(f"Top 10 weight receivers: {top_receivers.tolist()}")
-    
-    # Find neurons with most outgoing weights
-    outgoing_weights = weights.sum(dim=1)
-    top_senders = outgoing_weights.argsort(descending=True)[:10]
-    print(f"Top 10 weight senders: {top_senders.tolist()}")
-```
-
 ## Troubleshooting
 
 ### Common Issues
@@ -500,31 +298,6 @@ def analyze_weights(netuid):
 3. **Memory Usage**: Use lite mode for large subnets
 4. **Network Timeouts**: Increase timeout values for slow connections
 
-### Error Handling
-
-```python
-try:
-    metagraph = bt.metagraph(netuid=1)
-    metagraph.sync()
-except Exception as e:
-    print(f"Failed to sync metagraph: {e}")
-    # Handle error appropriately
-```
-
-### Debugging
-
-```python
-# Get metagraph metadata
-metadata = metagraph.metadata()
-print(f"Metagraph metadata: {metadata}")
-
-# Get state dictionary
-state = metagraph.state_dict()
-print(f"State keys: {list(state.keys())}")
-
-# String representation
-print(str(metagraph))  # e.g., "metagraph(netuid:1, n:100, block:500, network:finney)"
-```
 
 ## Related Documentation
 
@@ -532,3 +305,6 @@ print(str(metagraph))  # e.g., "metagraph(netuid:1, n:100, block:500, network:fi
 - [Subnet Hyperparameters](./subnet-hyperparameters.md) - Subnet configuration
 - [Bittensor CLI Reference](../btcli.md) - Complete btcli documentation
 - [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access and examples 
+
+
+## Python code examples
