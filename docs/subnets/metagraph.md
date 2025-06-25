@@ -13,7 +13,7 @@ Page Contents:
 - [Intro](#intro)
 - [Accessing the Metagraph](#accessing-the-metagraph)
 - [Metagraph Properties](#metagraph-properties)
-- [Data Structures](data-structures)
+- [Data Structures](#data-structures)
 - [Performance Considerations](#performance-considerations)
 - [Troubleshooting](#troubleshooting)
 - [Python Code Examples](#python-code-examples)
