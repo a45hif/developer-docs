@@ -499,8 +499,7 @@ print(str(metagraph))  # e.g., "metagraph(netuid:1, n:100, block:500, network:fi
 
 ## Related Documentation
 
-- [Understanding Neurons](./learn/neurons.md) - Neuron architecture overview
+- [Understanding Neurons](../learn/neurons.md) - Neuron architecture overview
 - [Subnet Hyperparameters](./subnet-hyperparameters.md) - Subnet configuration
-- [Bittensor CLI Reference](./btcli.md) - Complete btcli documentation
-- [Python SDK Reference](./reference/_bittensor-api-ref.md) - SDK documentation
-- [Metagraph Precompile](./evm-tutorials/metagraph-precompile.md) - Smart contract access 
+- [Bittensor CLI Reference](../btcli.md) - Complete btcli documentation
+- [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access 
