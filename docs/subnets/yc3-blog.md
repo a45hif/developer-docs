@@ -6,6 +6,11 @@ title: "How Yuma Consensus 3 Makes Bittensor More Fair"
 
 YC3 is the next evolution of Bittensor's consensus mechanism. It optimizes emissions to reward validators for recognizing innovation quickly.
 
+See also:
+[Yuma Consensus](../yuma-consensus)
+[Yuma Consensus 3 (YC3) Migration Guide](./yuma3-migration-guide)
+
+
 ## Introduction: Understanding Yuma Consensus
 
 At the heart of every Bittensor subnet lies a fundamental challenge: how do you fairly distribute rewards for work, when that work can include a wide range of different digitial commodities or services? Bittensor approaches this as a distributed judgment problem: **Validators** serve as judges for the whole community, with trust in them being measured by the total stake they have been delegated. Their ratings of the performance of **miners** (who produce the commodities and services for each subnet) determine emissions to those miners.
