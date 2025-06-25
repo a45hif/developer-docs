@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Economic Analysis Example
-
-This example demonstrates how to analyze economic metrics like incentives, emissions, and dividends.
-"""
 
 from bittensor.core.metagraph import Metagraph
 

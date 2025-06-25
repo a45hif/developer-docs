@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Async Usage Example
-
-This example demonstrates how to use the async metagraph functionality.
-"""
 
 import asyncio
 from bittensor.core.metagraph import async_metagraph

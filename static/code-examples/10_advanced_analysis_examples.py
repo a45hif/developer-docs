@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Advanced Analysis Examples
-
-This example demonstrates advanced analysis techniques including correlations, network efficiency, and stake concentration.
-"""
 
 import numpy as np
 from bittensor.core.metagraph import Metagraph
@@ -35,7 +30,7 @@ def main():
         print(f"Could not calculate correlations: {e}")
 
     # Network efficiency analysis (if weights are available)
-    if not metagraph.lite and hasattr(metagraph, 'weights') and metagraph.weights.numel() > 0:
+    if not metagraph.lite and hasattr(metagraph, 'weights') and metagraph.weights.size > 0:
         weights = metagraph.W
         
         print("\n=== Network Efficiency Analysis ===")

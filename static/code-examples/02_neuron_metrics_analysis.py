@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Neuron Metrics Analysis Example
-
-This example demonstrates how to analyze stake distribution and neuron metrics.
-"""
 
 from bittensor.core.metagraph import Metagraph
 

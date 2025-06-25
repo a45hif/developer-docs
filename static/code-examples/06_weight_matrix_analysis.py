@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""
-Weight Matrix Analysis Example
-
-This example demonstrates how to analyze the weight matrix between neurons.
-Note: This requires lite=False to access weights.
-"""
 
 from bittensor.core.metagraph import Metagraph
 

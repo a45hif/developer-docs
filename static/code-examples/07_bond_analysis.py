@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""
-Bond Analysis Example
-
-This example demonstrates how to analyze the bond matrix between neurons.
-Note: This requires lite=False to access bonds.
-"""
 
 from bittensor.core.metagraph import Metagraph
 

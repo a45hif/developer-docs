@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Neuron Activity Analysis Example
-
-This example demonstrates how to analyze neuron activity and validator status.
-"""
 
 from bittensor.core.metagraph import Metagraph
 

@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Performance and Ranking Analysis Example
-
-This example demonstrates how to analyze neuron performance, ranks, and trust scores.
-"""
 
 from bittensor.core.metagraph import Metagraph
 

@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Common Use Cases Examples
-
-This example demonstrates common use cases for metagraph analysis.
-"""
 
 import bittensor as bt
 

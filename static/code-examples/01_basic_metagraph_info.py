@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Basic Metagraph Information Example
-
-This example demonstrates how to get basic metagraph metadata and subnet information.
-"""
 
 from bittensor.core.metagraph import Metagraph
 from bittensor.core.subtensor import Subtensor
