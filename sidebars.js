@@ -87,6 +87,7 @@ const sidebars = {
       collapsible: true,
       collapsed: true,
       items: [
+        "subnets/metagraph",
         "subnets/create-a-subnet",
         "subnets/subnet-creators-btcli-guide",
         "subnets/subnet-hyperparameters",
