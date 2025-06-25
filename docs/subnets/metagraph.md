@@ -80,7 +80,32 @@ axons = metagraph.axons
 neurons = metagraph.neurons
 ```
 
-### 3. Polkadot Extrinsics
+### 3. Smart Contract Access (Metagraph Precompile)
+
+For smart contract integration, you can access metagraph data through the **Metagraph Precompile** at address `0x0000000000000000000000000000000000000802`. This provides read-only access to individual neuron metrics and network information.
+
+**Key functions available:**
+- `getUidCount(netuid)` - Get total number of neurons in a subnet
+- `getStake(netuid, uid)` - Get neuron's total stake
+- `getRank(netuid, uid)` - Get neuron's rank score
+- `getTrust(netuid, uid)` - Get neuron's trust score
+- `getConsensus(netuid, uid)` - Get neuron's consensus score
+- `getIncentive(netuid, uid)` - Get neuron's incentive score
+- `getEmission(netuid, uid)` - Get neuron's emission value
+- `getDividends(netuid, uid)` - Get neuron's dividends
+- `getVtrust(netuid, uid)` - Get neuron's validator trust score
+- `getValidatorStatus(netuid, uid)` - Check if neuron is a validator
+- `getIsActive(netuid, uid)` - Check if neuron is active
+- `getLastUpdate(netuid, uid)` - Get last update block
+- `getAxon(netuid, uid)` - Get neuron's network connection info
+- `getHotkey(netuid, uid)` - Get neuron's hotkey
+- `getColdkey(netuid, uid)` - Get neuron's coldkey
+
+:::tip Smart Contract Integration
+For detailed smart contract examples and complete ABI, see the [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) documentation.
+:::
+
+### 4. Polkadot Extrinsics
 
 For advanced users, you can query metagraph data directly through Polkadot extrinsics using the Substrate API.
 
@@ -293,6 +318,10 @@ class AxonInfo:
     placeholder2: int           # Reserved field
 ```
 
+:::note AxonInfo vs Smart Contract AxonInfo
+The Python SDK `AxonInfo` structure differs from the smart contract version. The smart contract `AxonInfo` includes `block`, `version`, `ip`, `port`, `ip_type`, and `protocol` fields, while the Python SDK version includes additional fields for hotkey, coldkey, and placeholders.
+:::
+
 ### MetagraphInfoParams
 
 ```python
@@ -502,4 +531,4 @@ print(str(metagraph))  # e.g., "metagraph(netuid:1, n:100, block:500, network:fi
 - [Understanding Neurons](../learn/neurons.md) - Neuron architecture overview
 - [Subnet Hyperparameters](./subnet-hyperparameters.md) - Subnet configuration
 - [Bittensor CLI Reference](../btcli.md) - Complete btcli documentation
-- [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access 
+- [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access and examples 
