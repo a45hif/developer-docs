@@ -18,11 +18,16 @@ Page Contents:
 - [Performance Considerations](#performance-considerations)
 - [Troubleshooting](#troubleshooting)
 - [Python Code Examples](#python-code-examples)
-- [Related Documentation](#related-documentation)
+
+Related reading:
+- [Understanding Neurons](../learn/neurons.md)
+- [Subnet Hyperparameters](./subnet-hyperparameters.md)
+- [Bittensor CLI Reference](../btcli.md)
+- [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md)
 
 ## Intro
 
-The **metagraph** is a core on-chain data structure in the Bittensor blockchain that represents the complete state of a subnet at any given block. It contains comprehensive information about all neurons (miners and validators) participating in a subnet, their relationships, and network metrics.
+The **metagraph** is a core data structure in the Bittensor blockchain that represents the complete state of a subnet at any given block. It contains comprehensive information about all neurons (miners and validators) participating in a subnet, their emissions, bonds, and trust, as well as subnet metrics.
 
 The metagraph serves as a dynamic snapshot of a subnet's neural network, capturing:
 
@@ -110,82 +115,89 @@ For detailed smart contract examples and complete ABI, see the [Metagraph Precom
 
 ### Polkadot Extrinsics
 
-For advanced users, you can query metagraph data directly through Polkadot extrinsics using the Substrate API.
+Advanced users can query the metagraph directly through Polkadot extrinsics using the PolkadotJS browser application, or with the PolkadotJS JavaScript SDK.
 
 ## Metagraph Properties
 
 ### Core Network Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `netuid` | int | Unique subnet identifier |
-| `network` | str | Network name (finney, test, local) |
-| `version` | Tensor | Bittensor version number |
-| `n` | Tensor | Total number of neurons |
-| `block` | Tensor | Current blockchain block number |
+| Name | Description |
+|------|-------------|
+| `netuid` | Unique subnet identifier |
+| `network` | Network name (finney, test, local) |
+| `version` | Bittensor version number |
+| `n` | Total number of neurons |
+| `block` | Current blockchain block number |
+| `total_stake` | Total stake across all neurons |
 
 ### Neuron Metrics
 
-| Property | Accessor | Type | Description |
-|----------|----------|------|-------------|
-| **Stake** | `S` | Tensor | Total stake of each neuron |
-| **Alpha Stake** | `AS` | Tensor | Alpha token stake |
-| **Tao Stake** | `TS` | Tensor | TAO token stake |
-| **Ranks** | `R` | Tensor | Performance ranking scores |
-| **Trust** | `T` | Tensor | Trust scores from other neurons |
-| **Validator Trust** | `Tv` | Tensor | Validator-specific trust scores |
-| **Consensus** | `C` | Tensor | Network consensus alignment |
-| **Incentive** | `I` | Tensor | Reward incentive scores |
-| **Emission** | `E` | Tensor | Token emission rates |
-| **Dividends** | `D` | Tensor | Dividend distributions |
-| **Bonds** | `B` | Tensor | Inter-neuronal bonds |
-| **Weights** | `W` | Tensor | Weight matrix between neurons |
+| Name | Accessor | Description |
+|------|----------|-------------|
+| **Stake** | `S` | Total stake of each neuron |
+| **Alpha Stake** | `AS` | Alpha token stake |
+| **Tao Stake** | `TS` | TAO token stake |
+| **Ranks** | `R` | Performance ranking scores |
+| **Trust** | `T` | Trust scores from other neurons |
+| **Validator Trust** | `Tv` | Validator-specific trust scores |
+| **Consensus** | `C` | Network consensus alignment |
+| **Incentive** | `I` | Reward incentive scores |
+| **Emission** | `E` | Token emission rates |
+| **Dividends** | `D` | Dividend distributions |
+| **Bonds** | `B` | Inter-neuronal bonds |
+| **Weights** | `W` | Weight matrix between neurons |
 
 ### Neuron Information
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `uids` | Tensor | Unique neuron identifiers |
-| `hotkeys` | list[str] | Neuron hotkey addresses |
-| `coldkeys` | list[str] | Neuron coldkey addresses |
-| `addresses` | list[str] | Network IP addresses |
-| `axons` | list[AxonInfo] | Network connection details |
-| `neurons` | list[NeuronInfo] | Complete neuron objects |
+| Name | Description |
+|------|-------------|
+| `uids` | Unique neuron identifiers |
+| `hotkeys` | Neuron hotkey addresses |
+| `coldkeys` | Neuron coldkey addresses |
+| `addresses` | Network IP addresses |
+| `axons` | Network connection details |
+| `neurons` | Complete neuron objects |
 
 ### Network State
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `active` | Tensor | Neuron activity status |
-| `last_update` | Tensor | Last update block numbers |
-| `validator_permit` | Tensor | Validator permission flags |
+| Name | Description |
+|------|-------------|
+| `active` | Neuron activity status |
+| `last_update` | Last update block numbers |
+| `validator_permit` | Neuron can set weights, i.e. act as validator |
 
 ## Metagraph Information
 
 The metagraph also contains subnet-level information:
 
 ### Subnet Identity
-- `name`: Subnet name
-- `symbol`: Subnet token symbol
-- `network_registered_at`: Registration block
-- `num_uids`: Current number of neurons
-- `max_uids`: Maximum allowed neurons
-- `identities`: List of chain identities
-- `identity`: Subnet identity information
-- `pruning_score`: List of pruning scores
-- `block_at_registration`: List of registration blocks
-- `tao_dividends_per_hotkey`: TAO dividends by hotkey
-- `alpha_dividends_per_hotkey`: Alpha dividends by hotkey
-- `last_step`: Last step block number
-- `tempo`: Block interval for updates
-- `blocks_since_last_step`: Blocks since last step
-- `owner_coldkey`: Subnet owner coldkey
-- `owner_hotkey`: Subnet owner hotkey
+
+| Name | Description |
+|------|-------------|
+| `name` | Subnet name |
+| `symbol` | Subnet token symbol |
+| `network_registered_at` | Registration block |
+| `num_uids` | Current number of neurons |
+| `max_uids` | Maximum allowed neurons |
+| `identities` | List of chain identities |
+| `identity` | Subnet identity information |
+| `pruning_score` | List of pruning scores |
+| `block_at_registration` | List of registration blocks |
+| `tao_dividends_per_hotkey` | TAO dividends by hotkey |
+| `alpha_dividends_per_hotkey` | Alpha dividends by hotkey |
+| `last_step` | Last step block number |
+| `tempo` | Block interval for updates |
+| `blocks_since_last_step` | Blocks since last step |
+| `owner_coldkey` | Subnet owner coldkey |
+| `owner_hotkey` | Subnet owner hotkey |
 
 ### Economic Parameters
-- `hparams`: Subnet hyperparameters (MetagraphInfoParams)
-- `pool`: Liquidity pool information (MetagraphInfoPool)
-- `emissions`: Emission configuration (MetagraphInfoEmissions)
+
+| Name | Description |
+|------|-------------|
+| `hparams` | Subnet hyperparameters (MetagraphInfoParams) |
+| `pool` | Liquidity pool information (MetagraphInfoPool) |
+| `emissions` | Emission configuration (MetagraphInfoEmissions) |
 
 
 ## Metagraph Data Structure
@@ -245,9 +257,11 @@ class MetagraphInfoParams:
     bonds_moving_avg: int       # Bonds moving average
     burn: float                 # Burn amount
     commit_reveal_period: int   # Commit reveal period
+    commit_reveal_weights_enabled: bool  # Commit reveal weights enabled
     difficulty: int             # Network difficulty
     immunity_period: int        # Immunity period
     kappa: float                # Kappa parameter
+    liquid_alpha_enabled: bool  # Liquid alpha enabled
     max_burn: float             # Maximum burn
     max_difficulty: int         # Maximum difficulty
     max_regs_per_block: int     # Max registrations per block
@@ -324,6 +338,12 @@ metagraph.save(root_dir=['/custom', 'path'])
 ## Python Code Examples
 
 This section provides practical examples of working with the Bittensor metagraph using the Python SDK. Each example demonstrates different aspects of metagraph analysis and data extraction.
+
+**Prerequisites**:
+- Bittensor Python SDK installed (`pip install bittensor`)
+- Network connection to access Bittensor blockchain
+- Python 3.7+ environment
+
 
 ### 1. Basic Metagraph Information
 
@@ -1149,16 +1169,3 @@ for script in *.py; do
 done
 ```
 
-### Prerequisites
-
-- Bittensor Python SDK installed (`pip install bittensor`)
-- Network connection to access Bittensor blockchain
-- Python 3.7+ environment
-
-### Notes
-
-- **Lite vs Full Mode**: Examples 6 and 7 require `lite=False` for weight and bond data
-- **Network Access**: All examples connect to the Finney network by default
-- **Error Handling**: Examples include proper error handling for missing data
-- **Performance**: Use lite mode for large subnets to reduce memory usage
-- **Block Sync**: Examples sync to the latest block unless specified otherwise
