@@ -7,9 +7,22 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Subnet Metagraph
 
-The **metagraph** is a core on-chain data structure in the Bittensor blockchain that represents the complete state of a subnet at any given block. It contains comprehensive information about all neurons (miners and validators) participating in a subnet, their relationships, and network metrics.
+This page documents the Bittensor subnet metagraph. 
 
-## Overview
+Page Contents:
+- [Intro](#intro)
+- [Accessing the Metagraph](#accessing-the-metagraph)
+- [Metagraph Properties](#metagraph-properties)
+- [Metagraph Information](#metagraph-information)
+- [Metagraph Data Structure](#metagraph-data-structure)
+- [Performance Considerations](#performance-considerations)
+- [Troubleshooting](#troubleshooting)
+- [Python Code Examples](#python-code-examples)
+- [Related Documentation](#related-documentation)
+
+## Intro
+
+The **metagraph** is a core on-chain data structure in the Bittensor blockchain that represents the complete state of a subnet at any given block. It contains comprehensive information about all neurons (miners and validators) participating in a subnet, their relationships, and network metrics.
 
 The metagraph serves as a dynamic snapshot of a subnet's neural network, capturing:
 
@@ -20,6 +33,18 @@ The metagraph serves as a dynamic snapshot of a subnet's neural network, capturi
 - **Inter-neuronal Relationships**: Weights and bonds between neurons
 
 The metagraph is continuously updated as the blockchain progresses, reflecting the real-time state of the subnet's collective intelligence.
+
+
+
+Related reading:
+
+- [Understanding Neurons](../learn/neurons.md) - Neuron architecture overview
+- [Subnet Hyperparameters](./subnet-hyperparameters.md) - Subnet configuration
+- [Bittensor CLI Reference](../btcli.md) - Complete btcli documentation
+- [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access and examples 
+
+
+
 
 ## Accessing the Metagraph
 
@@ -162,9 +187,6 @@ The metagraph also contains subnet-level information:
 - `pool`: Liquidity pool information (MetagraphInfoPool)
 - `emissions`: Emission configuration (MetagraphInfoEmissions)
 
-## Working with the Metagraph
-
-
 
 ## Metagraph Data Structure
 
@@ -299,21 +321,11 @@ metagraph.save(root_dir=['/custom', 'path'])
 4. **Network Timeouts**: Increase timeout values for slow connections
 
 
-## Related Documentation
-
-- [Understanding Neurons](../learn/neurons.md) - Neuron architecture overview
-- [Subnet Hyperparameters](./subnet-hyperparameters.md) - Subnet configuration
-- [Bittensor CLI Reference](../btcli.md) - Complete btcli documentation
-- [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access and examples 
-
-
 ## Python Code Examples
 
 This section provides practical examples of working with the Bittensor metagraph using the Python SDK. Each example demonstrates different aspects of metagraph analysis and data extraction.
 
-### Basic Examples
-
-#### 1. Basic Metagraph Information
+### 1. Basic Metagraph Information
 
 This example shows how to access basic metagraph metadata and subnet information:
 
@@ -355,7 +367,7 @@ if __name__ == "__main__":
 - Access basic metadata (network, subnet UID, total neurons, current block)
 - Retrieve subnet identity information (name, symbol, registration details)
 
-#### 2. Neuron Metrics Analysis
+### 2. Neuron Metrics Analysis
 
 This example demonstrates stake distribution and neuron metrics analysis:
 
@@ -408,7 +420,7 @@ if __name__ == "__main__":
 - Calculate alpha vs TAO stake distribution ratios
 - Handle both alpha and TAO token stakes
 
-#### 3. Performance and Ranking Analysis
+### 3. Performance and Ranking Analysis
 
 This example shows how to analyze neuron performance, ranks, and trust scores:
 
@@ -471,7 +483,7 @@ if __name__ == "__main__":
 - Identify most trusted validators
 - Access consensus scores and validator trust metrics
 
-#### 4. Economic Analysis
+### 4. Economic Analysis
 
 This example demonstrates analysis of economic metrics like incentives, emissions, and dividends:
 
@@ -525,7 +537,7 @@ if __name__ == "__main__":
 - Analyze dividend distribution statistics
 - Correlate incentives with emissions and dividends
 
-#### 5. Network Connectivity Analysis
+### 5. Network Connectivity Analysis
 
 This example shows how to analyze network addresses and axon information:
 
@@ -586,9 +598,9 @@ if __name__ == "__main__":
 - Display detailed axon information for neurons
 - Analyze network topology and connectivity patterns
 
-### Advanced Examples
 
-#### 6. Weight Matrix Analysis
+
+### 6. Weight Matrix Analysis
 
 This example demonstrates weight matrix analysis (requires `lite=False`):
 
@@ -655,7 +667,7 @@ if __name__ == "__main__":
 - Identify the strongest connection between neurons
 - Requires full sync mode for weight data access
 
-#### 7. Bond Analysis
+### 7. Bond Analysis
 
 This example shows bond matrix analysis (requires `lite=False`):
 
@@ -703,7 +715,7 @@ if __name__ == "__main__":
 - Calculate average bond values
 - Requires full sync mode for bond data access
 
-#### 8. Neuron Activity Analysis
+### 8. Neuron Activity Analysis
 
 This example demonstrates neuron activity and validator status analysis:
 
@@ -771,7 +783,7 @@ if __name__ == "__main__":
 - Analyze validator distribution and permissions
 - Display validator details with stake and rank information
 
-#### 9. Subnet Economic Parameters
+### 9. Subnet Economic Parameters
 
 This example shows how to access subnet hyperparameters, pool, and emissions:
 
@@ -834,7 +846,7 @@ if __name__ == "__main__":
 - Analyze emission configuration and pending emissions
 - Access economic parameters that control subnet behavior
 
-#### 10. Advanced Analysis Examples
+### 10. Advanced Analysis Examples
 
 This example demonstrates advanced analysis techniques including correlations and Gini coefficient:
 
@@ -918,9 +930,9 @@ if __name__ == "__main__":
 - Compute Gini coefficient for stake inequality measurement
 - Handle missing weight data gracefully
 
-### Usage Examples
 
-#### 11. Async Usage
+
+### 11. Async Usage
 
 This example demonstrates async metagraph usage:
 
@@ -968,7 +980,7 @@ if __name__ == "__main__":
 - Demonstrate factory function usage
 - Handle async operations with proper await syntax
 
-#### 12. Complete Neuron Information
+### 12. Complete Neuron Information
 
 This example shows how to access complete neuron object information:
 
@@ -1018,7 +1030,7 @@ if __name__ == "__main__":
 - Access complete neuron objects with all metadata
 - Format output for easy reading and analysis
 
-#### 13. Common Use Cases
+### 13. Common Use Cases
 
 This example demonstrates common use cases like subnet analysis and validator selection:
 
