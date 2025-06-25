@@ -13,8 +13,7 @@ Page Contents:
 - [Intro](#intro)
 - [Accessing the Metagraph](#accessing-the-metagraph)
 - [Metagraph Properties](#metagraph-properties)
-- [Metagraph Information](#metagraph-information)
-- [Metagraph Data Structure](#metagraph-data-structure)
+- [Data Structures](data-structures)
 - [Performance Considerations](#performance-considerations)
 - [Troubleshooting](#troubleshooting)
 - [Python Code Examples](#python-code-examples)
@@ -92,23 +91,6 @@ metagraph = Metagraph(netuid=1, network="finney", sync=True)
 
 For smart contract integration, you can access metagraph data through the **Metagraph Precompile** at address `0x0000000000000000000000000000000000000802`. This provides read-only access to individual neuron metrics and network information.
 
-**Key functions available:**
-- `getUidCount(netuid)` - Get total number of neurons in a subnet
-- `getStake(netuid, uid)` - Get neuron's total stake
-- `getRank(netuid, uid)` - Get neuron's rank score
-- `getTrust(netuid, uid)` - Get neuron's trust score
-- `getConsensus(netuid, uid)` - Get neuron's consensus score
-- `getIncentive(netuid, uid)` - Get neuron's incentive score
-- `getEmission(netuid, uid)` - Get neuron's emission value
-- `getDividends(netuid, uid)` - Get neuron's dividends
-- `getVtrust(netuid, uid)` - Get neuron's validator trust score
-- `getValidatorStatus(netuid, uid)` - Check if neuron is a validator
-- `getIsActive(netuid, uid)` - Check if neuron is active
-- `getLastUpdate(netuid, uid)` - Get last update block
-- `getAxon(netuid, uid)` - Get neuron's network connection info
-- `getHotkey(netuid, uid)` - Get neuron's hotkey
-- `getColdkey(netuid, uid)` - Get neuron's coldkey
-
 :::tip Smart Contract Integration
 For detailed smart contract examples and complete ABI, see the [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) documentation.
 :::
@@ -119,88 +101,57 @@ Advanced users can query the metagraph directly through Polkadot extrinsics usin
 
 ## Metagraph Properties
 
-### Core Network Properties
 
 | Name | Description |
-|------|-------------|
-| `netuid` | Unique subnet identifier |
-| `network` | Network name (finney, test, local) |
-| `version` | Bittensor version number |
-| `n` | Total number of neurons |
-| `block` | Current blockchain block number |
-| `total_stake` | Total stake across all neurons |
+|------|--|
+| `netuid`  | Unique subnet identifier |
+| `network`  | Network name (finney, test, local) |
+| `version`  | Bittensor version number |
+| `n`  | Total number of neurons |
+| `block`  | Current blockchain block number |
+| `total_stake`  | Total stake across all neurons |
+| **Stake** / `S` | Total stake of each neuron |
+| **Alpha Stake** / `AS` | Alpha token stake |
+| **Tao Stake** / `TS` | TAO token stake |
+| **Ranks** / `R` | Performance ranking scores |
+| **Trust** / `T` | Trust scores from other neurons |
+| **Validator Trust** / `Tv` | Validator-specific trust scores |
+| **Consensus** / `C` | Network consensus alignment |
+| **Incentive** / `I` | Reward incentive scores |
+| **Emission** / `E` | Token emission rates |
+| **Dividends** / `D` | Dividend distributions |
+| **Bonds** / `B` | Inter-neuronal bonds |
+| **Weights** / `W` | Weight matrix between neurons |
+| `uids` |  Unique neuron identifiers |
+| `hotkeys` |  Neuron hotkey addresses |
+| `coldkeys` |  Neuron coldkey addresses |
+| `addresses` |  Network IP addresses |
+| `axons` |  Network connection details |
+| `neurons` |  Complete neuron objects |
+| `active` |  Neuron activity status |
+| `last_update` |  Last update block numbers |
+| `validator_permit` |  Bool array indicating whether each neuron can set weights (act as validator) |
+| `name` |  Subnet name |
+| `symbol` |  Subnet token symbol |
+| `network_registered_at` |  Registration block |
+| `num_uids` |  Current number of neurons |
+| `max_uids` |  Maximum allowed neurons |
+| `identities` |  List of chain identities |
+| `identity` |  Subnet identity information |
+| `pruning_score` |  List of pruning scores |
+| `block_at_registration` |  List of registration blocks |
+| `tao_dividends_per_hotkey` |  TAO dividends by hotkey |
+| `alpha_dividends_per_hotkey` |  Alpha dividends by hotkey |
+| `last_step` |  Last step block number |
+| `tempo` |  Block interval for updates |
+| `blocks_since_last_step` |  Blocks since last step |
+| `owner_coldkey` |  Subnet owner coldkey |
+| `owner_hotkey` |  Subnet owner hotkey |
+| `hparams` |  Subnet hyperparameters (MetagraphInfoParams) |
+| `pool` |  Liquidity pool information (MetagraphInfoPool) |
+| `emissions` |  Emission configuration (MetagraphInfoEmissions) |
 
-### Neuron Metrics
-
-| Name | Accessor | Description |
-|------|----------|-------------|
-| **Stake** | `S` | Total stake of each neuron |
-| **Alpha Stake** | `AS` | Alpha token stake |
-| **Tao Stake** | `TS` | TAO token stake |
-| **Ranks** | `R` | Performance ranking scores |
-| **Trust** | `T` | Trust scores from other neurons |
-| **Validator Trust** | `Tv` | Validator-specific trust scores |
-| **Consensus** | `C` | Network consensus alignment |
-| **Incentive** | `I` | Reward incentive scores |
-| **Emission** | `E` | Token emission rates |
-| **Dividends** | `D` | Dividend distributions |
-| **Bonds** | `B` | Inter-neuronal bonds |
-| **Weights** | `W` | Weight matrix between neurons |
-
-### Neuron Information
-
-| Name | Description |
-|------|-------------|
-| `uids` | Unique neuron identifiers |
-| `hotkeys` | Neuron hotkey addresses |
-| `coldkeys` | Neuron coldkey addresses |
-| `addresses` | Network IP addresses |
-| `axons` | Network connection details |
-| `neurons` | Complete neuron objects |
-
-### Network State
-
-| Name | Description |
-|------|-------------|
-| `active` | Neuron activity status |
-| `last_update` | Last update block numbers |
-| `validator_permit` | Neuron can set weights, i.e. act as validator |
-
-## Metagraph Information
-
-The metagraph also contains subnet-level information:
-
-### Subnet Identity
-
-| Name | Description |
-|------|-------------|
-| `name` | Subnet name |
-| `symbol` | Subnet token symbol |
-| `network_registered_at` | Registration block |
-| `num_uids` | Current number of neurons |
-| `max_uids` | Maximum allowed neurons |
-| `identities` | List of chain identities |
-| `identity` | Subnet identity information |
-| `pruning_score` | List of pruning scores |
-| `block_at_registration` | List of registration blocks |
-| `tao_dividends_per_hotkey` | TAO dividends by hotkey |
-| `alpha_dividends_per_hotkey` | Alpha dividends by hotkey |
-| `last_step` | Last step block number |
-| `tempo` | Block interval for updates |
-| `blocks_since_last_step` | Blocks since last step |
-| `owner_coldkey` | Subnet owner coldkey |
-| `owner_hotkey` | Subnet owner hotkey |
-
-### Economic Parameters
-
-| Name | Description |
-|------|-------------|
-| `hparams` | Subnet hyperparameters (MetagraphInfoParams) |
-| `pool` | Liquidity pool information (MetagraphInfoPool) |
-| `emissions` | Emission configuration (MetagraphInfoEmissions) |
-
-
-## Metagraph Data Structure
+## Data Structures
 
 ### Neuron Object
 
