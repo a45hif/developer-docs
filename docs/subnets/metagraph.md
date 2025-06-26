@@ -59,7 +59,11 @@ You can access metagraph data through multiple interfaces:
 The `btcli` command-line interface provides easy access to metagraph information:
 
 ```bash
-# View metagraph for a specific subnet
+# Dump full metagraph to file
+btcli subnets metagraph --netuid 14 --network finney \
+    --json-output > sn14_full_metagraph.json
+
+# View abridged metagraph
 btcli subnets metagraph --netuid 14 --network finney
 ```
 ```console
@@ -80,12 +84,10 @@ The Bittensor Python SDK [Metagraph module](pathname:///python-api/html/autoapi/
 
 ```python
 from bittensor.core.metagraph import Metagraph
-from bittensor.core.subtensor import Subtensor
 
-# Initialize metagraph for subnet 1
-metagraph = Metagraph(netuid=1, network="finney", sync=True)
+# Initialize metagraph for subnet 14
+m = Metagraph(netuid=14, network="finney", sync=True)
 ```
-
 
 ### Smart Contract Access (Metagraph Precompile)
 
@@ -100,6 +102,8 @@ For detailed smart contract examples and complete ABI, see the [Metagraph Precom
 Advanced users can query the metagraph directly through Polkadot extrinsics using the PolkadotJS browser application, or with the PolkadotJS JavaScript SDK.
 
 ## Metagraph Properties
+
+In the Bittensor Python SDK, the Metagraph object allows query access to the following properties.
 
 
 | Name | Description |
@@ -290,6 +294,8 @@ metagraph.save(root_dir=['/custom', 'path'])
 
 This section provides practical examples of working with the Bittensor metagraph using the Python SDK. Each example demonstrates different aspects of metagraph analysis and data extraction.
 
+Code examples can be found [here](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/)
+
 **Prerequisites**:
 - Bittensor Python SDK installed (`pip install bittensor`)
 - Network connection to access Bittensor blockchain
@@ -304,7 +310,6 @@ This example shows how to access basic metagraph metadata and subnet information
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
-from bittensor.core.subtensor import Subtensor
 
 def main():
     # Initialize metagraph for subnet 1
@@ -374,10 +379,6 @@ def main():
         uid = uids[idx].item()
         stake = stakes[idx].item()
         print(f"  {i+1}. UID {uid}: {stake:.2f} τ")
-
-    # Analyze alpha vs tao stake distribution
-    alpha_ratio = alpha_stakes / (alpha_stakes + tao_stakes)
-    print(f"\nAverage alpha stake ratio: {alpha_ratio.mean().item():.2%}")
 
 if __name__ == "__main__":
     main() 
