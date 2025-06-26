@@ -7,6 +7,12 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Understanding Neurons
 
+
+<!-- This needs to be updated and better, and consoloditated with the description in docstring in bittensor, so there isn't redundancy or inconsistency!!!) 
+
+http://localhost:3000/python-api/html/autoapi/bittensor/core/metagraph/index.html#bittensor.core.metagraph.Metagraph
+-->
+
 The design of Bittensor subnets is inspired by the structure of a simple neural network, with each **neuron** being either a miner or validator.
 
 :::tip Neuron requirements

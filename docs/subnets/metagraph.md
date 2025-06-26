@@ -101,162 +101,98 @@ For detailed smart contract examples and complete ABI, see the [Metagraph Precom
 
 Advanced users can query the metagraph directly through Polkadot extrinsics using the PolkadotJS browser application, or with the PolkadotJS JavaScript SDK.
 
-## Metagraph Properties
 
-In the Bittensor Python SDK, the Metagraph object allows query access to the following properties.
-
-
-| Name | Description |
-|------|--|
-| `netuid`  | Unique subnet identifier |
-| `network`  | Network name (finney, test, local) |
-| `version`  | Bittensor version number |
-| `n`  | Total number of neurons |
-| `block`  | Current blockchain block number |
-| `total_stake`  | Total stake across all neurons |
-| **Stake** / `S` | Total stake of each neuron |
-| **Alpha Stake** / `AS` | Alpha token stake |
-| **Tao Stake** / `TS` | TAO token stake |
-| **Ranks** / `R` | Performance ranking scores |
-| **Trust** / `T` | Trust scores from other neurons |
-| **Validator Trust** / `Tv` | Validator-specific trust scores |
-| **Consensus** / `C` | Network consensus alignment |
-| **Incentive** / `I` | Reward incentive scores |
-| **Emission** / `E` | Token emission rates |
-| **Dividends** / `D` | Dividend distributions |
-| **Bonds** / `B` | Inter-neuronal bonds |
-| **Weights** / `W` | Weight matrix between neurons |
-| `uids` |  Unique neuron identifiers |
-| `hotkeys` |  Neuron hotkey addresses |
-| `coldkeys` |  Neuron coldkey addresses |
-| `addresses` |  Network IP addresses |
-| `axons` |  Network connection details |
-| `neurons` |  Complete neuron objects |
-| `active` |  Neuron is active as a validator, i.e. has set weights on the last tempo. |
-| `last_update` |  Last update block numbers |
-| `validator_permit` |  Bool array indicating whether each neuron can set weights (act as validator) |
-| `name` |  Subnet name |
-| `symbol` |  Subnet token symbol |
-| `network_registered_at` |  Registration block |
-| `num_uids` |  Current number of neurons |
-| `max_uids` |  Maximum allowed neurons |
-| `identities` |  List of chain identities |
-| `identity` |  Subnet identity information |
-| `pruning_score` |  List of pruning scores |
-| `block_at_registration` |  List of registration blocks |
-| `tao_dividends_per_hotkey` |  TAO dividends by hotkey |
-| `alpha_dividends_per_hotkey` |  Alpha dividends by hotkey |
-| `last_step` |  Last step block number |
-| `tempo` |  Block interval for updates |
-| `blocks_since_last_step` |  Blocks since last step |
-| `owner_coldkey` |  Subnet owner coldkey |
-| `owner_hotkey` |  Subnet owner hotkey |
-| `hparams` |  Subnet hyperparameters (MetagraphInfoParams) |
-| `pool` |  Liquidity pool information (MetagraphInfoPool) |
-| `emissions` |  Emission configuration (MetagraphInfoEmissions) |
 
 ## Data Structures
 
+### Metagraph Object
+
+In the Bittensor Python SDK, the Metagraph object allows query access to the following properties.
+
+[Metagraph class specification](pathname:///python-api/html/autoapi/bittensor/core/metagraph/index.html)
+
 ### Neuron Object
 
-Each neuron in the metagraph contains:
+A neuron object represents any registered participant on the subnet, whether a miner or a validator.
 
-```python
-class NeuronInfo:
-    uid: int                    # Unique identifier
-    hotkey: str                 # Hotkey address
-    coldkey: str                # Coldkey address
-    stake: float                # Total stake
-    rank: float                 # Performance rank
-    trust: float                # Trust score
-    consensus: float            # Consensus score
-    incentive: float            # Incentive score
-    emission: float             # Emission rate
-    dividends: float            # Dividend amount
-    validator_trust: float      # Validator trust
-    active: bool                # Activity status
-    last_update: int            # Last update block
-    validator_permit: bool      # Validator permission
-    weights: list               # Weight assignments
-    bonds: list                 # Bond investments
-    axon_info: AxonInfo         # Network connection
-```
+See [Understanding Neurons](../learn/neurons.md)
 
 ### Axon Information
 
-```python
-class AxonInfo:
-    hotkey: str                 # Neuron hotkey
-    coldkey: str                # Neuron coldkey
-    ip: int                     # IP address
-    port: int                   # Port number
-    ip_type: int                # IP type
-    version: int                # Protocol version
-    placeholder1: int           # Reserved field
-    placeholder2: int           # Reserved field
-```
+An axon represents a server run by a registered miner, capable of answering requests by validators.
 
-:::note AxonInfo vs Smart Contract AxonInfo
-The Python SDK `AxonInfo` structure differs from the smart contract version. The smart contract `AxonInfo` includes `block`, `version`, `ip`, `port`, `ip_type`, and `protocol` fields, while the Python SDK version includes additional fields for hotkey, coldkey, and placeholders.
-:::
+| Name | Description |
+--|--
+`hotkey`                 | Neuron hotkey
+`coldkey`                | Neuron coldkey
+`ip`                     | IP address
+`port`                   | Port number
+`ip_type`                | IP type
+`version`                | Protocol version
+`placeholder1`           | Reserved field
+`placeholder2`           | Reserved field
+
 
 ### MetagraphInfoParams
 
-```python
+Represents the hyperparameters of a subnet.
+
+
 class MetagraphInfoParams:
-    activity_cutoff: int        # Activity cutoff threshold
-    adjustment_alpha: float     # Adjustment alpha parameter
-    adjustment_interval: int    # Adjustment interval
-    alpha_high: float           # Alpha high threshold
-    alpha_low: float            # Alpha low threshold
-    bonds_moving_avg: int       # Bonds moving average
-    burn: float                 # Burn amount
-    commit_reveal_period: int   # Commit reveal period
-    commit_reveal_weights_enabled: bool  # Commit reveal weights enabled
-    difficulty: int             # Network difficulty
-    immunity_period: int        # Immunity period
-    kappa: float                # Kappa parameter
-    liquid_alpha_enabled: bool  # Liquid alpha enabled
-    max_burn: float             # Maximum burn
-    max_difficulty: int         # Maximum difficulty
-    max_regs_per_block: int     # Max registrations per block
-    max_validators: int         # Maximum validators
-    max_weights_limit: int      # Maximum weights limit
-    min_allowed_weights: int    # Minimum allowed weights
-    min_burn: float             # Minimum burn
-    min_difficulty: int         # Minimum difficulty
-    pow_registration_allowed: bool  # POW registration allowed
-    registration_allowed: bool  # Registration allowed
-    rho: float                  # Rho parameter
-    serving_rate_limit: int     # Serving rate limit
-    target_regs_per_interval: int  # Target registrations per interval
-    tempo: int                  # Tempo
-    weights_rate_limit: int     # Weights rate limit
-    weights_version: int        # Weights version
-```
+
+| Name | Description |
+---|----
+`activity_cutoff`        | Activity cutoff threshold
+`adjustment_alpha`     | Adjustment alpha parameter
+`adjustment_interval`    | Adjustment interval
+`alpha_high`           | Alpha high threshold
+`alpha_low`            | Alpha low threshold
+`bonds_moving_avg`       | Bonds moving average
+`burn`                 | Burn amount
+`commit_reveal_period`   | Commit reveal period
+`commit_reveal_weights_enabled`  | Commit reveal weights enabled
+`difficulty`             | Network difficulty
+`immunity_period`        | Immunity period
+`kappa`                | Kappa parameter
+`liquid_alpha_enabled`  | Liquid alpha enabled
+`max_burn`             | Maximum burn
+`max_difficulty`         | Maximum difficulty
+`max_regs_per_block`     | Max registrations per block
+`max_validators`         | Maximum validators
+`max_weights_limit`      | Maximum weights limit
+`min_allowed_weights`    | Minimum allowed weights
+`min_burn`             | Minimum burn
+`min_difficulty`         | Minimum difficulty
+`pow_registration_allowed`  | POW registration allowed
+`registration_allowed`  | Registration allowed
+`rho`                  | Rho parameter
+`serving_rate_limit`     | Serving rate limit
+`target_regs_per_interval`  | Target registrations per interval
+`tempo`                  | Tempo
+`weights_rate_limit`     | Weights rate limit
+`weights_version`        | Weights version
+
 
 ### MetagraphInfoPool
 
-```python
-class MetagraphInfoPool:
-    alpha_out: float            # Alpha out amount
-    alpha_in: float             # Alpha in amount
-    tao_in: float               # TAO in amount
-    subnet_volume: float        # Subnet volume
-    moving_price: float         # Moving price
-```
+| Name | Description |
+--|--
+`alpha_out`            | Alpha out amount
+`alpha_in`             | Alpha in amount
+`tao_in`               | TAO in amount
+`subnet_volume`        | Subnet volume
+`moving_price`         | Moving price
 
 ### MetagraphInfoEmissions
 
-```python
-class MetagraphInfoEmissions:
-    alpha_out_emission: float   # Alpha out emission
-    alpha_in_emission: float    # Alpha in emission
-    subnet_emission: float      # Subnet emission
-    tao_in_emission: float      # TAO in emission
-    pending_alpha_emission: float  # Pending alpha emission
-    pending_root_emission: float   # Pending root emission
-```
+| Name | Description |
+--|--
+`alpha_out_emission`   | Alpha out emission
+`alpha_in_emission`    | Alpha in emission
+`subnet_emission`      | Subnet emission
+`tao_in_emission`      | TAO in emission
+`pending_alpha_emission`  | Pending alpha emission
+`pending_root_emission`   | Pending root emission
 
 ## Performance Considerations
 
