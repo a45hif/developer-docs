@@ -132,7 +132,7 @@ In the Bittensor Python SDK, the Metagraph object allows query access to the fol
 | `addresses` |  Network IP addresses |
 | `axons` |  Network connection details |
 | `neurons` |  Complete neuron objects |
-| `active` |  Neuron activity status |
+| `active` |  Neuron is active as a validator, i.e. has set weights on the last tempo. |
 | `last_update` |  Last update block numbers |
 | `validator_permit` |  Bool array indicating whether each neuron can set weights (act as validator) |
 | `name` |  Subnet name |
@@ -302,11 +302,11 @@ Code examples can be found [here](https://github.com/latent-to/developer-docs/tr
 - Python 3.7+ environment
 
 
-### 1. Basic Metagraph Information
+### Basic Metagraph Information
 
 This example shows how to access basic metagraph metadata and subnet information:
 
-```python title="01_basic_metagraph_info.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -336,18 +336,12 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/01_basic_metagraph_info.py)
 
-**Key Features:**
-- Initialize metagraph for a specific subnet
-- Access basic metadata (network, subnet UID, total neurons, current block)
-- Retrieve subnet identity information (name, symbol, registration details)
-
-### 2. Neuron Metrics Analysis
+### Neuron Metrics Analysis
 
 This example demonstrates stake distribution and neuron metrics analysis:
 
-```python title="02_neuron_metrics_analysis.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -384,19 +378,12 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/02_neuron_metrics_analysis.py)
 
-**Key Features:**
-- Analyze total, average, highest, and lowest stake across neurons
-- Find top 10 staked neurons
-- Calculate alpha vs TAO stake distribution ratios
-- Handle both alpha and TAO token stakes
-
-### 3. Performance and Ranking Analysis
+### Performance and Ranking Analysis
 
 This example shows how to analyze neuron performance, ranks, and trust scores:
 
-```python title="03_performance_ranking_analysis.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -447,19 +434,12 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/03_performance_ranking_analysis.py)
 
-**Key Features:**
-- Find top performing neurons by rank
-- Analyze trust score distribution (mean, std dev, min/max)
-- Identify most trusted validators
-- Access consensus scores and validator trust metrics
-
-### 4. Economic Analysis
+### Economic Analysis
 
 This example demonstrates analysis of economic metrics like incentives, emissions, and dividends:
 
-```python title="04_economic_analysis.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -501,19 +481,12 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/04_economic_analysis.py)
 
-**Key Features:**
-- Calculate total and average incentives across the network
-- Find highest incentivized neurons
-- Analyze dividend distribution statistics
-- Correlate incentives with emissions and dividends
-
-### 5. Network Connectivity Analysis
+### Network Connectivity Analysis
 
 This example shows how to analyze network addresses and axon information:
 
-```python title="05_network_connectivity_analysis.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -562,21 +535,13 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/05_network_connectivity_analysis.py)
-
-**Key Features:**
-- Count unique network addresses, hotkeys, and coldkeys
-- Identify neurons sharing the same network addresses
-- Display detailed axon information for neurons
-- Analyze network topology and connectivity patterns
 
 
-
-### 6. Weight Matrix Analysis
+### Weight Matrix Analysis
 
 This example demonstrates weight matrix analysis (requires `lite=False`):
 
-```python title="06_weight_matrix_analysis.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -598,7 +563,7 @@ def main():
         print(f"Average weight: {weights.mean().item():.4f}")
         print(f"Max weight: {weights.max().item():.4f}")
         
-        # Find neurons receiving most weights
+        # Find miners receiving most weights
         weight_received = weights.sum(axis=0)  # Sum of incoming weights
         top_receivers = weight_received.argsort()[::-1][:10]
         print("\n=== Top 10 Weight Receivers ===")
@@ -607,16 +572,16 @@ def main():
             total_weight = weight_received[idx].item()
             print(f"  {i+1}. UID {uid}: {total_weight:.4f}")
         
-        # Find neurons sending most weights
+        # Find validators sending most weights
         weight_sent = weights.sum(axis=1)  # Sum of outgoing weights
         top_senders = weight_sent.argsort()[::-1][:10]
-        print("\n=== Top 10 Weight Senders ===")
+        print("\n=== Top 10 Weight Setters ===")
         for i, idx in enumerate(top_senders):
             uid = uids[idx].item()
             total_weight = weight_sent[idx].item()
             print(f"  {i+1}. UID {uid}: {total_weight:.4f}")
         
-        # Find strongest connections
+        # Find highest set weight
         max_weight_idx = weights.argmax()
         sender_idx = max_weight_idx // weights.shape[1]
         receiver_idx = max_weight_idx % weights.shape[1]
@@ -630,20 +595,11 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/06_weight_matrix_analysis.py)
-
-**Key Features:**
-- Analyze weight matrix shape and statistics
-- Find neurons receiving the most weights (incoming connections)
-- Find neurons sending the most weights (outgoing connections)
-- Identify the strongest connection between neurons
-- Requires full sync mode for weight data access
-
-### 7. Bond Analysis
+### Bond Analysis
 
 This example shows bond matrix analysis (requires `lite=False`):
 
-```python title="07_bond_analysis.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -664,7 +620,7 @@ def main():
         print(f"Total bonds: {bonds.sum().item():.4f}")
         print(f"Average bond: {bonds.mean().item():.4f}")
         
-        # Find neurons with most bonds
+        # Find miners with most bonds
         bonds_received = bonds.sum(axis=0)  # Sum of incoming bonds
         top_bonded = bonds_received.argsort()[::-1][:10]
         print("\n=== Top 10 Bonded Neurons ===")
@@ -679,19 +635,12 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/07_bond_analysis.py)
 
-**Key Features:**
-- Analyze bond matrix shape and total bonds
-- Find neurons with the most bonds
-- Calculate average bond values
-- Requires full sync mode for bond data access
+### Neuron Activity Analysis
 
-### 8. Neuron Activity Analysis
+This example demonstrates analyzing validator activity:
 
-This example demonstrates neuron activity and validator status analysis:
-
-```python title="08_neuron_activity_analysis.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -713,9 +662,9 @@ def main():
     active_count = active.sum().item()
     total_count = len(active)
     print(f"\n=== Activity Analysis ===")
-    print(f"Active neurons: {active_count}/{total_count} ({active_count/total_count:.1%})")
+    print(f"Active validators: {active_count}/{total_count} ({active_count/total_count:.1%})")
 
-    # Find inactive neurons
+    # Find all nuerons not actively setting weights
     inactive_indices = (active == 0).nonzero()[0]
     if len(inactive_indices) > 0:
         print("\n=== Inactive Neurons (First 10) ===")
@@ -747,19 +696,13 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/08_neuron_activity_analysis.py)
 
-**Key Features:**
-- Calculate active vs inactive neuron ratios
-- Find inactive neurons and their last update blocks
-- Analyze validator distribution and permissions
-- Display validator details with stake and rank information
 
-### 9. Subnet Economic Parameters
+### Subnet Economic Parameters
 
 This example shows how to access subnet hyperparameters, pool, and emissions:
 
-```python title="09_subnet_economic_parameters.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -810,19 +753,13 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/09_subnet_economic_parameters.py)
 
-**Key Features:**
-- Access subnet hyperparameters (activity cutoff, adjustment alpha, etc.)
-- View liquidity pool information (alpha/TAO amounts, volume, price)
-- Analyze emission configuration and pending emissions
-- Access economic parameters that control subnet behavior
 
-### 10. Advanced Analysis Examples
+### Advanced Analysis Examples
 
-This example demonstrates advanced analysis techniques including correlations and Gini coefficient:
+This example demonstrates advanced analysis techniques including correlations and [Gini coefficient](https://en.wikipedia.org/wiki/Gini_coefficient) of stake distribution.
 
-```python title="10_advanced_analysis_examples.py"
+```python
 #!/usr/bin/env python3
 
 import numpy as np
@@ -893,22 +830,12 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/10_advanced_analysis_examples.py)
 
-**Key Features:**
-- Calculate correlations between stake, rank, and trust metrics
-- Analyze network efficiency through weight distribution
-- Calculate stake concentration using percentiles
-- Compute Gini coefficient for stake inequality measurement
-- Handle missing weight data gracefully
-
-
-
-### 11. Async Usage
+### Async Usage
 
 This example demonstrates async metagraph usage:
 
-```python title="11_async_usage.py"
+```python
 #!/usr/bin/env python3
 
 import asyncio
@@ -928,35 +855,20 @@ async def analyze_metagraph():
     await metagraph.sync()
     print(f"Synced to block: {metagraph.block.item()}")
 
-async def use_factory():
-    print("Using factory function...")
-    metagraph = await async_metagraph(netuid=1, sync=True)
-    print(f"Factory metagraph has {metagraph.n.item()} neurons")
-
 async def main():
     print("=== Async Metagraph Analysis ===")
     await analyze_metagraph()
-    print("\n=== Factory Function Example ===")
-    await use_factory()
 
 if __name__ == "__main__":
     # Run async analysis
     asyncio.run(main()) 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/11_async_usage.py)
-
-**Key Features:**
-- Use async metagraph for non-blocking operations
-- Sync to latest block asynchronously
-- Demonstrate factory function usage
-- Handle async operations with proper await syntax
-
-### 12. Complete Neuron Information
+### Complete Neuron Information
 
 This example shows how to access complete neuron object information:
 
-```python title="12_complete_neuron_information.py"
+```python
 #!/usr/bin/env python3
 
 from bittensor.core.metagraph import Metagraph
@@ -994,19 +906,12 @@ if __name__ == "__main__":
     main() 
 ```
 
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/12_complete_neuron_information.py)
 
-**Key Features:**
-- Display comprehensive neuron information for multiple neurons
-- Show all available neuron properties in a structured format
-- Access complete neuron objects with all metadata
-- Format output for easy reading and analysis
-
-### 13. Common Use Cases
+### Common Use Cases
 
 This example demonstrates common use cases like subnet analysis and validator selection:
 
-```python title="13_common_use_cases.py"
+```python
 #!/usr/bin/env python3
 
 import bittensor as bt
@@ -1089,35 +994,5 @@ def main():
 
 if __name__ == "__main__":
     main() 
-```
-
-[View source file](https://github.com/latent-to/developer-docs/tree/main/static/code-examples/13_common_use_cases.py)
-
-**Key Features:**
-- Analyze subnet health and activity rates
-- Find top validators by rank
-- Analyze weight distribution for network topology
-- Provide reusable functions for common analysis tasks
-- Handle errors gracefully for missing data
-
-### Running the Examples
-
-All examples can be run directly from the command line:
-
-```bash
-# Navigate to the code examples directory
-cd docs/subnets/code-examples
-
-# Run individual examples
-python3 01_basic_metagraph_info.py
-python3 02_neuron_metrics_analysis.py
-# ... etc
-
-# Or run all examples in sequence
-for script in *.py; do
-    echo "Running $script..."
-    python3 "$script"
-    echo "---"
-done
 ```
 
