@@ -9,43 +9,17 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 This page documents the Bittensor subnet metagraph. 
 
-Page Contents:
-- [Intro](#intro)
-- [Accessing the Metagraph](#accessing-the-metagraph)
-- [Data Structures](#data-structures)
-- [Performance Considerations](#performance-considerations)
-- [Troubleshooting](#troubleshooting)
-- [Python Code Examples](#python-code-examples)
+The **metagraph** is a core data structure in Bittensor that represents the complete state of a subnet at any given block. It contains comprehensive information about all neurons (miners and validators) participating in a subnet, their emissions, bonds, and trust, as well as subnet metrics.
+
+:::info source code
+The metagraph is implemented in the Bittensor blockchain (Subtensor) as a Rust data structure. The source code is located in the [Subtensor repository](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/rpc_info/metagraph.rs).
+:::
 
 Related reading:
 - [Understanding Neurons](../learn/neurons.md)
 - [Subnet Hyperparameters](./subnet-hyperparameters.md)
 - [Bittensor CLI Reference](../btcli.md)
 - [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md)
-
-## Intro
-
-The **metagraph** is a core data structure in the Bittensor blockchain that represents the complete state of a subnet at any given block. It contains comprehensive information about all neurons (miners and validators) participating in a subnet, their emissions, bonds, and trust, as well as subnet metrics.
-
-The metagraph serves as a dynamic snapshot of a subnet's neural network, capturing:
-
-- **Neuron Information**: UIDs, hotkeys, coldkeys, network addresses
-- **Network Metrics**: Stakes, ranks, trust scores, consensus values
-- **Economic Data**: Incentives, emissions, dividends, bonds
-- **Network State**: Active status, validator permits, last updates
-- **Inter-neuronal Relationships**: Weights and bonds between neurons
-
-The metagraph is continuously updated as the blockchain progresses, reflecting the real-time state of the subnet's collective intelligence.
-
-
-
-Related reading:
-
-- [Understanding Neurons](../learn/neurons.md) - Neuron architecture overview
-- [Subnet Hyperparameters](./subnet-hyperparameters.md) - Subnet configuration
-- [Bittensor CLI Reference](../btcli.md) - Complete btcli documentation
-- [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access and examples 
-
 
 ## Accessing the Metagraph
 
@@ -94,9 +68,16 @@ For smart contract integration, you can access metagraph data through the **Meta
 For detailed smart contract examples and complete ABI, see the [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) documentation.
 :::
 
-### Polkadot Extrinsics
 
-Advanced users can query the metagraph directly through Polkadot extrinsics using the PolkadotJS browser application, or with the PolkadotJS JavaScript SDK.
+### RPC Functions
+
+The blockchain provides several RPC functions for accessing metagraph data:
+
+- `get_metagraph(netuid)` - Returns complete metagraph for a subnet
+- `get_all_metagraphs()` - Returns metagraphs for all subnets
+- `get_selective_metagraph(netuid, indexes)` - Returns partial metagraph data
+
+See [Subtensor:Metagraph RPC source code](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/rpc_info/metagraph.rs)
 
 ## Performance Considerations
 
@@ -119,16 +100,6 @@ metagraph.load()
 # Custom save directory
 metagraph.save(root_dir=['/custom', 'path'])
 ```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Sync Failures**: Ensure you're connected to the correct network
-2. **Historical Data**: Use archive network for data beyond 300 blocks
-3. **Memory Usage**: Use lite mode for large subnets
-4. **Network Timeouts**: Increase timeout values for slow connections
-
 
 ## Data Structures
 
@@ -254,7 +225,6 @@ Represents the hyperparameters of a subnet.
 See also:
 - [Subnet Hyperparameters](./subnet-hyperparameters)
 - [MetagraphInfoParams class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/chain_data/metagraph_info/index.html#bittensor.core.chain_data.metagraph_info.MetagraphInfoParams)
-
 
 <details>
   <summary>MetagraphInfoParams (Hyperparams) Properties</summary>
