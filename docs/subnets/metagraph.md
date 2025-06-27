@@ -12,7 +12,6 @@ This page documents the Bittensor subnet metagraph.
 Page Contents:
 - [Intro](#intro)
 - [Accessing the Metagraph](#accessing-the-metagraph)
-- [Metagraph Properties](#metagraph-properties)
 - [Data Structures](#data-structures)
 - [Performance Considerations](#performance-considerations)
 - [Troubleshooting](#troubleshooting)
@@ -46,8 +45,6 @@ Related reading:
 - [Subnet Hyperparameters](./subnet-hyperparameters.md) - Subnet configuration
 - [Bittensor CLI Reference](../btcli.md) - Complete btcli documentation
 - [Metagraph Precompile](../evm-tutorials/metagraph-precompile.md) - Smart contract access and examples 
-
-
 
 
 ## Accessing the Metagraph
@@ -101,25 +98,142 @@ For detailed smart contract examples and complete ABI, see the [Metagraph Precom
 
 Advanced users can query the metagraph directly through Polkadot extrinsics using the PolkadotJS browser application, or with the PolkadotJS JavaScript SDK.
 
+## Performance Considerations
+
+### Lite vs Full Sync
+
+- **Lite Mode** (`lite=True`): Faster sync, excludes weights and bonds
+- **Full Mode** (`lite=False`): Complete data including weight matrices
+
+### Caching
+
+The metagraph supports local caching:
+
+```python
+# Save metagraph for later use
+metagraph.save()
+
+# Load cached metagraph
+metagraph.load()
+
+# Custom save directory
+metagraph.save(root_dir=['/custom', 'path'])
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Sync Failures**: Ensure you're connected to the correct network
+2. **Historical Data**: Use archive network for data beyond 300 blocks
+3. **Memory Usage**: Use lite mode for large subnets
+4. **Network Timeouts**: Increase timeout values for slow connections
 
 
 ## Data Structures
 
 ### Metagraph Object
 
-In the Bittensor Python SDK, the Metagraph object allows query access to the following properties.
+In the Bittensor Python SDK, the `Metagraph` class encapsulates the following information
 
-[Metagraph class specification](pathname:///python-api/html/autoapi/bittensor/core/metagraph/index.html)
+[Metagraph class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/metagraph/index.html)
 
-### Neuron Object
+<details>
+  <summary>Metagraph Properties</summary>
+| Name | Description |
+|------|--|
+| `netuid`  | Unique subnet identifier |
+| `network`  | Network name (finney, test, local) |
+| `version`  | Bittensor version number |
+| `n`  | Total number of neurons |
+| `block`  | Current blockchain block number |
+| `total_stake`  | Total stake across all neurons |
+| **Stake** / `S` | Total stake of each neuron |
+| **Alpha Stake** / `AS` | Alpha token stake |
+| **Tao Stake** / `TS` | TAO token stake |
+| **Ranks** / `R` | Performance ranking scores |
+| **Trust** / `T` | Trust scores from other neurons |
+| **Validator Trust** / `Tv` | Validator-specific trust scores |
+| **Consensus** / `C` | Network consensus alignment |
+| **Incentive** / `I` | Reward incentive scores |
+| **Emission** / `E` | Token emission rates |
+| **Dividends** / `D` | Dividend distributions |
+| **Bonds** / `B` | Inter-neuronal bonds |
+| **Weights** / `W` | Weight matrix between neurons |
+| `uids` |  Unique neuron identifiers |
+| `hotkeys` |  Neuron hotkey addresses |
+| `coldkeys` |  Neuron coldkey addresses |
+| `addresses` |  Network IP addresses |
+| `axons` |  Network connection details |
+| `neurons` |  Complete neuron objects |
+| `active` |  Neuron activity status |
+| `last_update` |  Last update block numbers |
+| `validator_permit` |  Bool array indicating whether each neuron can set weights (act as validator) |
+| `name` |  Subnet name |
+| `symbol` |  Subnet token symbol |
+| `network_registered_at` |  Registration block |
+| `num_uids` |  Current number of neurons |
+| `max_uids` |  Maximum allowed neurons |
+| `identities` |  List of chain identities |
+| `identity` |  Subnet identity information |
+| `pruning_score` |  List of pruning scores |
+| `block_at_registration` |  List of registration blocks |
+| `tao_dividends_per_hotkey` |  TAO dividends by hotkey |
+| `alpha_dividends_per_hotkey` |  Alpha dividends by hotkey |
+| `last_step` |  Last step block number |
+| `tempo` |  Block interval for updates |
+| `blocks_since_last_step` |  Blocks since last step |
+| `owner_coldkey` |  Subnet owner coldkey |
+| `owner_hotkey` |  Subnet owner hotkey |
+| `hparams` |  Subnet hyperparameters (`MetagraphInfoParams`) |
+| `pool` |  Liquidity pool information (`MetagraphInfoPool`) |
+| `emissions` |  Emission configuration (`MetagraphInfoEmissions`) |
+</details>
 
-A neuron object represents any registered participant on the subnet, whether a miner or a validator.
 
-See [Understanding Neurons](../learn/neurons.md)
+### Neuron Info
 
-### Axon Information
+A neuron represents any registered participant on the subnet, whether a miner or a validator.
+
+See also:
+- [Understanding Neurons](../learn/neurons.md)
+- [NeuronInfo class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/chain_data/neuron_info/index.html#bittensor.core.chain_data.neuron_info.NeuronInfo)
+
+<details>
+  <summary>Neuron Info Properties</summary>
+| Name | Description |
+--|--
+`uid` | Unique identifier
+`hotkey` | Hotkey address
+`coldkey` | Coldkey address
+`stake` | Total stake
+`rank` | Performance rank
+`trust` | Trust score
+`consensus` | Consensus score
+`incentive` | Incentive score
+`emission` | Emission rate
+`dividends` | Dividend amount
+`validator_trust` | Validator trust
+`active` | Activity status
+`last_update` | Last update block
+`validator_permit` | Validator permission
+`weights` | Weight assignments
+`bonds` | Bond investments
+`axon_info` | Network connection
+  </details>
+
+
+### Axons
 
 An axon represents a server run by a registered miner, capable of answering requests by validators.
+
+See also:
+- [Understanding Neurons](../learn/neurons.md)
+- [Axon class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/axon/index.html#module-bittensor.core.axon)
+- [Axon class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/axon/index.html#module-bittensor.core.axon)
+
+<details>
+  <summary>Axon Properties</summary>
 
 | Name | Description |
 --|--
@@ -131,14 +245,19 @@ An axon represents a server run by a registered miner, capable of answering requ
 `version`                | Protocol version
 `placeholder1`           | Reserved field
 `placeholder2`           | Reserved field
-
+</details>
 
 ### MetagraphInfoParams
 
 Represents the hyperparameters of a subnet.
 
+See also:
+- [Subnet Hyperparameters](./subnet-hyperparameters)
+- [MetagraphInfoParams class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/chain_data/metagraph_info/index.html#bittensor.core.chain_data.metagraph_info.MetagraphInfoParams)
 
-class MetagraphInfoParams:
+
+<details>
+  <summary>MetagraphInfoParams (Hyperparams) Properties</summary>
 
 | Name | Description |
 ---|----
@@ -171,10 +290,19 @@ class MetagraphInfoParams:
 `tempo`                  | Tempo
 `weights_rate_limit`     | Weights rate limit
 `weights_version`        | Weights version
-
+</details>
 
 ### MetagraphInfoPool
 
+Contains information about the subnet's liquidity pool
+
+See also:
+- [Understanding Subnets: Liquidity pools](./understanding-subnets#liquidity-pools).
+- [MetagraphInfoPool class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/chain_data/metagraph_info/index.html#bittensor.core.chain_data.metagraph_info.MetagraphInfoPool)
+
+
+<details>
+  <summary>MetagraphInfoPool properties</summary>
 | Name | Description |
 --|--
 `alpha_out`            | Alpha out amount
@@ -182,9 +310,19 @@ class MetagraphInfoParams:
 `tao_in`               | TAO in amount
 `subnet_volume`        | Subnet volume
 `moving_price`         | Moving price
+</details>
 
 ### MetagraphInfoEmissions
 
+Contains detailed information about the subnet's emissions.
+
+See also:
+- [Emissions](../emissions).
+- [MetagraphInfoEmissions class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/chain_data/metagraph_info/index.html#bittensor.core.chain_data.metagraph_info.MetagraphInfoPool)
+
+
+<details>
+  <summary>MetagraphInfoEmissions properties</summary>
 | Name | Description |
 --|--
 `alpha_out_emission`   | Alpha out emission
@@ -193,37 +331,8 @@ class MetagraphInfoParams:
 `tao_in_emission`      | TAO in emission
 `pending_alpha_emission`  | Pending alpha emission
 `pending_root_emission`   | Pending root emission
+</details>
 
-## Performance Considerations
-
-### Lite vs Full Sync
-
-- **Lite Mode** (`lite=True`): Faster sync, excludes weights and bonds
-- **Full Mode** (`lite=False`): Complete data including weight matrices
-
-### Caching
-
-The metagraph supports local caching:
-
-```python
-# Save metagraph for later use
-metagraph.save()
-
-# Load cached metagraph
-metagraph.load()
-
-# Custom save directory
-metagraph.save(root_dir=['/custom', 'path'])
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Sync Failures**: Ensure you're connected to the correct network
-2. **Historical Data**: Use archive network for data beyond 300 blocks
-3. **Memory Usage**: Use lite mode for large subnets
-4. **Network Timeouts**: Increase timeout values for slow connections
 
 
 ## Python Code Examples
@@ -502,7 +611,7 @@ def main():
         # Find miners receiving most weights
         weight_received = weights.sum(axis=0)  # Sum of incoming weights
         top_receivers = weight_received.argsort()[::-1][:10]
-        print("\n=== Top 10 Weight Receivers ===")
+        print("\n=== Miners Receiving Most Frequent Weights ===")
         for i, idx in enumerate(top_receivers):
             uid = uids[idx].item()
             total_weight = weight_received[idx].item()
@@ -511,7 +620,7 @@ def main():
         # Find validators sending most weights
         weight_sent = weights.sum(axis=1)  # Sum of outgoing weights
         top_senders = weight_sent.argsort()[::-1][:10]
-        print("\n=== Top 10 Weight Setters ===")
+        print("\n=== Validators Setting Weights Most Frequently ===")
         for i, idx in enumerate(top_senders):
             uid = uids[idx].item()
             total_weight = weight_sent[idx].item()
@@ -522,7 +631,7 @@ def main():
         sender_idx = max_weight_idx // weights.shape[1]
         receiver_idx = max_weight_idx % weights.shape[1]
         max_weight = weights.max().item()
-        print(f"\n=== Strongest Connection ===")
+        print(f"\n=== Highest Single Set Weight ===")
         print(f"UID {uids[sender_idx].item()} -> UID {uids[receiver_idx].item()}: {max_weight:.4f}")
     else:
         print("Weights not available. Make sure to use lite=False when initializing the metagraph.")
@@ -559,7 +668,7 @@ def main():
         # Find miners with most bonds
         bonds_received = bonds.sum(axis=0)  # Sum of incoming bonds
         top_bonded = bonds_received.argsort()[::-1][:10]
-        print("\n=== Top 10 Bonded Neurons ===")
+        print("\n=== Top 10 Most Bonded Miners ===")
         for i, idx in enumerate(top_bonded):
             uid = uids[idx].item()
             total_bonds = bonds_received[idx].item()
@@ -600,16 +709,6 @@ def main():
     print(f"\n=== Activity Analysis ===")
     print(f"Active validators: {active_count}/{total_count} ({active_count/total_count:.1%})")
 
-    # Find all nuerons not actively setting weights
-    inactive_indices = (active == 0).nonzero()[0]
-    if len(inactive_indices) > 0:
-        print("\n=== Inactive Neurons (First 10) ===")
-        for idx in inactive_indices[:10]:  # Show first 10
-            uid = uids[idx].item()
-            last_block = last_update[idx].item()
-            print(f"  UID {uid}: Last update at block {last_block}")
-    else:
-        print("\nAll neurons are active.")
 
     # Analyze validator distribution
     validator_count = validator_permit.sum().item()
@@ -632,9 +731,7 @@ if __name__ == "__main__":
     main() 
 ```
 
-
-
-### Subnet Economic Parameters
+### Subnet Economics
 
 This example shows how to access subnet hyperparameters, pool, and emissions:
 
@@ -841,94 +938,3 @@ def main():
 if __name__ == "__main__":
     main() 
 ```
-
-
-### Common Use Cases
-
-This example demonstrates common use cases like subnet analysis and validator selection:
-
-```python
-#!/usr/bin/env python3
-
-import bittensor as bt
-
-def analyze_subnet(netuid):
-    """Analyze subnet health"""
-    print(f"Analyzing subnet {netuid}...")
-    metagraph = bt.metagraph(netuid=netuid)
-    metagraph.sync()
-    
-    total_neurons = metagraph.n.item()
-    active_neurons = metagraph.active.sum().item()
-    total_stake = metagraph.S.sum().item()
-    
-    print(f"Subnet {netuid} Analysis:")
-    print(f"  Total neurons: {total_neurons}")
-    print(f"  Active neurons: {active_neurons}")
-    print(f"  Total stake: {total_stake}")
-    print(f"  Activity rate: {active_neurons/total_neurons:.2%}")
-
-def get_top_validators(netuid, top_k=10):
-    """Find top validators"""
-    print(f"Finding top {top_k} validators for subnet {netuid}...")
-    metagraph = bt.metagraph(netuid=netuid)
-    metagraph.sync()
-    
-    # Get validator permits
-    validator_mask = metagraph.validator_permit
-    
-    # Get ranks for validators only
-    validator_ranks = metagraph.R[validator_mask]
-    validator_uids = metagraph.uids[validator_mask]
-    
-    # Sort by rank
-    sorted_indices = validator_ranks.argsort()[::-1]
-    top_validators = validator_uids[sorted_indices][:top_k]
-    
-    print(f"Top {top_k} validators:")
-    for i, uid in enumerate(top_validators):
-        print(f"  {i+1}. UID {uid.item()}")
-    
-    return top_validators.tolist()
-
-def analyze_weights(netuid):
-    """Analyze weight distribution"""
-    print(f"Analyzing weights for subnet {netuid}...")
-    metagraph = bt.metagraph(netuid=netuid, lite=False)
-    metagraph.sync()
-    
-    weights = metagraph.W
-    print(f"Weight matrix shape: {weights.shape}")
-    
-    # Find neurons with most incoming weights
-    incoming_weights = weights.sum(axis=0)
-    top_receivers = incoming_weights.argsort()[::-1][:10]
-    print(f"Top 10 weight receivers: {top_receivers.tolist()}")
-    
-    # Find neurons with most outgoing weights
-    outgoing_weights = weights.sum(axis=1)
-    top_senders = outgoing_weights.argsort()[::-1][:10]
-    print(f"Top 10 weight senders: {top_senders.tolist()}")
-
-def main():
-    print("=== Common Use Cases Examples ===")
-    
-    # Example 1: Subnet Analysis
-    print("\n1. Subnet Analysis")
-    analyze_subnet(1)
-    
-    # Example 2: Validator Selection
-    print("\n2. Validator Selection")
-    get_top_validators(1, top_k=5)
-    
-    # Example 3: Weight Analysis
-    print("\n3. Weight Analysis")
-    try:
-        analyze_weights(1)
-    except Exception as e:
-        print(f"Weight analysis failed: {e}")
-
-if __name__ == "__main__":
-    main() 
-```
-
