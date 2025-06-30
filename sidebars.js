@@ -41,7 +41,7 @@ const sidebars = {
         "learn/anatomy-of-incentive-mechanism",
         "emissions",
         "yuma-consensus",
-
+        "subnets/yc3-blog",
       ],
     },
     {
@@ -95,6 +95,7 @@ const sidebars = {
         "subnets/walkthrough-prompting",
         "tutorials/basic-subnet-tutorials",
         "tutorials/ocr-subnet-tutorial",
+        "subnets/yuma3-migration-guide"
       ],
     },
     {
