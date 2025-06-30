@@ -4,7 +4,7 @@ title: "Glossary"
 
 # Glossary
 
-## A 
+## A
 
 ### Active UID
 
@@ -30,7 +30,7 @@ A digital wallet that holds the core ownership in the Bittensor network and serv
 
 ### Block
 
-A unit of data in the Bittensor blockchain, containing a collection of transactions and a unique identifier (block hash). A single block is processed every 12 seconds in the Bittensor blockchain. 
+A unit of data in the Bittensor blockchain, containing a collection of transactions and a unique identifier (block hash). A single block is processed every 12 seconds in the Bittensor blockchain.
 
 ## C
 
@@ -72,7 +72,7 @@ See [Emissions](./emissions).
 
 Also known as staking, delegating TAO to a validator (who is thereby the delegate), increases the validator's stake and secure a validator permit.
 
-### Dendrite  
+### Dendrite
 
 A client instance used by subnet validators and subnet miners to transmit information to axons on subnet miners and subnet validators. Dendrites communicate with axons using the server-client (Axon-dendrite) protocol.
 
@@ -80,7 +80,7 @@ A client instance used by subnet validators and subnet miners to transmit inform
 
 The process of removing a subnet miner or a subnet validator from the subnet due to poor performance.
 
-## E 
+## E
 
 ### EdDSA Cryptographic Keypairs
 
@@ -106,7 +106,13 @@ An optional security measure for the hotkey.
 
 A Bittensor wallet created through the Bittensor website or using a tool like [subkey](https://docs.substrate.io/reference/command-line-tools/subkey/), allowing users to use TAO without installing Bittensor.
 
-## H 
+## F
+
+### Fast blocks
+
+A development-only configuration that accelerates block production to 250ms intervals, enabling rapid local testing and immediate execution of on-chain operations.
+
+## H
 
 ### Hotkey
 
@@ -116,7 +122,7 @@ A component of a Bittensor wallet responsible for less secure operations such as
 
 Authentication mechanism for delegates and nominators and for delegates participating in the Senate.
 
-## I 
+## I
 
 ### Immunity Period
 
@@ -130,7 +136,7 @@ A portion of the TAO emission received by the subnet miners when they provide va
 
 A system that drives the behavior of subnet miners and governs consensus among subnet validators in a Bittensor subnet. Each subnet has its own incentive mechanism, which should be designed carefully to promote desired behaviors and penalize undesired ones.
 
-## L 
+## L
 
 ### Lite Node
 
@@ -148,7 +154,7 @@ A Bittensor wallet created on the user's machine, requiring the installation of 
 
 In the context of machine learning, a mathematical function that measures the difference between the predicted output and the ground truth. In Bittensor, incentive mechanisms act as loss functions that steer subnet miners towards desirable outcomes.
 
-## M 
+## M
 
 ### Mainchain
 
@@ -168,7 +174,7 @@ See [Mining in Bittensor: Miner Deregistration](./miners/#miner-deregistration)
 
 A sequence of words used to regenerate keys, in case of loss, and restore coldkeys and hotkeys in the Bittensor wallet.
 
-## N 
+## N
 
 ### NaCl Format
 
@@ -194,13 +200,17 @@ Another term for a delegator. A subnet validator who nominates their own hotkey 
 
 A TAO holder who delegates their stake.
 
-## O 
+### Non-fast blocks
+
+A development-only configuration that adheres to Subtensor’s default 12-second block interval, simulating production timing for features like delayed subnet activation.
+
+## O
 
 ### Objective Function
 
 In the context of machine learning and subnet operations, this refers to the goal that the subnet is continuously optimizing for, through its incentive mechanism.
 
-## P 
+## P
 
 ### Private Key
 
@@ -222,7 +232,7 @@ A cryptographic key that is publicly available and used for verifying signatures
 
 A publicly accessible node in the Bittensor network that can be run as a lite node or an archive node and synchronized with either the mainchain or testchain.
 
-## R 
+## R
 
 ### RAO
 
@@ -238,7 +248,7 @@ A measure of a subnet miner's performance relative to other subnet miners in the
 
 This happens in two cases:
 
-- When you register either as a subnet validator or a subnet miner and get a `UID` in return, the registration cost TAO you pay is recycled. 
+- When you register either as a subnet validator or a subnet miner and get a `UID` in return, the registration cost TAO you pay is recycled.
 - Emissions are recycled for those subnets that have registration turned off or paused.
 
 When TAO is burned it is permanently removed from circulation, reducing total supply.
@@ -253,8 +263,7 @@ The process of recreating a lost or deleted coldkey or hotkey using the associat
 
 The process of registering keys with a subnet and purchasing a UID slot.
 
-
-## S 
+## S
 
 ### SS58 Encoded
 
@@ -266,7 +275,7 @@ A group of elected delegates formed from the top K delegate hotkeys, responsible
 
 ### Stake
 
-The amount of currency tokens delegated to a validator UID in a subnet. Includes both self-stake (from the validator's own cold-key) and stake delegated from others. 
+The amount of currency tokens delegated to a validator UID in a subnet. Includes both self-stake (from the validator's own cold-key) and stake delegated from others.
 
 Stake determines a validator's weight in consensus as well as their emissions.
 
@@ -284,7 +293,7 @@ The framework that governs the behavior of subnet miners and ensures consensus a
 
 ### Subnet Miner
 
-The task-performing entity within a Bittensor subnet. A subnet miner is a type of node in a Bittensor subnet that is connected only to subnet validators. Subnet miners are isolated from the external world and communicate bidirectionally with subnet validators. A subnet miner is responsible for performing tasks given to them by the subnet validators in that subnet. 
+The task-performing entity within a Bittensor subnet. A subnet miner is a type of node in a Bittensor subnet that is connected only to subnet validators. Subnet miners are isolated from the external world and communicate bidirectionally with subnet validators. A subnet miner is responsible for performing tasks given to them by the subnet validators in that subnet.
 
 ### Subnet Creator
 
@@ -304,7 +313,7 @@ A key component of any incentive mechanism that defines the work the subnet mine
 
 ### Subnet Validator
 
-A type of node in a subnet that creates tasks, evaluates the performance of subnet miners and sets weights based on their output. A subnet validator is connected only to subnet miners and to the external world. Subnet validators receive inputs from the external world and communicate bidirectionally with subnet miners. 
+A type of node in a subnet that creates tasks, evaluates the performance of subnet miners and sets weights based on their output. A subnet validator is connected only to subnet miners and to the external world. Subnet validators receive inputs from the external world and communicate bidirectionally with subnet miners.
 
 ### Subnet Weights
 
@@ -324,7 +333,7 @@ A privileged key for administrative actions, replaced by governance protocol for
 
 A data object used by subnet validators and subnet miners as the main vehicle to exchange information. Synapse objects are based on the BaseModel of the Pydantic data validation library.
 
-## T 
+## T
 
 ### TAO (τ)
 
@@ -332,7 +341,7 @@ The cryptocurrency of the Bittensor network, used to incentivize participation i
 
 ### Tempo
 
-A 360-block period during which the Yuma Consensus calculates emissions to subnet participants based on the latest available ranking weight matrix. A single block is processed every 12 seconds, hence a 360-block tempo occurs every 4320 seconds or 72 minutes. 
+A 360-block period during which the Yuma Consensus calculates emissions to subnet participants based on the latest available ranking weight matrix. A single block is processed every 12 seconds, hence a 360-block tempo occurs every 4320 seconds or 72 minutes.
 
 ### Transfer
 
@@ -350,13 +359,13 @@ A measure of a subnet miner's reputation and reliability, calculated based on th
 
 A measure of the confidence in a subnet based on the stakes that set non-zero weights.
 
-## U 
+## U
 
 ### UID Slot
 
 A position occupied by a subnet miner or subnet validator within a subnet, identified by a unique UID. The UID is assigned to a hotkey when it is registered in a subnet, allowing the hotkey to participate as a subnet validator or subnet miner.
 
-## V 
+## V
 
 ### VPermit
 
@@ -366,8 +375,7 @@ Validator permits held by the delegate for specific subnets.
 
 The software component that subnet validators run to perform their subnet validation operations within a subnet.
 
-
-## W 
+## W
 
 ### Wallet Address
 
@@ -387,10 +395,10 @@ A vector maintained by each subnet validator, with each element representing the
 
 The ranking weight vectors for each subnet are transmitted to the blockchain, where they combine to form the [weight matrix](#weight-matrix) that is input for Yuma Consensus.
 
-## Y 
+## Y
 
 ### Yuma Consensus
 
-The consensus mechanism in the Bittensor blockchain that computes emissions to participants. 
+The consensus mechanism in the Bittensor blockchain that computes emissions to participants.
 
 See [Yuma Consensus](./yuma-consensus.md)
