@@ -37,7 +37,7 @@ The Bittensor SDK and Bittensor CLI are required to interact with the local bloc
 
 ### 1. Pull the Docker image
 
-You can pull the official subtensor Docker image used to create the local blockchain instance from the [GitHub Container Repository](ghcr.io/opentensor/subtensor-localnet). To do this, run the following command in your terminal:
+You can pull the official subtensor Docker image used to create the local blockchain instance from the [GitHub Container Repository](https://github.com/opentensor/subtensor/pkgs/container/subtensor-localnet). To do this, run the following command in your terminal:
 
 ```bash
 docker pull ghcr.io/opentensor/subtensor-localnet:devnet-ready
