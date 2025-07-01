@@ -27,16 +27,17 @@ You can access metagraph data through multiple interfaces:
 
 ### Bittensor CLI (btcli)
 
-The `btcli` command-line interface provides easy access to metagraph information:
+The `btcli` command-line interface provides access to a subset of metagraph information (corresponding to "lite" mode in the SDK). For full metagraph data including weights and bonds, use the Python SDK with `lite=False`.
 
 ```bash
-# Dump full metagraph to file
+# Dump metagraph subset to file (lite mode)
 btcli subnets metagraph --netuid 14 --network finney \
-    --json-output > sn14_full_metagraph.json
+    --json-output > sn14_metagraph.json
 
 # View abridged metagraph
 btcli subnets metagraph --netuid 14 --network finney
 ```
+
 ```console
                                                     Subnet 14: TAOHash
                                                      Network: finney
@@ -47,7 +48,11 @@ btcli subnets metagraph --netuid 14 --network finney
   3  │ 387.08k ξ │  61.46k ξ │ τ 325.62k │ 0.184314  │ 0.000000  │  27.280861 ξ  │ 5C59… │ 5GZSAg  │ 
 
 ...
- ```
+```
+
+:::note btcli Limitations
+The btcli output shows a subset of metagraph data (lite mode). For complete data including ranks, trust scores, weights, and bonds, use the Python SDK with `lite=False`.
+:::
 
 ### Python SDK
 
@@ -56,9 +61,14 @@ The Bittensor Python SDK [Metagraph module](pathname:///python-api/html/autoapi/
 ```python
 from bittensor.core.metagraph import Metagraph
 
-# Initialize metagraph for subnet 14
+# Initialize metagraph for subnet 14 (lite mode - excludes weights/bonds)
 m = Metagraph(netuid=14, network="finney", sync=True)
+
+# Initialize metagraph with full data including weights and bonds
+m = Metagraph(netuid=14, network="finney", lite=False, sync=True)
 ```
+
+
 
 ### Smart Contract Access (Metagraph Precompile)
 
@@ -83,12 +93,12 @@ See [Subtensor:Metagraph RPC source code](https://github.com/opentensor/subtenso
 
 ### Lite vs Full Sync
 
-- **Lite Mode** (`lite=True`): Faster sync, excludes weights and bonds
-- **Full Mode** (`lite=False`): Complete data including weight matrices
+- **Lite Mode** (`lite=True`): Faster sync, excludes weights and bonds (corresponds to btcli output)
+- **Full Mode** (`lite=False`): Complete data including weight matrices and bond matrices
 
 ### Caching
 
-The metagraph supports local caching:
+The metagraph supports local caching to persistent files:
 
 ```python
 # Save metagraph for later use
@@ -101,36 +111,42 @@ metagraph.load()
 metagraph.save(root_dir=['/custom', 'path'])
 ```
 
+:::info Cache Location
+Metagraph files are saved to `~/.bittensor/metagraphs/network-{network}/netuid-{netuid}/block-{block_number}.pt` by default. The files are persistent and not temporary.
+
+**Source**: [`bittensor/bittensor/core/metagraph.py:96-115`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/metagraph.py#L96-L115)
+:::
+
 ## Data Structures
 
 ### Metagraph Object
 
-In the Bittensor Python SDK, the `Metagraph` class encapsulates the following information
+In the Bittensor Python SDK, the `Metagraph` class encapsulates the following information about a particular subnet.
 
 [Metagraph class specification, SDK reference](pathname:///python-api/html/autoapi/bittensor/core/metagraph/index.html)
-
+<!--  -->
 <details>
   <summary>Metagraph Properties</summary>
 | Name | Description |
 |------|--|
-| `netuid`  | Unique subnet identifier |
-| `network`  | Network name (finney, test, local) |
+| `netuid`  | The subnet's unique identifier |
+| `network`  | Name of the Bittensor network, i.e. mainnet ('finney'), test, or a locally deployed chain |
 | `version`  | Bittensor version number |
-| `n`  | Total number of neurons |
-| `block`  | Current blockchain block number |
-| `total_stake`  | Total stake across all neurons |
-| **Stake** / `S` | Total stake of each neuron |
+| `n`  | Total number of neurons registered on the subnet |
+| `block`  | Block number when the metagraph record was retrieved |
+| `total_stake`  | Total stake (alpha + TAO × 0.18) across all neurons | 
+| **Stake** / `S` | Total stake (alpha + TAO × 0.18) of each neuron |
 | **Alpha Stake** / `AS` | Alpha token stake |
 | **Tao Stake** / `TS` | TAO token stake |
-| **Ranks** / `R` | Performance ranking scores |
-| **Trust** / `T` | Trust scores from other neurons |
+| **Ranks** / `R` | Consensus ranking scores after weight clipping | 
+| **Trust** / `T` | Consensus alignment ratio (final rank / pre-rank) |
 | **Validator Trust** / `Tv` | Validator-specific trust scores |
-| **Consensus** / `C` | Network consensus alignment |
-| **Incentive** / `I` | Reward incentive scores |
-| **Emission** / `E` | Token emission rates |
-| **Dividends** / `D` | Dividend distributions |
-| **Bonds** / `B` | Inter-neuronal bonds |
-| **Weights** / `W` | Weight matrix between neurons |
+| **Consensus** / `C` | Stake-weighted median of weights (consensus threshold) |
+| **Incentive** / `I` | Normalized ranks (reward allocation for miners) |
+| **Emission** / `E` | Token emission amounts in RAO |
+| **Dividends** / `D` | Bond-based rewards for validators |
+| **Bonds** / `B` | Inter-neuronal bond matrix (speculative investments) |
+| **Weights** / `W` | Weight matrix (validator → miner assignments) |
 | `uids` |  Unique neuron identifiers |
 | `hotkeys` |  Neuron hotkey addresses |
 | `coldkeys` |  Neuron coldkey addresses |
@@ -160,6 +176,48 @@ In the Bittensor Python SDK, the `Metagraph` class encapsulates the following in
 | `pool` |  Liquidity pool information (`MetagraphInfoPool`) |
 | `emissions` |  Emission configuration (`MetagraphInfoEmissions`) |
 </details>
+
+### Stake Calculation
+
+The total stake combines alpha and TAO stakes with a weighting factor:
+
+**Formula**: `Total Stake = Alpha Stake + (TAO Stake × 0.18)`
+
+**Source**: [`bittensor/bittensor/core/chain_data/metagraph_info.py:340`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/chain_data/metagraph_info.py#L340)
+
+```python
+tao_stake = [
+    _tbwu(ts) * settings.ROOT_TAO_STAKE_WEIGHT  # ROOT_TAO_STAKE_WEIGHT = 0.18
+    for ts in decoded["tao_stake"]
+]
+```
+
+### Consensus Metrics (Ranks, Trust, Consensus)
+
+The Yuma Consensus algorithm calculates these metrics through a multi-step process:
+
+**Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:175-200`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L175-L200)
+
+1. **Pre-ranks**: `preranks = matmul(weights, active_stake)` - stake-weighted sum of incoming weights
+2. **Consensus**: `consensus = weighted_median_col(active_stake, weights, kappa)` - stake-weighted median of weights per neuron (consensus threshold)
+3. **Weight clipping**: Weights clipped at consensus threshold to remove outliers
+4. **Final ranks**: `ranks = matmul(clipped_weights, active_stake)` - stake-weighted sum of clipped weights
+5. **Trust**: `trust = ranks / preranks` - ratio of final rank to pre-rank (consensus alignment)
+
+**Metric Details**:
+- **Consensus**: Stake-weighted median of weights assigned to each neuron by validators. Higher values indicate stronger validator agreement.
+- **Ranks**: Final consensus-based ranking after weight clipping. Used for incentive distribution.
+- **Trust**: Measures how much a neuron's rank was affected by consensus clipping (0-1 range).
+- **Validator Trust**: Sum of clipped weights set by each validator (measures validator influence).
+
+**Trust interpretation**:
+- `Trust = 1.0`: Neuron's rank unchanged by consensus (high consensus alignment)
+- `Trust < 1.0`: Neuron's rank reduced by consensus clipping (lower consensus alignment)
+- `Trust = 0.0`: Neuron's rank eliminated by consensus (no consensus)
+
+**Incentive vs Dividends**:
+- **Incentive**: Normalized ranks distributed to miners based on consensus performance
+- **Dividends**: Bond-based rewards distributed to validators based on their bond investments
 
 
 ### Neuron Info
@@ -908,3 +966,17 @@ def main():
 if __name__ == "__main__":
     main() 
 ```
+
+## Source Code References
+
+### Core Implementation
+- **Metagraph Class**: [`bittensor/bittensor/core/metagraph.py`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/metagraph.py)
+- **Chain Data**: [`bittensor/bittensor/core/chain_data/metagraph_info.py`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/chain_data/metagraph_info.py)
+- **Subtensor RPC**: [`subtensor/pallets/subtensor/src/rpc_info/metagraph.rs`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/rpc_info/metagraph.rs)
+
+### Consensus Algorithm
+- **Yuma Consensus**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs)
+- **Mathematical Operations**: [`subtensor/pallets/subtensor/src/epoch/math.rs`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/math.rs)
+
+### Key Constants
+- **TAO Stake Weight**: [`bittensor/bittensor/core/settings.py:7`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/settings.py#L7) - `ROOT_TAO_STAKE_WEIGHT = 0.18`
