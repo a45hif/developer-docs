@@ -7,13 +7,18 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Heading from '@theme/Heading';
 
-# Deploy a Local Bittensor Blockchain Instance
+# Create a Local Bittensor Blockchain Instance
 
-This tutorial will guide the user through deploying a local instance of Subtensor, Bittensor's L1 blockchain. This is useful in general Bittensor development, as it gives you more freedom over chain state than when working against mainnet or even testnet. For example, it is much easier to create subnets without having to wait for registration availability.
+This tutorial will guide the user through deploying a local instance of Subtensor, Bittensor's L1 blockchain. Running a local instance of the Subtensor blockchain is a great way to test changes and explore the network in a safe and isolated environment.
 
-Each local chain is provisioned with an `alice` account with one million $\tau$.
+## Running a local subtensor instance
 
-In the following tutorial, we will also provision several wallets to serve as subnet creator, miner, and validator.
+This section outlines steps for running a local instance of the Subtensor blockchain. There are two supported methods:
+
+- Using a prebuilt Docker image
+- Running a local build from source
+
+Both approaches enable isolated testing, development, and debugging without requiring a connection to the mainnet. Choose the method that best fits your workflow.
 
 <Tabs queryString="local-chain">
 <TabItem value="docker" label="Using Docker (Recommended)">
@@ -87,6 +92,8 @@ If the local blockchain is running correctly, you should see the following outpu
 
 ### Prerequisites
 
+Before you begin, make sure you have installed the following on your machine:
+
 - Update your Mac or Linux workstation using your package manager
 - Install [Bittensor SDK](../getting-started/installation) and [Bittensor CLI](../getting-started/install-btcli)
 
@@ -94,19 +101,20 @@ The Bittensor SDK and Bittensor CLI are required to interact with the local bloc
 
 ### Build your local Subtensor
 
+The following steps outline how to build a local subtensor instance:
+
 #### 1. Install Rust/Cargo
 
-To run locally, Substrate requires an up-to-date install of Cargo and Rust
+To run locally, Substrate requires an up-to-date install of Cargo and Rust on your local machine. If Rust is already installed, update it using the following command:
 
-Install from Rust's website:
+```bash
+rustup update
+```
+
+If Rust is not installed, install Rust and then update your shell's source to include Cargo's path by running the following commands:
 
 ```shell
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-Update your shell's source to include Cargo's path by running the following command:
-
-```shell
 . "$HOME/.cargo/env"
 ```
 
@@ -193,3 +201,7 @@ If you encounter errors when running the local chain, consider the following:
 
 </TabItem>
 </Tabs>
+
+## Next steps
+
+Once your local chain is running, the next step is to provision wallets for local deployment. This includes creating hotkeys and coldkeys, funding wallets, and preparing accounts for testing or development tasks. For more information, see [Provision Wallets for Local Development](./provision-wallets).
