@@ -26,8 +26,7 @@ The steps in this guide assume that you are running the command from the machine
 Before you begin, make sure you have installed the following on your machine:
 
 - [Docker](https://docs.docker.com/desktop/use-desktop/)
-- [Bittensor SDK](../getting-started/installation.md)
-- [Bittensor CLI](../getting-started/install-btcli.md)
+- Install [Bittensor SDK](../getting-started/installation.md) and [Bittensor CLI](../getting-started/install-btcli.md)
 
 The Bittensor SDK and Bittensor CLI are required to interact with the local blockchain instance.
 
@@ -89,11 +88,13 @@ If the local blockchain is running correctly, you should see the following outpu
 ### Prerequisites
 
 - Update your Mac or Linux workstation using your package manager
-- Install [Bittensor SDK](../getting-started/installation) and [BTCLI](../getting-started/install-btcli)
+- Install [Bittensor SDK](../getting-started/installation) and [Bittensor CLI](../getting-started/install-btcli)
+
+The Bittensor SDK and Bittensor CLI are required to interact with the local blockchain instance.
 
 ### Build your local Subtensor
 
-#### Install Rust/Cargo
+#### 1. Install Rust/Cargo
 
 To run locally, Substrate requires an up-to-date install of Cargo and Rust
 
@@ -109,27 +110,22 @@ Update your shell's source to include Cargo's path by running the following comm
 . "$HOME/.cargo/env"
 ```
 
-#### Clone and tweak the Subtensor source
+#### 2. Clone the subtensor repo
 
-We will clone the source and make a small modification to the state configuration with which the chain is deployed.
+Next, you must fetch the subtensor codebase to your local machine. Run the following commands to clone the Github repo and navigate into the `subtensor` directory:
 
-Normally, the creation of new subnets is limited to one per day. This is inconvenient for local subnet development, so we will limit this restriction.
+```bash
+git clone https://github.com/opentensor/subtensor.git
+cd subtensor
+```
 
-1. Fetch the subtensor codebase to your local machine.
+Cloning the Subtensor repository provides all the necessary components to build and run the Bittensor blockchain locally.
 
-   ```bash
-   git clone https://github.com/opentensor/subtensor.git
-   ```
+<!-- check on a new device if this step is required -->
 
-2. Open the source file `subtensor/runtime/src/lib.rs` in the your editor of choice, and find where the variable `SubtensorInitialNetworkRateLimit` is set. It is normally configured to `7200`, which is the number of blocks per day written to the chain, i.e. the seconds in a day divided by 12, since a Subtensor block is written every twelve seconds.
+#### 3. Setup Rust
 
-   In otherwords, this setting limits the number of new subnets that can be created to one per day.
-
-3. Change the value of this variable to `1`, so we can create a new subnet every 12 seconds if we want to.
-
-#### Setup Rust
-
-This step ensures that you have the nightly toolchain and the WebAssembly (wasm) compilation target. Note that this step will run the Subtensor chain on your terminal directly, hence we advise that you run this as a background process using PM2 or other software.
+This step ensures that you have the nightly toolchain and the WebAssembly (wasm) compilation target. Note that this step will run the Subtensor chain directly on your terminal; therefore, we advise running it as a background process using PM2 or other software.
 
 Update to the nightly version of Rust:
 
@@ -137,39 +133,41 @@ Update to the nightly version of Rust:
 ./subtensor/scripts/init.sh
 ```
 
-#### Build
+#### 4. Run the blockchain locally
 
-These steps initialize your local subtensor chain in development mode. These commands will set up and run a local subtensor.
-
-Build the binary:
+Use the `localnet.sh` script to build and launch a local instance of the subtensor blockchain. To run the blockchain:
 
 ```bash
-cd subtensor
-cargo build -p node-subtensor --profile release
+./scripts/localnet.sh
 ```
 
-#### Run
+This script handles compilation and starts the node in a development-ready state.
 
-Next, run the localnet script and turn off the attempt to build the binary (as we have already done this above):
+:::info Additional configurations
+
+By default, running the `localnet.sh` script builds the Subtensor binary, purges any existing chain state, and launches the local blockchain in [fast block mode](../glossary.md#fast-blocks). To run the local blockchain in [non-fast block mode](../glossary.md#non-fast-blocks), run the following command in your terminal:
 
 ```bash
-BUILD_BINARY=0 ./scripts/localnet.sh
+./scripts/localnet.sh False
 ```
 
-:::info troubleshooting
-If you see errors to the effect that the release cannot be found in `targets/fast-blocks`, you may need to move the build artifacts from `targets/release` to `targets/fast-blocks/release`.
+The script also supports additional flags to customize its behavior:
+
+- `--no-purge`: Skips deletion of the existing chain state, allowing you to resume from a previous session.
+- `--build-only`: Compiles the binary and generates the chainspec without starting the node.
+
+These flags make it easy to adapt your localnet setup for different development workflows.
 :::
 
-### Validate
+#### 5. Verify your setup
 
 Ensure your local chain is working by checking the list of subnets.
 
-Note the use of the `--chain_endpoint` flag to target the local chain, rather than, say, test network
-
 ```shell
- btcli subnet list --network ws://127.0.0.1:9945
- btcli subnet list --network test
+btcli subnet list --network ws://127.0.0.1:9945
 ```
+
+If the local blockchain is running correctly, you should see the following output:
 
 ```console
                                                            Subnets
@@ -186,29 +184,12 @@ Note the use of the `--chain_endpoint` flag to target the local chain, rather th
 
 ```
 
-```shell
+### Troubleshooting local chain issues
 
-```
+If you encounter errors when running the local chain, consider the following:
 
-```console
-
-                                                                        Subnets
-                                                                     Network: test
-
-
-        ┃                        ┃ Price        ┃ Market Cap  ┃              ┃                          ┃               ┃                 ┃
- Netuid ┃ Name                   ┃ (τ_in/α_in)  ┃ (α * Price) ┃ Emission (τ) ┃ P (τ_in, α_in)           ┃ Stake (α_out) ┃ Supply (α)      ┃ Tempo (k/n)
-━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━
-   0    │ τ root                 │ 1.0000 τ/Τ   │ τ 5.01m     │ τ 0.0000     │ -, -                     │ Τ 3.10m       │ 5.01m Τ /21M    │ -/-
-  277   │ इ muv                  │ 0.4008 τ/इ   │ τ 536.06k   │ τ 0.4154     │ τ 199.85k, 498.63k इ     │ 838.83k इ     │ 1.34m इ /21M    │ 39/99
-   3    │ γ templar              │ 0.1534 τ/γ   │ τ 219.03k   │ τ 0.1690     │ τ 110.74k, 722.13k γ     │ 706.14k γ     │ 1.43m γ /21M    │ 65/99
-  119   │ Ⲃ vida                 │ 0.0748 τ/Ⲃ   │ τ 94.83k    │ τ 0.1321     │ τ 44.77k, 598.65k Ⲃ      │ 669.45k Ⲃ     │ 1.27m Ⲃ /21M    │ 81/99
-   1    │ α apex                 │ 0.0587 τ/α   │ τ 70.03k    │ τ 0.0405     │ τ 30.27k, 515.71k α      │ 677.20k α     │ 1.19m α /21M    │ 63/99
-   13   │ ν dataverse            │ 0.0467 τ/ν   │ τ 63.12k    │ τ 0.0645     │ τ 26.93k, 576.17k ν      │ 774.11k ν     │ 1.35m ν /21M    │ 75/99
-  255   │ ዉ ethiopic_wu          │ 0.0181 τ/ዉ   │ τ 21.94k    │ τ 0.0133     │ τ 10.72k, 592.40k ዉ      │ 619.73k ዉ     │ 1.21m ዉ /21M    │ 17/99
-
-...
-```
+- Fast and non-fast block modes are compiled into separate directories. Ensure you're using the correct build for your selected mode and that it has been compiled before starting the chain.
+- Any time you pull updates or make changes to the _subtensor_ repository, you must rebuild the chain for those changes to take effect.
 
 </TabItem>
 </Tabs>
