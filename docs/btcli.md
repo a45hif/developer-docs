@@ -52,10 +52,9 @@ aliases: conf, c
 
 **Commands**:
 
-- `set`: Sets or updates configuration values in...
+- `set`: Sets or updates configuration values in the BTCLI config file.
 - `get`: Prints the current config file in a table.
-- `clear`: Clears the fields in the config file and...
-- `metagraph`: Command option to configure the display of...
+- `clear`: Clears the fields in the config file and sets them to 'None'.
 
 ### `btcli config set`
 
@@ -76,7 +75,7 @@ Note:
 
 - Network values can be network names (e.g., 'finney', 'test') or websocket URLs
 - Rate tolerance is specified as a decimal (e.g., 0.05 for 0.05%)
-- Changes are saved to ~/.bittensor/btcli.yaml
+- Changes are saved to `~/.bittensor/btcli.yaml`
 - Use `btcli config get` to view current settings
 
 **Usage**:
@@ -147,21 +146,6 @@ btcli config clear [OPTIONS]
 - `--all`
 - `--help`: Show this message and exit.
 
-### `btcli config metagraph`
-
-Command option to configure the display of the metagraph columns.
-
-**Usage**:
-
-```console
-btcli config metagraph [OPTIONS]
-```
-
-**Options**:
-
-- `--reset`: Restore the display of metagraph columns to show all columns.
-- `--help`: Show this message and exit.
-
 ## `btcli view`
 
 Display html dashboard with subnets list, stake, and neuron information.
@@ -206,30 +190,20 @@ aliases: w, wallets
 
 **Commands**:
 
-- `list`: Displays all the wallets and their...
-- `swap-hotkey`: Swap hotkeys of a given wallet on the...
-- `regen-coldkey`: Regenerate a coldkey for a wallet on the...
-- `regen-coldkeypub`: Regenerates the public part of a coldkey...
+- `list`: Displays all the wallets and their corresponding hotkeys that are located in the wallet path specified in the config.
+- `swap-hotkey`: Swap hotkeys of a given wallet on the blockchain.
+- `regen-coldkey`: Regenerate a coldkey for a wallet on the Bittensor blockchain network.
+- `regen-coldkeypub`: Regenerates the public part of a coldkey (coldkeypub.txt) for a wallet.
 - `regen-hotkey`: Regenerates a hotkey for a wallet.
 - `new-hotkey`: Create a new hotkey for a wallet.
 - `new-coldkey`: Create a new coldkey.
-- `create`: Create a complete wallet by setting up...
+- `create`: Create a complete wallet by setting up both coldkey and hotkeys.
 - `balance`: Check the balance of the wallet.
-- `history`: Show the history of the transfers carried...
-- `overview`: Displays a detailed overview of the user's...
-- `transfer`: Send TAO tokens from one wallet to another...
-- `inspect`: Displays the details of the user's wallet...
-- `set-identity`: Create or update the on-chain identity of...
-- `get-identity`: Shows the identity details of a user's...
-- `sign`: Allows users to sign a message with the...
-- `swap_hotkey`: Swap hotkeys of a given wallet on the...
-- `regen_coldkey`: Regenerate a coldkey for a wallet on the...
-- `regen_coldkeypub`: Regenerates the public part of a coldkey...
-- `regen_hotkey`: Regenerates a hotkey for a wallet.
-- `new_hotkey`: Create a new hotkey for a wallet.
-- `new_coldkey`: Create a new coldkey.
-- `set_identity`: Create or update the on-chain identity of...
-- `get_identity`: Shows the identity details of a user's...
+- `overview`: Displays a detailed overview of the user's registered accounts on the Bittensor network.
+- `transfer`: Send TAO tokens from one wallet to another wallet on the Bittensor network.
+- `set-identity`: Create or update the on-chain identity of a coldkey or a hotkey on the Bittensor network.
+- `get-identity`: Shows the identity details of a user's coldkey or hotkey.
+- `sign`: Allows users to sign a message with the provided wallet or wallet hotkey.
 
 ### `btcli wallet list`
 
@@ -263,15 +237,12 @@ btcli wallet list [OPTIONS]
 
 Swap hotkeys of a given wallet on the blockchain. For a registered key pair, for example, a (coldkeyA, hotkeyA) pair, this command swaps the hotkeyA with a new, unregistered, hotkeyB to move the original registration to the (coldkeyA, hotkeyB) pair.
 
-**Usage:**
-
-The command is used to swap the hotkey of a wallet for another hotkey on that same wallet.
-
-**Important:**
+:::info
 
 - Make sure that your original key pair (coldkeyA, hotkeyA) is already registered.
 - Make sure that you use a newly created hotkeyB in this command. A hotkeyB that is already registered cannot be used in this command.
 - Finally, note that this command requires a fee of 1 TAO for recycling and this fee is taken from your wallet (coldkeyA).
+  :::
 
 **Example:**
 
@@ -283,6 +254,8 @@ btcli wallet swap_hotkey destination_hotkey_name --wallet-name your_wallet_name 
 
 ```console
 btcli wallet swap-hotkey [OPTIONS] [DESTINATION_HOTKEY_NAME]
+
+alias: swap_hotkey
 ```
 
 **Arguments**:
@@ -316,12 +289,16 @@ Users can specify a mnemonic, a seed string, or a JSON file path to regenerate a
 btcli wallet regen-coldkey --mnemonic "word1 word2 ... word12"
 ```
 
-Note: This command is critical for users who need to regenerate their coldkey either for recovery or for security reasons.
+:::info
+This command is critical for users who need to regenerate their coldkey either for recovery or for security reasons.
+:::
 
 **Usage**:
 
 ```console
 btcli wallet regen-coldkey [OPTIONS]
+
+alias: regen_coldkey
 ```
 
 **Options**:
@@ -354,12 +331,15 @@ The command requires either a public key in hexadecimal format or an `SS58` addr
 btcli wallet regen_coldkeypub --ss58_address 5DkQ4...
 ```
 
-Note: This command is particularly useful for users who need to regenerate their coldkeypub, perhaps due to file corruption or loss. You will need either ss58 address or public hex key from your old coldkeypub.txt for the wallet. It is a recovery-focused utility that ensures continued access to your wallet functionalities.
-
+:::info
+This command is particularly useful for users who need to regenerate their coldkeypub, perhaps due to file corruption or loss. You will need either ss58 address or public hex key from your old coldkeypub.txt for the wallet. It is a recovery-focused utility that ensures continued access to your wallet functionalities.
+:::
 **Usage**:
 
 ```console
 btcli wallet regen-coldkeypub [OPTIONS]
+
+alias: regen_coldkeypub
 ```
 
 **Options**:
@@ -387,13 +367,17 @@ Users can provide a mnemonic, seed string, or a JSON file to regenerate the hotk
 btcli wallet regen_hotkey --seed 0x1234...
 ```
 
-Note: This command is essential for users who need to regenerate their hotkey, possibly for security upgrades or key recovery.
+:::info
+This command is essential for users who need to regenerate their hotkey, possibly for security upgrades or key recovery.
 It should be used with caution to avoid accidental overwriting of existing keys.
+:::
 
 **Usage**:
 
 ```console
 btcli wallet regen-hotkey [OPTIONS]
+
+alias: regen_hotkey
 ```
 
 **Options**:
@@ -425,12 +409,16 @@ existing hotkey.
 btcli wallet new-hotkey --n_words 24
 ```
 
-Note: This command is useful to create additional hotkeys for different purposes, such as running multiple subnet miners or subnet validators or separating operational roles within the Bittensor network.
+:::info
+This command is useful to create additional hotkeys for different purposes, such as running multiple subnet miners or subnet validators or separating operational roles within the Bittensor network.
+:::
 
 **Usage**:
 
 ```console
 btcli wallet new-hotkey [OPTIONS]
+
+alias: new_hotkey
 ```
 
 **Options**:
@@ -459,12 +447,16 @@ The command creates a new coldkey. It provides options for the mnemonic word cou
 btcli wallet new_coldkey --n_words 15
 ```
 
-Note: This command is crucial for users who need to create a new coldkey for enhanced security or as part of setting up a new wallet. It is a foundational step in establishing a secure presence on the Bittensor network.
+:::info
+This command is crucial for users who need to create a new coldkey for enhanced security or as part of setting up a new wallet. It is a foundational step in establishing a secure presence on the Bittensor network.
+:::
 
 **Usage**:
 
 ```console
 btcli wallet new-coldkey [OPTIONS]
+
+alias: new_coldkey
 ```
 
 **Options**:
@@ -563,35 +555,6 @@ btcli wallet balance [OPTIONS]
 - `--verbose`: Enable verbose output.
 - `--help`: Show this message and exit.
 
-### `btcli wallet history`
-
-Show the history of the transfers carried out with the provided wallet on the Bittensor network.
-
-**Usage:**
-
-The output shows the latest transfers of the provided wallet, showing the columns 'From', 'To', 'Amount', 'Extrinsic ID' and 'Block Number'.
-
-**Example:**
-
-```
-btcli wallet history
-```
-
-**Usage**:
-
-```console
-btcli wallet history [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
 ### `btcli wallet overview`
 
 Displays a detailed overview of the user's registered accounts on the Bittensor network.
@@ -674,60 +637,6 @@ btcli wallet transfer [OPTIONS]
 - `--verbose`: Enable verbose output.
 - `--help`: Show this message and exit.
 
-### `btcli wallet inspect`
-
-Displays the details of the user's wallet pairs (coldkey, hotkey) on the Bittensor network.
-
-The output is presented as a table with the below columns:
-
-- Coldkey: The coldkey associated with the user's wallet.
-
-- Balance: The balance of the coldkey.
-
-- Delegate: The name of the delegate to which the coldkey has staked TAO.
-
-- Stake: The amount of stake held by both the coldkey and hotkey.
-
-- Emission: The emission or rewards earned from staking.
-
-- Netuid: The network unique identifier of the subnet where the hotkey is active (i.e., validating).
-
-- Hotkey: The hotkey associated with the neuron on the network.
-
-**Usage:**
-
-This command can be used to inspect a single wallet or all the wallets located at a specified path. It is useful for a comprehensive overview of a user's participation and performance in the Bittensor network.
-
-**Example:**
-
-```
-btcli wallet inspect
-```
-
-```
-btcli wallet inspect --all -n 1 -n 2 -n 3
-```
-
-Note: The `inspect` command is for displaying information only and does not perform any transactions or state changes on the blockchain. It is intended to be used with Bittensor CLI and not as a standalone function in user code.
-
-**Usage**:
-
-```console
-btcli wallet inspect [OPTIONS]
-```
-
-**Options**:
-
-- `-a, --all, --all-wallets`: Inspect all the wallets at the specified wallet path.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `-n, --netuids, --netuid TEXT`: Set the netuid(s) to exclude. Separate multiple netuids with a comma, for example: `-n 0,1,2`.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
 ### `btcli wallet set-identity`
 
 Create or update the on-chain identity of a coldkey or a hotkey on the Bittensor network. Incurs a 1 TAO transaction fee.
@@ -746,12 +655,16 @@ If the user does not have a hotkey, the coldkey address is used by default. If s
 btcli wallet set_identity
 ```
 
-Note: This command should only be used if the user is willing to incur the a recycle fee associated with setting an identity on the blockchain. It is a high-level command that makes changes to the blockchain state and should not be used programmatically as part of other scripts or applications.
+:::info
+This command should only be used if the user is willing to incur the a recycle fee associated with setting an identity on the blockchain. It is a high-level command that makes changes to the blockchain state and should not be used programmatically as part of other scripts or applications.
+:::
 
 **Usage**:
 
 ```console
 btcli wallet set-identity [OPTIONS]
+
+alias: set_identity
 ```
 
 **Options**:
@@ -790,12 +703,16 @@ The command displays the information in a table format showing:
 btcli wallet get_identity --key &lt;s58_address&gt;
 ```
 
-Note: This command is primarily used for informational purposes and has no side effects on the blockchain network state.
+:::info
+This command is primarily used for informational purposes and has no side effects on the blockchain network state.
+:::
 
 **Usage**:
 
 ```console
 btcli wallet get-identity [OPTIONS]
+
+alias: get_identity
 ```
 
 **Options**:
@@ -844,307 +761,6 @@ btcli wallet sign [OPTIONS]
 - `--verbose`: Enable verbose output.
 - `--help`: Show this message and exit.
 
-### `btcli wallet swap_hotkey`
-
-Swap hotkeys of a given wallet on the blockchain. For a registered key pair, for example, a (coldkeyA, hotkeyA) pair, this command swaps the hotkeyA with a new, unregistered, hotkeyB to move the original registration to the (coldkeyA, hotkeyB) pair.
-
-**Usage:**
-
-The command is used to swap the hotkey of a wallet for another hotkey on that same wallet.
-
-**Important:**
-
-- Make sure that your original key pair (coldkeyA, hotkeyA) is already registered.
-- Make sure that you use a newly created hotkeyB in this command. A hotkeyB that is already registered cannot be used in this command.
-- Finally, note that this command requires a fee of 1 TAO for recycling and this fee is taken from your wallet (coldkeyA).
-
-**Example:**
-
-```
-btcli wallet swap_hotkey destination_hotkey_name --wallet-name your_wallet_name --wallet-hotkey original_hotkey
-```
-
-**Usage**:
-
-```console
-btcli wallet swap_hotkey [OPTIONS] [DESTINATION_HOTKEY_NAME]
-```
-
-**Arguments**:
-
-- `[DESTINATION_HOTKEY_NAME]`: Destination hotkey name.
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
-
-### `btcli wallet regen_coldkey`
-
-Regenerate a coldkey for a wallet on the Bittensor blockchain network.
-
-This command is used to create a new coldkey from an existing mnemonic, seed, or JSON file.
-
-**Usage:**
-
-Users can specify a mnemonic, a seed string, or a JSON file path to regenerate a coldkey. The command supports optional password protection for the generated key.
-
-**Example:**
-
-```
-btcli wallet regen-coldkey --mnemonic "word1 word2 ... word12"
-```
-
-Note: This command is critical for users who need to regenerate their coldkey either for recovery or for security reasons.
-
-**Usage**:
-
-```console
-btcli wallet regen_coldkey [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--mnemonic TEXT`: Mnemonic used to regenerate your key. For example: horse cart dog ...
-- `--seed TEXT`: Seed hex string used to regenerate your key. For example: 0x1234...
-- `-j, --json TEXT`: Path to a JSON file containing the encrypted key backup. For example, a JSON file from PolkadotJS.
-- `--json-password TEXT`: Password to decrypt the JSON file.
-- `--use-password / --no-use-password`: Set this to `True` to protect the generated Bittensor key with a password. [default: use-password]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli wallet regen_coldkeypub`
-
-Regenerates the public part of a coldkey (coldkeypub.txt) for a wallet.
-
-Use this command when you need to move machine for subnet mining. Use the public key or SS58 address from your coldkeypub.txt that you have on another machine to regenerate the coldkeypub.txt on this new machine.
-
-**Usage:**
-
-The command requires either a public key in hexadecimal format or an `SS58` address from the existing coldkeypub.txt from old machine to regenerate the coldkeypub on the new machine.
-
-**Example:**
-
-```
-btcli wallet regen_coldkeypub --ss58_address 5DkQ4...
-```
-
-Note: This command is particularly useful for users who need to regenerate their coldkeypub, perhaps due to file corruption or loss. You will need either ss58 address or public hex key from your old coldkeypub.txt for the wallet. It is a recovery-focused utility that ensures continued access to your wallet functionalities.
-
-**Usage**:
-
-```console
-btcli wallet regen_coldkeypub [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--public-key-hex TEXT`: The public key in hex format.
-- `--ss58, --ss58-address TEXT`: The SS58 address of the coldkey.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli wallet regen_hotkey`
-
-Regenerates a hotkey for a wallet.
-
-Similar to regenerating a coldkey, this command creates a new hotkey from a mnemonic, seed, or JSON file.
-
-**Usage:**
-
-Users can provide a mnemonic, seed string, or a JSON file to regenerate the hotkey. The command supports optional password protection and can overwrite an existing hotkey.
-
-```
-btcli wallet regen_hotkey --seed 0x1234...
-```
-
-Note: This command is essential for users who need to regenerate their hotkey, possibly for security upgrades or key recovery.
-It should be used with caution to avoid accidental overwriting of existing keys.
-
-**Usage**:
-
-```console
-btcli wallet regen_hotkey [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--mnemonic TEXT`: Mnemonic used to regenerate your key. For example: horse cart dog ...
-- `--seed TEXT`: Seed hex string used to regenerate your key. For example: 0x1234...
-- `-j, --json TEXT`: Path to a JSON file containing the encrypted key backup. For example, a JSON file from PolkadotJS.
-- `--json-password TEXT`: Password to decrypt the JSON file.
-- `--use-password / --no-use-password`: Set to 'True' to protect the generated Bittensor key with a password. [default: no-use-password]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli wallet new_hotkey`
-
-Create a new hotkey for a wallet.
-
-**Usage:**
-
-This command is used to generate a new hotkey for managing a neuron or participating in a subnet. It provides options for the mnemonic word count, and supports password protection. It also allows overwriting the
-existing hotkey.
-
-**Example:**
-
-```
-btcli wallet new-hotkey --n_words 24
-```
-
-Note: This command is useful to create additional hotkeys for different purposes, such as running multiple subnet miners or subnet validators or separating operational roles within the Bittensor network.
-
-**Usage**:
-
-```console
-btcli wallet new_hotkey [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--n-words, --n_words INTEGER`: The number of words used in the mnemonic. Options: [12, 15, 18, 21, 24]
-- `--use-password / --no-use-password`: Set to 'True' to protect the generated Bittensor key with a password. [default: no-use-password]
-- `--uri TEXT`: Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie', 'Dave', 'Eve')
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli wallet new_coldkey`
-
-Create a new coldkey. A coldkey is required for holding TAO balances and performing high-value transactions.
-
-**Usage:**
-
-The command creates a new coldkey. It provides options for the mnemonic word count, and supports password protection. It also allows overwriting an existing coldkey.
-
-**Example:**
-
-```
-btcli wallet new_coldkey --n_words 15
-```
-
-Note: This command is crucial for users who need to create a new coldkey for enhanced security or as part of setting up a new wallet. It is a foundational step in establishing a secure presence on the Bittensor network.
-
-**Usage**:
-
-```console
-btcli wallet new_coldkey [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--n-words, --n_words INTEGER`: The number of words used in the mnemonic. Options: [12, 15, 18, 21, 24]
-- `--use-password / --no-use-password`: Set this to `True` to protect the generated Bittensor key with a password. [default: use-password]
-- `--uri TEXT`: Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie', 'Dave', 'Eve')
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli wallet set_identity`
-
-Create or update the on-chain identity of a coldkey or a hotkey on the Bittensor network. Incurs a 1 TAO transaction fee.
-
-The on-chain identity includes attributes such as display name, legal name, web URL, PGP fingerprint, and contact information, among others.
-
-The command prompts the user for the identity attributes and validates the input size for each attribute. It provides an option to update an existing validator hotkey identity. If the user consents to the transaction cost, the identity is updated on the blockchain.
-
-Each field has a maximum size of 64 bytes. The PGP fingerprint field is an exception and has a maximum size of 20 bytes. The user is prompted to enter the PGP fingerprint as a hex string, which is then converted to bytes. The user is also prompted to enter the coldkey or hotkey `ss58` address for the identity to be updated.
-
-If the user does not have a hotkey, the coldkey address is used by default. If setting a validator identity, the hotkey will be used by default. If the user is setting an identity for a subnet, the coldkey will be used by default.
-
-**Example:**
-
-```
-btcli wallet set_identity
-```
-
-Note: This command should only be used if the user is willing to incur the a recycle fee associated with setting an identity on the blockchain. It is a high-level command that makes changes to the blockchain state and should not be used programmatically as part of other scripts or applications.
-
-**Usage**:
-
-```console
-btcli wallet set_identity [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--name TEXT`: The display name for the identity.
-- `--web-url, --web TEXT`: The web URL for the identity.
-- `--image-url, --image TEXT`: The image URL for the identity.
-- `--discord TEXT`: The Discord handle for the identity.
-- `--description TEXT`: The description for the identity.
-- `--additional TEXT`: Additional details for the identity.
-- `--github TEXT`: The GitHub repository for the identity.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
-
-### `btcli wallet get_identity`
-
-Shows the identity details of a user's coldkey or hotkey.
-
-The command displays the information in a table format showing:
-
-- Address: The `ss58` address of the queried key.
-
-- Item: Various attributes of the identity such as stake, rank, and trust.
-
-- Value: The corresponding values of the attributes.
-
-**Example:**
-
-```
-btcli wallet get_identity --key &lt;s58_address&gt;
-```
-
-Note: This command is primarily used for informational purposes and has no side effects on the blockchain network state.
-
-**Usage**:
-
-```console
-btcli wallet get_identity [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-k, --ss58, --coldkey_ss58, --coldkey.ss58_address, --coldkey.ss58, --key TEXT`: Coldkey address of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
 ## `btcli stake`
 
 **Usage**:
@@ -1152,7 +768,7 @@ btcli wallet get_identity [OPTIONS]
 ```console
 btcli stake [OPTIONS] COMMAND [ARGS]...
 
-aliases: st
+alias: st
 ```
 
 **Options**:
@@ -1161,12 +777,12 @@ aliases: st
 
 **Commands**:
 
-- `add`: Stake TAO to one or more hotkeys on...
-- `remove`: Unstake TAO from one or more hotkeys and...
-- `list`: Display detailed stake information for a...
-- `move`: Move staked TAO between hotkeys while...
-- `transfer`: Transfer stake between coldkeys while...
-- `swap`: Swap stake between different subnets while...
+- `add`: Stake TAO to one or more hotkeys on specific netuids with your coldkey.
+- `remove`: Unstake TAO from one or more hotkeys and transfer them back to the user's coldkey wallet.
+- `list`: Display detailed stake information for a wallet across all subnets.
+- `move`: Move staked TAO between hotkeys while keeping the same coldkey ownership.
+- `transfer`: Transfer stake between coldkeys while keeping the same hotkey ownership.
+- `swap`: Swap stake between different subnets while keeping the same coldkey-hotkey pair ownership.
 - `child`: Child Hotkey commands, alias: `children`
 - `children`
 
@@ -1531,6 +1147,8 @@ btcli stake swap [OPTIONS]
 
 ```console
 btcli stake child [OPTIONS] COMMAND [ARGS]...
+
+alias: children
 ```
 
 **Options**:
@@ -1564,6 +1182,8 @@ btcli stake child get --all-netuids
 
 ```console
 btcli stake child get [OPTIONS]
+
+alias: children
 ```
 
 **Options**:
@@ -1596,6 +1216,8 @@ btcli stake child set -c 5FCL3gmjtQV4xxxxuEPEFQVhyyyyqYgNwX7drFLw7MSdBnxP -c 5Hp
 
 ```console
 btcli stake child set [OPTIONS]
+
+alias: children
 ```
 
 **Options**:
@@ -1630,6 +1252,8 @@ btcli stake child revoke --hotkey &lt;parent_hotkey&gt; --netuid 1
 
 ```console
 btcli stake child revoke [OPTIONS]
+
+alias: children
 ```
 
 **Options**:
@@ -1670,170 +1294,8 @@ To set a new take value, use the '--take' option:
 
 ```console
 btcli stake child take [OPTIONS]
-```
 
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--hotkey TEXT`
-- `--netuid INTEGER`: The netuid of the subnet, (e.g. 23)
-- `--all-netuids, --all, --allnetuids`: When this flag is used it sets child hotkeys on all the subnets.
-- `-t, --take FLOAT`: Use to set the take value for your child hotkey. When not used, the command will fetch the current take value.
-- `--wait-for-inclusion / --no-wait-for-inclusion`: If `True`, waits until the transaction is included in a block. [default: wait-for-inclusion]
-- `--wait-for-finalization / --no-wait-for-finalization`: If `True`, waits until the transaction is finalized on the blockchain. [default: wait-for-finalization]
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli stake children`
-
-**Usage**:
-
-```console
-btcli stake children [OPTIONS] COMMAND [ARGS]...
-```
-
-**Options**:
-
-- `--help`: Show this message and exit.
-
-**Commands**:
-
-- `get`: Get all the child hotkeys on a specified...
-- `set`: Set child hotkeys on specified subnets.
-- `revoke`: Remove all children hotkeys on a specified...
-- `take`: Get and set your child hotkey take on a...
-
-#### `btcli stake children get`
-
-Get all the child hotkeys on a specified subnet.
-
-Users can specify the subnet and see the child hotkeys and the proportion that is given to them. This command is used to view the authority delegated to different hotkeys on the subnet.
-
-**Example:**
-
-```
-btcli stake child get --netuid 1
-```
-
-```
-btcli stake child get --all-netuids
-```
-
-**Usage**:
-
-```console
-btcli stake children get [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet (e.g. 2)
-- `--all-netuids, --all, --allnetuids`: When set, gets the child hotkeys from all the subnets.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-#### `btcli stake children set`
-
-Set child hotkeys on specified subnets.
-
-Users can specify the 'proportion' to delegate to child hotkeys (ss58 address). The sum of proportions cannot be greater than 1.
-
-This command is used to delegate authority to different hotkeys, securing their position and influence on the subnet.
-
-**Example:**
-
-```
-btcli stake child set -c 5FCL3gmjtQV4xxxxuEPEFQVhyyyyqYgNwX7drFLw7MSdBnxP -c 5Hp5dxxxxtGg7pu8dN2btyyyyVA1vELmM9dy8KQv3LxV8PA7 --hotkey default --netuid 1 -p 0.3 -p 0.7
-```
-
-**Usage**:
-
-```console
-btcli stake children set [OPTIONS]
-```
-
-**Options**:
-
-- `-c, --children TEXT`: Enter child hotkeys (ss58)
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--all-netuids / --no-all-netuids`: Use all netuids [default: no-all-netuids]
-- `-p, --proportions, --prop FLOAT`: Enter the stake weight proportions for the child hotkeys (sum should be less than or equal to 1)
-- `--wait-for-inclusion / --no-wait-for-inclusion`: If `True`, waits until the transaction is included in a block. [default: wait-for-inclusion]
-- `--wait-for-finalization / --no-wait-for-finalization`: If `True`, waits until the transaction is finalized on the blockchain. [default: wait-for-finalization]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-#### `btcli stake children revoke`
-
-Remove all children hotkeys on a specified subnet.
-
-This command is used to remove delegated authority from all child hotkeys, removing their position and influence on the subnet.
-
-**Example:**
-
-```
-btcli stake child revoke --hotkey &lt;parent_hotkey&gt; --netuid 1
-```
-
-**Usage**:
-
-```console
-btcli stake children revoke [OPTIONS]
-```
-
-**Options**:
-
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet, (e.g. 8)
-- `--all-netuids, --all, --allnetuids`: When this flag is used it sets child hotkeys on all the subnets.
-- `--wait-for-inclusion / --no-wait-for-inclusion`: If `True`, waits until the transaction is included in a block. [default: wait-for-inclusion]
-- `--wait-for-finalization / --no-wait-for-finalization`: If `True`, waits until the transaction is finalized on the blockchain. [default: wait-for-finalization]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-#### `btcli stake children take`
-
-Get and set your child hotkey take on a specified subnet.
-
-The child hotkey take must be between 0 - 18%.
-
-**Example:**
-
-To get the current take value, do not use the '--take' option:
-
-    ```
-    btcli stake child take --hotkey &lt;child_hotkey&gt; --netuid 1
-    ```
-
-To set a new take value, use the '--take' option:
-
-    ```
-    btcli stake child take --hotkey &lt;child_hotkey&gt; --take 0.12 --netuid 1
-    ```
-
-**Usage**:
-
-```console
-btcli stake children take [OPTIONS]
+alias: children
 ```
 
 **Options**:
@@ -1860,7 +1322,7 @@ btcli stake children take [OPTIONS]
 ```console
 btcli sudo [OPTIONS] COMMAND [ARGS]...
 
-aliases: su
+alias: su
 ```
 
 **Options**:
@@ -1869,16 +1331,13 @@ aliases: su
 
 **Commands**:
 
-- `set`: Used to set hyperparameters for a specific...
-- `get`: Shows a list of the hyperparameters for...
-- `senate`: Shows the Senate members of the...
-- `proposals`: View active proposals for the senate in...
-- `senate-vote`: Cast a vote on an active proposal in...
-- `set-take`: Allows users to change their delegate take...
-- `get-take`: Allows users to check their delegate take...
-- `senate_vote`: Cast a vote on an active proposal in...
-- `get_take`: Allows users to check their delegate take...
-- `set_take`: Allows users to change their delegate take...
+- `set`: Used to set hyperparameters for a specific subnet.
+- `get`: Shows a list of the hyperparameters for the specified subnet.
+- `senate`: Shows the Senate members of the Bittensor's governance protocol.
+- `proposals`: View active proposals for the senate in the Bittensor's governance protocol.
+- `senate-vote`: Cast a vote on an active proposal in Bittensor's governance protocol.
+- `set-take`: Allows users to change their delegate take percentage.
+- `get-take`: Allows users to check their delegate take percentage.
 
 ### `btcli sudo set`
 
@@ -1997,13 +1456,15 @@ The user must specify the hash of the proposal they want to vote on. The command
 **Example:**
 
 ```
-btcli sudo senate_vote --proposal &lt;proposal_hash&gt;
+btcli sudo senate-vote --proposal &lt;proposal_hash&gt;
 ```
 
 **Usage**:
 
 ```console
 btcli sudo senate-vote [OPTIONS]
+
+alias: senate_vote
 ```
 
 **Options**:
@@ -2036,6 +1497,8 @@ btcli sudo set-take --wallet-name my_wallet --wallet-hotkey my_hotkey
 
 ```console
 btcli sudo set-take [OPTIONS]
+
+alias: set_take
 ```
 
 **Options**:
@@ -2065,6 +1528,8 @@ btcli sudo get-take --wallet-name my_wallet --wallet-hotkey my_hotkey
 
 ```console
 btcli sudo get-take [OPTIONS]
+
+alias: get_take
 ```
 
 **Options**:
@@ -2073,98 +1538,6 @@ btcli sudo get-take [OPTIONS]
 - `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
 - `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
 - `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli sudo senate_vote`
-
-Cast a vote on an active proposal in Bittensor's governance protocol.
-
-This command is used by Senate members to vote on various proposals that shape the network's future. Use `btcli sudo proposals` to see the active proposals and their hashes.
-
-**Usage:**
-The user must specify the hash of the proposal they want to vote on. The command then allows the Senate member to cast a 'Yes' or 'No' vote, contributing to the decision-making process on the proposal. This command is crucial for Senate members to exercise their voting rights on key proposals. It plays a vital role in the governance and evolution of the Bittensor network.
-
-**Example:**
-
-```
-btcli sudo senate_vote --proposal &lt;proposal_hash&gt;
-```
-
-**Usage**:
-
-```console
-btcli sudo senate_vote [OPTIONS]
-```
-
-**Options**:
-
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--proposal, --proposal-hash TEXT`: The hash of the proposal to vote on.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--vote-aye / --vote-nay`: The vote casted on the proposal
-- `--help`: Show this message and exit.
-
-### `btcli sudo get_take`
-
-Allows users to check their delegate take percentage.
-
-This command can be used to fetch the delegate take of your hotkey.
-
-**Example:**
-
-```
-btcli sudo get-take --wallet-name my_wallet --wallet-hotkey my_hotkey
-```
-
-**Usage**:
-
-```console
-btcli sudo get_take [OPTIONS]
-```
-
-**Options**:
-
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
-
-### `btcli sudo set_take`
-
-Allows users to change their delegate take percentage.
-
-This command can be used to update the delegate takes. To run the command, the user must have a configured wallet with both hotkey and coldkey.
-The command makes sure the new take value is within 0-18% range.
-
-**Example:**
-
-```
-btcli sudo set-take --wallet-name my_wallet --wallet-hotkey my_hotkey
-```
-
-**Usage**:
-
-```console
-btcli sudo set_take [OPTIONS]
-```
-
-**Options**:
-
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--take FLOAT`: The new take value.
 - `--quiet`: Display only critical information on the console.
 - `--verbose`: Enable verbose output.
 - `--help`: Show this message and exit.
@@ -2185,17 +1558,18 @@ aliases: subnet, s
 
 **Commands**:
 
-- `hyperparameters`: Shows a list of the hyperparameters for...
-- `list`: List all subnets and their detailed...
-- `burn-cost`: Shows the required amount of TAO to be...
+- `hyperparameters`: Shows a list of the hyperparameters for the specified subnet.
+- `list`: List all subnets and their detailed information.
+- `burn-cost`: Shows the required amount of TAO to be recycled for creating a new subnet, i.e., cost of registering a new subnet.
 - `create`: Registers a new subnet on the network.
-- `pow-register`: Register a neuron (a subnet validator or a...
-- `register`: Register a neuron (a subnet validator or a...
+- `pow-register`: Register a neuron (a subnet validator or a subnet miner) using Proof of Work (POW).
+- `register`: Register a neuron (a subnet validator or a subnet miner) in the specified subnet by recycling some TAO.
 - `metagraph`: Displays detailed information about a...
-- `show`: Displays detailed information about a...
-- `price`: Shows the historical price of a subnet for...
-- `burn_cost`: Shows the required amount of TAO to be...
-- `pow_register`: Register a neuron (a subnet validator or a...
+- `show`: Displays detailed information about a subnet including participants and their state.
+- `price`: Shows the historical price of a subnet for the past 24 hours.
+- `check-start`: Checks if a subnet's emission schedule can be started.
+- `set-identity`: Get the identity information for a subnet.
+- `get-identity`: Set or update the identity information for a subnet.
 
 ### `btcli subnets hyperparameters`
 
@@ -2285,6 +1659,8 @@ btcli subnets burn_cost
 
 ```console
 btcli subnets burn-cost [OPTIONS]
+
+alias: burn_cost
 ```
 
 **Options**:
@@ -2364,6 +1740,8 @@ This command may be disabled by the subnet owner. For example, on netuid 1 this 
 
 ```console
 btcli subnets pow-register [OPTIONS]
+
+alias pow_register
 ```
 
 **Options**:
@@ -2476,25 +1854,25 @@ If no html flag is used, the command will display the price in the cli.
 
 **Example:**
 
-```
+```bash
 btcli subnets price --netuid 1
 ```
 
-```
+```bash
 btcli subnets price --netuid 1 --html --log
 ```
 
-```
+```bash
 btcli subnets price --all --html
 ```
 
-```
+```bash
 btcli subnets price --netuids 1,2,3,4 --html
 ```
 
 **Usage**:
 
-```console
+```bash
 btcli subnets price [OPTIONS]
 ```
 
@@ -2508,72 +1886,103 @@ btcli subnets price [OPTIONS]
 - `--html`: Display the table as HTML in the browser.
 - `--help`: Show this message and exit.
 
-### `btcli subnets burn_cost`
+### `btcli subnets check-start`
 
-Shows the required amount of TAO to be recycled for creating a new subnet, i.e., cost of registering a new subnet.
-
-The current implementation anneals the cost of creating a subnet over a period of two days. If the displayed cost is unappealing to you, check back in a day or two to see if it has decreased to a more affordable level.
+Checks if a subnet's emission schedule can be started. This command verifies if a subnet's emission schedule can be started based on the subnet's registration block.
 
 **Example:**
 
-```
-btcli subnets burn_cost
+```bash
+btcli subnets check_start --netuid 1
 ```
 
-**Usage**:
+**Usage**
 
-```console
-btcli subnets burn_cost [OPTIONS]
+```bash
+btcli subnets check-start [OPTIONS]
+
+alias check_start
 ```
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
+- `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` TEXT: The subtensor network to connect to. Default: finney.
+- `--netuid`: INTEGER The netuid of the subnet in the network, (e.g. 1).
 - `--quiet`: Display only critical information on the console.
 - `--verbose`: Enable verbose output.
 - `--help`: Show this message and exit.
 
-### `btcli subnets pow_register`
+### `btcli subnets set-identity`
 
-Register a neuron (a subnet validator or a subnet miner) using Proof of Work (POW).
+Set or update the identity information for a subnet. This command allows subnet owners to set or update identity information like name, GitHub repo, contact details, etc.
 
-This method is an alternative registration process that uses computational work for securing a neuron's place on the subnet.
+**Examples:**
 
-The command starts by verifying the existence of the specified subnet. If the subnet does not exist, it terminates with an error message. On successful verification, the POW registration process is initiated, which requires solving computational puzzles.
+1. Interactive subnet identity setting:
 
-The command also supports additional wallet and subtensor arguments, enabling further customization of the registration process.
-
-**Example:**
-
-```
-btcli pow_register --netuid 1 --num_processes 4 --cuda
+```bash
+btcli subnets set-identity --netuid 1
 ```
 
-Note: This command is suitable for users with adequate computational resources to participate in POW registration.
-It requires a sound understanding of the network's operations and POW mechanics. Users should ensure their systems meet the necessary hardware and software requirements, particularly when opting for CUDA-based GPU acceleration.
+2.  Set subnet identity with specific values:
 
-This command may be disabled by the subnet owner. For example, on netuid 1 this is permanently disabled.
+```bash
+btcli subnets set-identity --netuid 1 --subnet-name MySubnet --github-repo https://github.com/myorg/mysubnet --subnet-contact team@mysubnet.net
+```
 
 **Usage**:
 
-```console
-btcli subnets pow_register [OPTIONS]
+```sh
+btcli subnets set-identity [OPTIONS]
+
+alias: set_identity
 ```
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--processors INTEGER`: Number of processors to use for POW registration.
-- `-u, --update-interval INTEGER`: The number of nonces to process before checking for the next block during registration [default: 50000]
-- `--output-in-place / --no-output-in-place`: Whether to output the registration statistics in-place. [default: output-in-place]
-- `-v, --verbose`: Whether to output the registration statistics verbosely.
-- `--use-cuda, --cuda / --no-use-cuda, --no-cuda`: Set the flag to use CUDA for POW registration. [default: no-use-cuda]
-- `-d, --dev-id INTEGER`: Set the CUDA device id(s), in the order of the device speed (0 is the fastest). [default: 0]
-- `-tbp, --threads-per-block INTEGER`: Set the number of threads per block for CUDA. [default: 256]
+- `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name` TEXT: Name of the wallet.
+- `--wallet-path`, `--wallet_path`, `--wallet.path`, `-p` TEXT: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
+- `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` `-H` TEXT: Hotkey of the wallet
+- `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` TEXT: The subtensor network to connect to.
+- `--netuid` INTEGER: The netuid of the subnet in the network, (e.g. 1).
+- `--subnet-name`, `--name` TEXT: Name of the subnet.
+- `--github-repo`, `--repo` TEXT: GitHub repository URL
+- `--subnet-contact`, `--contact`, `--email` TEXT: Contact email for subnet
+- `--subnet-url`, `--url` TEXT: Subnet URL
+- `--discord-handle`, `--discord` TEXT: Discord handle
+- `--description` TEXT: Description
+- `--additional-info` TEXT: Additional information
+- `--json-output`, `--json-out`: Outputs the result of the command as JSON.
+- `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`: Enable or disable interactive prompts.
+- `--quiet`: Display only critical information on the console.
+- `--verbose`: Enable verbose output.
+- `--help`: Show this message and exit.
+
+### `btcli subnets get-identity`
+
+Get the identity information for a subnet. This command displays the identity information of a subnet including name, GitHub repo, contact details, etc.
+
+**Examples:**
+
+```sh
+btcli subnets get-identity --netuid 1
+```
+
+**Usage**:
+
+```sh
+btcli subnets get-identity [OPTIONS]
+
+alias: get_identity
+```
+
+**Options**:
+
+- `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` TEXT: The subtensor network to connect to.
+- `--netuid` INTEGER: The netuid of the subnet in the network, (e.g. 1).
+- `--quiet`: Display only critical information on the console.
+- `--verbose`: Enable verbose output.
+- `--json-output`, `--json-out`: Outputs the result of the command as JSON.
 - `--help`: Show this message and exit.
 
 ## `btcli weights`
