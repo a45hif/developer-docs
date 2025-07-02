@@ -2,6 +2,9 @@
 title: "Install BTCLI"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Install BTCLI
 
 This page contains installation details for `btcli`, the Bittensor CLI.
@@ -16,7 +19,10 @@ For a full developer reference, see the [Bittensor CLI reference document](../bt
 
 ## Install on macOS and Linux
 
-### Install from Python Package Indexer
+You can install the Bittensor CLI on macOS and Linux using any of the following methods:
+
+<Tabs>
+  <TabItem value="pypi" label="Python Package Indexer" default>
 
 Check for the latest release at the Python Package Index: [https://pypi.org/project/bittensor-cli/](https://pypi.org/project/bittensor-cli/).
 
@@ -41,8 +47,26 @@ BTCLI version: 9.2.0
 :::warning Update frequently!
 Check frequently to make sure you are using the latest version of `btcli`.
 :::
+</TabItem>
+<TabItem value="homebrew" label="Homebrew">
+To install the Bittensor CLI using Homebrew, run the following command in your terminal:
 
-### Install from source
+```shell
+brew install btcli
+```
+
+Next, verify your installation and its version by running:
+
+```shell
+btcli --version
+```
+
+:::warning Update frequently!
+Check frequently to make sure you are using the latest version of `btcli`.
+:::
+
+</TabItem>
+<TabItem value="source" label="Install from source">
 
 1. Create and activate a virtual environment.
    :::tip Create and activate a virtual environment
@@ -77,6 +101,9 @@ Check frequently to make sure you are using the latest version of `btcli`.
    ```bash
    pip3 install .
    ```
+
+</TabItem>
+   </Tabs>
 
 ## Install on Windows
 
