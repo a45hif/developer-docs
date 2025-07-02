@@ -64,191 +64,18 @@ The commit reveal feature is designed to solve the weight-copying problem by giv
 
 **See also:** [Commit Reveal](./subnets/commit-reveal.md)
 
-Code References and Implementation Details
+### Consensus Score
 
-**Commit Reveal as Anti-Weight-Copying Mechanism:**
-- Commit reveal prevents weight copying by introducing a time delay between weight commitment and revelation
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:41` - `do_commit_weights()` implementation
-- Validators commit to weights without revealing them immediately, creating a temporal offset
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:74` - Weight commit storage in `WeightCommits<T>`
-- The mechanism ensures that copied weights are stale by the time they can be used
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1075` - `get_reveal_blocks()` timing calculation
-
-**Core Storage and Configuration:**
-
-**Commit Reveal Enablement:**
-- Commit reveal is controlled per subnet via `CommitRevealWeightsEnabled` storage
-  - `subtensor/pallets/subtensor/src/lib.rs:1430` - `pub type CommitRevealWeightsEnabled<T> = StorageMap<_, Identity, u16, bool, ValueQuery, DefaultCommitRevealWeightsEnabled<T>>;`
-- Enablement can be toggled by subnet owners or root
-  - `subtensor/pallets/subtensor/src/utils/misc.rs:472-477` - `get_commit_reveal_weights_enabled()` and `set_commit_reveal_weights_enabled()`
-
-**Weight Commit Storage:**
-- **WeightCommits**: Stores commit hashes and timing information for each validator
-  - `subtensor/pallets/subtensor/src/lib.rs:1662-1669` - `pub type WeightCommits<T: Config> = StorageDoubleMap<_, Twox64Concat, u16, Twox64Concat, T::AccountId, VecDeque<(H256, u64, u64, u64)>, OptionQuery>;`
-- **CRV3WeightCommits**: Stores v3 encrypted commits with epoch-based organization
-  - `subtensor/pallets/subtensor/src/lib.rs:1671-1680` - `pub type CRV3WeightCommits<T: Config> = StorageDoubleMap<_, Twox64Concat, u16, Twox64Concat, u64, VecDeque<(T::AccountId, BoundedVec<u8, ConstU32<MAX_CRV3_COMMIT_SIZE_BYTES>>, RoundNumber)>, ValueQuery>;`
-- **RevealPeriodEpochs**: Configurable reveal period per subnet
-  - `subtensor/pallets/subtensor/src/lib.rs:1682-1684` - `pub type RevealPeriodEpochs<T: Config> = StorageMap<_, Twox64Concat, u16, u64, ValueQuery, DefaultRevealPeriodEpochs<T>>;`
-
-**Commit Phase Implementation:**
-
-**Commit Hash Generation:**
-- Commit hash is generated from validator data using BlakeTwo256
-  - `subtensor/pallets/subtensor/src/tests/weights.rs:1520` - `let commit_hash: H256 = BlakeTwo256::hash_of(&(hotkey, netuid, uids.clone(), weight_values.clone(), salt.clone(), version_key));`
-- Hash includes: hotkey, netuid, uids, weight_values, salt, and version_key
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:74` - Commit storage with hash and timing information
-
-**Commit Validation:**
-- **Enablement Check**: Ensures commit-reveal is enabled for the subnet
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:52` - `ensure!(Self::get_commit_reveal_weights_enabled(netuid), Error::<T>::CommitRevealDisabled);`
-- **Registration Check**: Validates hotkey is registered on the network
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:56-59` - `ensure!(Self::is_hotkey_registered_on_network(netuid, &who), Error::<T>::HotKeyNotRegisteredInSubNet);`
-- **Rate Limiting**: Prevents excessive commit frequency
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:61-66` - Rate limit check via `check_rate_limit()`
-
-**Reveal Timing Calculation:**
-
-**Epoch-Based Timing:**
-- **Epoch Calculation**: Epochs are calculated based on tempo and netuid offset
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1040-1047` - `get_epoch_index()` implementation
-- **Reveal Period**: Configurable number of epochs between commit and reveal
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1095-1097` - `get_reveal_period()` and `set_reveal_period()`
-
-**Reveal Block Range:**
-- **First Reveal Block**: Calculated from commit epoch + reveal period
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1075-1085` - `get_reveal_blocks()` implementation
-- **Last Reveal Block**: First reveal block + tempo (one epoch duration)
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1086-1087` - `let last_reveal_block = first_reveal_block.saturating_add(tempo);`
-
-**Reveal Phase Implementation:**
-
-**Reveal Validation:**
-- **Enablement Check**: Ensures commit-reveal is still enabled
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:353` - `ensure!(Self::get_commit_reveal_weights_enabled(netuid), Error::<T>::CommitRevealDisabled);`
-- **Hash Verification**: Validates revealed data matches committed hash
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:396-396` - Hash matching in reveal validation
-- **Timing Validation**: Ensures reveal occurs within valid time window
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1020-1027` - `is_reveal_block_range()` implementation
-
-**Reveal Timing Checks:**
-- **Too Early**: Reveal attempted before valid reveal period
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1020-1027` - `is_reveal_block_range()` check
-- **Expired**: Commit has expired beyond reveal period
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1029-1035` - `is_commit_expired()` implementation
-- **Valid Window**: Reveal must occur exactly at `commit_epoch + reveal_period`
-
-**Commit Expiration and Cleanup:**
-
-**Expiration Logic:**
-- **Expiration Check**: Commits expire after reveal period + 1 epoch
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1029-1035` - `is_commit_expired()` function
-- **Automatic Cleanup**: Expired commits are removed during reveal operations
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:512-520` - Expired commit removal in batch reveal
-
-**Queue Management:**
-- **FIFO Processing**: Commits are processed in first-in-first-out order
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:74` - `VecDeque<(H256, u64, u64, u64)>` storage
-- **Commit Removal**: Revealed commits are removed from the queue
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:410-415` - Commit removal after successful reveal
-
-**Security Properties:**
-
-**Anti-Weight-Copying:**
-- **Temporal Offset**: Time delay prevents immediate weight copying
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1075` - Reveal timing calculation
-- **Stale Data**: Copied weights become irrelevant due to network changes
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1029-1035` - Commit expiration mechanism
-- **Hash Verification**: Cryptographic commitment prevents manipulation
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:396` - Hash verification in reveal
-
-**Rate Limiting:**
-- **Commit Rate Limit**: Prevents excessive commit frequency
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:61-66` - Rate limit validation
-- **Reveal Timing**: Strict timing windows prevent timing attacks
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1020-1027` - Reveal timing validation
-
-**Testing and Validation:**
-
-**Comprehensive Test Coverage:**
-- **Basic Functionality**: Tests verify commit and reveal workflow
-  - `subtensor/pallets/subtensor/src/tests/weights.rs:1502-1559` - `test_reveal_weights_when_commit_reveal_disabled()`
-- **Timing Validation**: Tests verify reveal timing constraints
-  - `subtensor/pallets/subtensor/src/tests/weights.rs:1663-1750` - Timing validation tests
-- **Hash Verification**: Tests verify cryptographic commitment integrity
-  - `subtensor/pallets/subtensor/src/tests/weights.rs:1750-1831` - `test_commit_reveal_hash()`
-
-**Error Handling:**
-- **CommitRevealDisabled**: Attempting operations when disabled
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:52` - Enablement check
-- **RevealTooEarly**: Reveal attempted before valid window
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1020-1027` - Timing validation
-- **ExpiredWeightCommit**: Reveal attempted after expiration
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1029-1035` - Expiration check
-- **InvalidRevealCommitHashNotMatch**: Hash verification failure
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:396` - Hash matching
-
-**Network Configuration:**
-
-**Subnet-Level Settings:**
-- **Enablement**: Per-subnet commit reveal toggle
-  - `subtensor/pallets/subtensor/src/utils/misc.rs:472-477` - Enablement functions
-- **Reveal Period**: Configurable epochs between commit and reveal
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:1095-1097` - Reveal period configuration
-- **Rate Limits**: Commit frequency restrictions
-  - `subtensor/pallets/subtensor/src/subnets/weights.rs:61-66` - Rate limiting
-
-**Default Values:**
-- **DefaultCommitRevealWeightsEnabled**: Defaults to false (disabled)
-  - `subtensor/pallets/subtensor/src/lib.rs:799` - `pub fn DefaultCommitRevealWeightsEnabled<T: Config>() -> bool { false }`
-- **DefaultRevealPeriodEpochs**: Default reveal period configuration
-  - `subtensor/pallets/subtensor/src/lib.rs:735` - `pub fn DefaultRevealPeriodEpochs<T: Config>() -> u64 { 1 }`
-
-**Key Mathematical Insights:**
-1. **Commit Hash = BlakeTwo256(hotkey, netuid, uids, weights, salt, version_key)**: Cryptographic commitment
-2. **Reveal Epoch = Commit Epoch + Reveal Period**: Timing calculation
-3. **Reveal Block Range = [first_reveal_block, last_reveal_block]**: Valid reveal window
-4. **Expiration = Current Epoch > Commit Epoch + Reveal Period + 1**: Automatic cleanup
-5. **Temporal Offset = Reveal Period × Tempo**: Anti-copying delay
-
-**Network Security Implications:**
-- **Weight Copying Prevention**: Temporal offset makes copied weights stale
-- **Consensus Stability**: Prevents rapid weight manipulation
-- **Validator Commitment**: Requires validators to commit to their assessments
-- **Network Decentralization**: Reduces influence of weight-copying validators
-- **Dynamic Adaptation**: Network changes make stale weights irrelevant
-
-**Complete Commit Reveal Flow:**
-1. **Configuration** → Subnet enables commit reveal and sets reveal period
-2. **Commit Phase** → Validator commits hash of weights without revealing them
-3. **Temporal Offset** → Network progresses for reveal_period epochs
-4. **Reveal Window** → Validator reveals weights within valid time window
-5. **Hash Verification** → System verifies revealed data matches commit hash
-6. **Weight Application** → Verified weights are applied to consensus
-7. **Cleanup** → Expired commits are automatically removed
-
-**Commit Reveal vs Traditional Weight Setting:**
-- **Traditional**: Immediate weight setting and consensus participation
-- **Commit Reveal**: Delayed weight revelation with temporal offset
-- **Security**: Commit reveal prevents weight copying and manipulation
-- **Complexity**: Additional timing and hash verification requirements
-- **Flexibility**: Configurable per subnet based on security needs
-
-### Consensus
-
-A measure of a subnet validator's agreement with other validators on the network, calculated based on their trust scores. This is a $\kappa$-centered sigmoid of trust, influencing the emission calculation.
+The consensus score is calculated as the stake-weighted median of all weights assigned to a specific neuron by validators. This creates a consensus threshold that filters out outlier weights, ensuring that only weights near the median consensus are used in final rank calculations.
 
 **See also:** [Yuma Consensus](./yuma-consensus.md), [Consensus-Based Weights](./subnets/consensus-based-weights.md)
 
-### Consensus Score
+#### Mathematical Definition:
 
-A core metric in the Yuma Consensus algorithm that represents the stake-weighted median of weights assigned to each neuron by validators. The consensus score serves as a threshold for weight clipping, determining which weights are considered "in consensus" and which are outliers.
-
-**Core Concept:**
-The consensus score is calculated as the stake-weighted median of all weights assigned to a specific neuron by validators. This creates a consensus threshold that filters out outlier weights, ensuring that only weights near the median consensus are used in final rank calculations.
-
-**Mathematical Definition:**
 For each neuron $j$, the consensus score $C_j$ is calculated as:
-$$C_j = \text{weighted\_median}(\{w_{ij} \mid i \in \text{validators}\}, \{s_i \mid i \in \text{validators}\}, \kappa)$$
+$$
+C_j = \text{weighted\_median}(\{w_{ij} \mid i \in \text{validators}\}, \{s_i \mid i \in \text{validators}\}, \kappa)
+$$
 
 Where:
 - $w_{ij}$ is the weight assigned by validator $i$ to neuron $j$
@@ -256,93 +83,25 @@ Where:
 - $\kappa$ is the consensus majority ratio (typically 51%)
 - $\text{weighted\_median}$ is the stake-weighted median function
 
-**Consensus Score in Yuma Consensus:**
+Calculation Process:
+1. **Weight collection**: Gather all weights assigned to each neuron by validators
+2. **Stake weighting**: Apply stake weights to validator opinions
+3. **Median calculation**: Find stake-weighted median using κ parameter (typically 51%)
+4. **Threshold establishment**: Consensus score becomes clipping threshold for weights
 
-**1. Pre-ranks Calculation:**
-- **Formula**: `preranks = matmul(weights, active_stake)`
-- **Purpose**: Calculate initial ranks before consensus filtering
-- **Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:591`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L591)
-
-**2. Consensus Score Calculation:**
-- **Formula**: `consensus = weighted_median_col(active_stake, weights, kappa)`
-- **Purpose**: Calculate consensus threshold for each neuron
-- **Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:595`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L595)
-
-**3. Weight Clipping:**
-- **Formula**: `clipped_weights = col_clip(weights, consensus)`
-- **Purpose**: Remove weights below consensus threshold
-- **Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:598`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L598)
-
-**4. Final Ranks:**
-- **Formula**: `ranks = matmul(clipped_weights, active_stake)`
-- **Purpose**: Calculate final ranks using consensus-filtered weights
-- **Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:605`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L605)
-
-**5. Trust Calculation:**
-- **Formula**: `trust = ranks / preranks`
-- **Purpose**: Measure consensus alignment impact
-- **Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:608`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L608)
-
-**Weighted Median Implementation:**
-
-**Core Algorithm:**
-The weighted median is calculated using a binary search approach with stake-weighted partitioning:
-
-**Source**: [`subtensor/pallets/subtensor/src/epoch/math.rs:1000-1143`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/math.rs#L1000-L1143)
-
-```rust
-pub fn weighted_median_col(
-    stake: &[I32F32],
-    score: &[Vec<I32F32>],
-    majority: I32F32,
-) -> Vec<I32F32> {
-    // For each column (neuron), calculate stake-weighted median
-    for c in 0..columns {
-        median[c] = weighted_median(&use_stake, &use_score, minority, zero, stake_sum);
-    }
-}
-```
-
-**Column-wise Processing:**
-- **Input**: Weight matrix where rows are validators and columns are neurons
-- **Output**: Consensus score vector where each element is the consensus threshold for that neuron
-- **Stake Weighting**: Each validator's weight is weighted by their stake in the median calculation
-
-**Consensus Score Properties:**
-
-**Range and Interpretation:**
+Properties and Interpretation:
 - **Range**: [0, 1] normalized values
 - **High Consensus**: Values close to 1 indicate strong validator agreement
 - **Low Consensus**: Values close to 0 indicate weak validator agreement
 - **Outlier Detection**: Weights below consensus score are clipped to 0
 
-**Network Security Properties:**
+Network Security Properties:
 - **Anti-Manipulation**: Consensus filtering prevents weight manipulation by outliers
 - **Stake-Weighted**: Higher stake validators have more influence in consensus
 - **Dynamic Threshold**: Consensus adapts to changing network conditions
-- **Majority Rule**: $\kappa$ parameter controls consensus strictness (typically 51%)
+- **Majority Rule**: κ parameter controls consensus strictness (typically 51%)
 
-**Consensus Score in Metagraph:**
-
-**Data Structure:**
-- **Storage**: Consensus scores stored as u16 vectors in blockchain state
-- **Retrieval**: Accessed via `metagraph.C` property in Python SDK
-- **Normalization**: Converted from u16 to float using `u16_normalized_float()`
-
-**Source**: [`bittensor/bittensor/core/metagraph.py:360-372`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/metagraph.py#L360-L372)
-
-```python
-@property
-def C(self) -> Tensor:
-    """
-    Represents the consensus values of neurons in the Bittensor network. 
-    Consensus is a measure of how much a neuron's contributions are trusted 
-    and agreed upon by the majority of the network.
-    """
-    return self.consensus
-```
-
-**Consensus Score vs Other Metrics:**
+#### Relationship to Other Metrics
 
 **Consensus vs Trust:**
 - **Consensus**: Stake-weighted median of weights (consensus threshold)
@@ -359,96 +118,10 @@ def C(self) -> Tensor:
 - **Validator Trust**: Sum of clipped weights set by each validator
 - **Relationship**: Validator trust measures validator influence in consensus
 
-**Testing and Validation:**
+**Source**: 
+- [`bittensor/bittensor/core/metagraph.py:360-372`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/metagraph.py#L360-372)
+- [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:595`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L595)
 
-**Consensus Calculation Testing:**
-- **Weighted Median Tests**: Verify correct stake-weighted median calculation
-- **Source**: [`subtensor/pallets/subtensor/src/tests/math.rs:1518-1854`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/tests/math.rs#L1518-L1854)
-- **Consensus Threshold Tests**: Verify consensus filtering behavior
-- **Source**: [`subtensor/pallets/subtensor/src/tests/consensus.rs:333-382`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/tests/consensus.rs#L333-L382)
-
-**Network Configuration:**
-
-**Kappa Parameter:**
-- **Default Value**: 0.51 (51% majority)
-- **Purpose**: Controls consensus strictness
-- **Effect**: Higher kappa = stricter consensus, more weight clipping
-- **Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:594`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L594)
-
-**Key Mathematical Insights:**
-1. **Consensus = Stake-Weighted Median**: Consensus score is the median of weights weighted by validator stake
-2. **Threshold Function**: Consensus score serves as clipping threshold for outlier weights
-3. **Dynamic Nature**: Consensus adapts to changing network conditions and stake distribution
-4. **Security Mechanism**: Consensus filtering prevents weight manipulation by outlier validators
-5. **Majority Rule**: $\kappa$ parameter ensures majority consensus (typically 51%)
-
-**Network Security Implications:**
-- **Outlier Protection**: Consensus filtering removes manipulative outlier weights
-- **Stake-Based Influence**: Higher stake validators have more influence in consensus
-- **Dynamic Adaptation**: Consensus thresholds adapt to changing network conditions
-- **Anti-Collusion**: Consensus prevents collusive weight manipulation
-- **Network Stability**: Consensus creates stable, predictable weight filtering
-
-**Complete Consensus Score Flow:**
-1. **Weight Submission** → Validators submit weights for all neurons
-2. **Stake Weighting** → Each validator's weight is weighted by their stake
-3. **Median Calculation** → Stake-weighted median calculated for each neuron
-4. **Threshold Setting** → Consensus score becomes clipping threshold
-5. **Weight Filtering** → Weights below consensus are clipped to 0
-6. **Rank Calculation** → Final ranks calculated using filtered weights
-7. **Trust Measurement** → Trust measures impact of consensus filtering
-
-**Consensus Score in Emission Calculation:**
-- **Direct Impact**: Consensus influences rank calculation through weight clipping
-- **Indirect Impact**: Ranks determine incentive distribution to miners
-- **Validator Impact**: Consensus affects validator trust and dividend calculation
-- **Network Effect**: Consensus creates feedback loop for network stability
-
-**Python SDK Usage:**
-
-**Accessing Consensus Scores:**
-```python
-import bittensor as bt
-
-# Initialize metagraph
-metagraph = bt.metagraph(netuid=1, network="finney", sync=True)
-
-# Get consensus scores for all neurons
-consensus_scores = metagraph.C
-print(f"Consensus scores: {consensus_scores}")
-
-# Get consensus score for specific neuron
-neuron_consensus = consensus_scores[0]  # First neuron
-print(f"Neuron 0 consensus: {neuron_consensus}")
-```
-
-**Consensus Analysis:**
-```python
-# Analyze consensus distribution
-avg_consensus = consensus_scores.mean()
-max_consensus = consensus_scores.max()
-min_consensus = consensus_scores.min()
-
-print(f"Average consensus: {avg_consensus:.4f}")
-print(f"Max consensus: {max_consensus:.4f}")
-print(f"Min consensus: {min_consensus:.4f}")
-
-# Find neurons with highest consensus
-top_consensus_indices = consensus_scores.argsort()[::-1][:10]
-print("Top 10 consensus neurons:")
-for i, idx in enumerate(top_consensus_indices):
-    print(f"  {i+1}. UID {idx}: {consensus_scores[idx]:.4f}")
-```
-
-**Error Handling:**
-- **Network Issues**: Consensus scores may be unavailable during network issues
-- **Sync Requirements**: Metagraph must be synced to get current consensus scores
-- **Lite Mode**: Consensus scores available in both lite and full metagraph modes
-
-**Testing Examples:**
-- **E2E Tests**: `bittensor/tests/e2e_tests/test_incentive.py` - Consensus score validation
-- **Unit Tests**: `bittensor/tests/unit_tests/test_metagraph.py` - Metagraph consensus testing
-- **Integration Tests**: `bittensor/tests/integration_tests/` - End-to-end consensus testing
 
 ## D
 
@@ -464,249 +137,7 @@ The amount of TAO staked by the delegate themselves.
 
 **See also:** [Managing Stake with btcli](./staking-and-delegation/managing-stake-btcli.md), [Managing Stake with SDK](./staking-and-delegation/managing-stake-sdk.md)
 
-### Validator Take %
 
-The percentage of emissions a validator takes, of the portion that depends on delegated stake (not including their emissions in proportion to their own self-stake), before the remainder is extracted back to the stakers.
-
-**See also:** [Emissions](./emissions.md)
-
-Code References and Implementation Details
-
-**Validator Take as Delegation Fee:**
-- Validator take represents the fee percentage that validators charge delegators for validation services
-  - `subtensor/pallets/subtensor/src/lib.rs:992-994` - `pub type Delegates<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, u16, ValueQuery, DefaultDelegateTake<T>>;`
-- Take is stored as a u16 value representing percentage of u16::MAX (65,535)
-  - `subtensor/pallets/subtensor/src/tests/mock.rs:168` - `pub const InitialDefaultDelegateTake: u16 = 11_796; // 18%`
-- Default take is 18% (11,796/65,535), with configurable min/max bounds
-  - `subtensor/pallets/subtensor/src/lib.rs:382` - `T::InitialDefaultDelegateTake::get()`
-
-**Storage and Configuration:**
-
-**Core Storage Implementation:**
-- **Delegates Storage**: Maps hotkey to take value in blockchain state
-  - `subtensor/pallets/subtensor/src/lib.rs:992-994` - `pub type Delegates<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, u16, ValueQuery, DefaultDelegateTake<T>>;`
-- **Default Values**: Network-wide configuration for take limits
-  - `subtensor/pallets/subtensor/src/lib.rs:382` - `DefaultDelegateTake<T>()` - Default 18%
-  - `subtensor/pallets/subtensor/src/lib.rs:393` - `DefaultMinDelegateTake<T>()` - Minimum 9%
-  - `subtensor/pallets/subtensor/src/lib.rs:977` - `MaxDelegateTake<T>` - Maximum 18%
-
-**Take Management Functions:**
-
-**Increase Take Implementation:**
-- **Rate Limiting**: Prevents rapid take increases to maintain network stability
-  - `subtensor/pallets/subtensor/src/staking/increase_take.rs:55-62` - Rate limit validation
-- **Strict Increase**: Take can only be increased, never decreased via this function
-  - `subtensor/pallets/subtensor/src/staking/increase_take.rs:50-52` - `ensure!(take > current_take, Error::<T>::DelegateTakeTooLow);`
-- **Max Bound Check**: Take cannot exceed network maximum (18%)
-  - `subtensor/pallets/subtensor/src/staking/increase_take.rs:55-56` - `ensure!(take <= max_take, Error::<T>::DelegateTakeTooHigh);`
-
-**Decrease Take Implementation:**
-- **Rate Limiting**: Prevents rapid take decreases
-  - `subtensor/pallets/subtensor/src/staking/decrease_take.rs:45-50` - Rate limit validation
-- **Strict Decrease**: Take can only be decreased, never increased via this function
-  - `subtensor/pallets/subtensor/src/staking/decrease_take.rs:48-50` - `ensure!(take < current_take, Error::<T>::DelegateTakeTooLow);`
-- **Min Bound Check**: Take cannot fall below network minimum (9%)
-  - `subtensor/pallets/subtensor/src/staking/decrease_take.rs:52-53` - `ensure!(take >= min_take, Error::<T>::DelegateTakeTooLow);`
-
-**Emission Calculation Formula:**
-
-**Return Per 1000 TAO Calculation:**
-- **Mathematical Formula**: `return_per_1000 = (emissions_per_day * (1 - take_percentage)) / (total_stake / 1000)`
-  - `subtensor/pallets/subtensor/src/rpc_info/delegate_info.rs:23-40` - `return_per_1000_tao()` implementation
-- **Take Percentage Conversion**: `take_percentage = take_value / u16::MAX`
-  - `subtensor/pallets/subtensor/src/rpc_info/delegate_info.rs:28-29` - Take to percentage conversion
-- **Delegator Return**: Delegators receive `(1 - take_percentage)` of validator emissions
-  - `subtensor/pallets/subtensor/src/rpc_info/delegate_info.rs:30-35` - Delegator return calculation
-
-**Emission Distribution Logic:**
-
-**Validator vs Delegator Emissions:**
-- **Validator Self-Stake**: Validator keeps 100% of emissions from their own stake
-  - `developer-docs/docs/staking-and-delegation/delegation.md:73-121` - Emission distribution examples
-- **Delegated Stake**: Validator takes percentage from delegated stake emissions
-  - `subtensor/pallets/subtensor/src/rpc_info/delegate_info.rs:113` - Take application to delegated emissions
-- **Delegator Proportional**: Delegators receive proportional shares of remaining emissions
-  - `developer-docs/docs/staking-and-delegation/delegation.md:73-85` - Proportional distribution formula
-
-**Example Calculation:**
-- **Validator with 18% take**: Takes 18% of delegated stake emissions
-- **Delegators receive**: 82% of delegated stake emissions
-- **Total validator emissions**: 100% of self-stake + 18% of delegated stake
-- **Mathematical representation**: `validator_total = self_stake_emissions + (delegated_stake_emissions * 0.18)`
-
-**Rate Limiting and Security:**
-
-**Transaction Rate Limits:**
-- **Take Change Rate Limit**: Prevents rapid take manipulation
-  - `subtensor/pallets/subtensor/src/staking/increase_take.rs:55-62` - Rate limit enforcement
-- **Rate Limit Storage**: Tracks last take change timestamp per hotkey
-  - `subtensor/pallets/subtensor/src/lib.rs:1656` - `LastTxBlockDelegateTake<T: Config>`
-- **Rate Limit Configuration**: Network-wide rate limit parameter
-  - `subtensor/pallets/subtensor/src/lib.rs:1473` - `TxDelegateTakeRateLimit<T>`
-
-**Ownership Validation:**
-- **Coldkey Verification**: Only hotkey owner can modify take
-  - `subtensor/pallets/subtensor/src/staking/increase_take.rs:42` - `Self::do_take_checks(&coldkey, &hotkey)?;`
-- **Registration Check**: Hotkey must be registered to set take
-  - `subtensor/pallets/subtensor/src/staking/helpers.rs:15-20` - Registration validation
-
-**Testing and Validation:**
-
-**Return Calculation Testing:**
-- **18% Take Test**: Verifies correct return calculation for 18% take
-  - `subtensor/pallets/subtensor/src/tests/delegate_info.rs:9-37` - `test_return_per_1000_tao()`
-- **Mathematical Verification**: Tests verify `return_per_1000 = 82` for 18% take with 10,000 TAO stake
-  - `subtensor/pallets/subtensor/src/tests/delegate_info.rs:19-25` - Expected return calculation
-
-**Take Management Testing:**
-- **Increase Take Tests**: Verify take can be increased up to maximum
-  - `subtensor/pallets/subtensor/src/tests/staking.rs:2761-2830` - Take increase validation
-- **Decrease Take Tests**: Verify take can be decreased down to minimum
-  - `subtensor/pallets/subtensor/src/tests/staking.rs:2830-2900` - Take decrease validation
-- **Boundary Testing**: Tests verify min/max take enforcement
-  - `subtensor/pallets/subtensor/src/tests/staking.rs:2786-2829` - Boundary condition tests
-
-**Network Configuration:**
-
-**Default Network Parameters:**
-- **InitialDefaultDelegateTake**: 18% (11,796/65,535)
-  - `subtensor/pallets/subtensor/src/tests/mock.rs:168` - Default take value
-- **MinDelegateTake**: 9% (5,898/65,535) - Minimum allowed take
-  - `subtensor/pallets/subtensor/src/lib.rs:393` - Minimum take configuration
-- **MaxDelegateTake**: 18% (11,796/65,535) - Maximum allowed take
-  - `subtensor/pallets/subtensor/src/lib.rs:977` - Maximum take configuration
-
-**Rate Limit Configuration:**
-- **TxDelegateTakeRateLimit**: Controls frequency of take changes
-  - `subtensor/pallets/subtensor/src/lib.rs:1473` - Rate limit parameter
-- **LastTxBlockDelegateTake**: Per-hotkey rate limit tracking
-  - `subtensor/pallets/subtensor/src/lib.rs:1656` - Rate limit storage
-
-**Key Mathematical Insights:**
-1. **Take Percentage = take_value / u16::MAX**: Conversion from u16 to percentage
-2. **Delegator Return = emissions * (1 - take_percentage)**: Delegator share calculation
-3. **Validator Total = self_emissions + (delegated_emissions * take_percentage)**: Total validator earnings
-4. **Return Per 1000 = (daily_emissions * (1 - take)) / (total_stake / 1000)**: Delegator return rate
-
-**Network Security Properties:**
-- **Economic Incentives**: Take creates market-driven validation fees
-- **Rate Limiting**: Prevents take manipulation and network instability
-- **Bounded Range**: Min/max limits prevent extreme take values
-- **Ownership Control**: Only hotkey owners can modify their take
-- **Transparent Calculation**: Clear mathematical formula for delegator returns
-
-**Complete Validator Take Flow:**
-1. **Registration** → Validator registers and sets initial take (18% default)
-2. **Delegation** → Delegators stake to validator
-3. **Emission Calculation** → Yuma Consensus calculates validator emissions
-4. **Take Application** → Validator extracts take percentage from delegated emissions
-5. **Distribution** → Remaining emissions distributed to delegators proportionally
-6. **Take Management** → Validator can increase/decrease take within bounds
-7. **Rate Limiting** → Changes rate-limited to prevent manipulation
-
-**Validator Take vs Other Network Fees:**
-- **Validator Take**: Fee for validation services (9-18%)
-- **Staking Fee**: One-time fee for delegation (network parameter)
-- **Registration Fee**: One-time fee for subnet registration
-- **Childkey Take**: Fee for childkey delegation (separate parameter)
-- **Network Owner Cut**: Subnet owner's share of emissions
-
-**Economic Implications:**
-- **Market Competition**: Validators compete on take rates and performance
-- **Delegator Choice**: Delegators choose validators based on take and returns
-- **Network Efficiency**: Take incentivizes quality validation services
-- **Economic Security**: Take creates skin-in-the-game for validators
-- **Dynamic Adjustment**: Take can be adjusted based on market conditions
-
-**Python SDK Usage:**
-
-**Setting Validator Take:**
-- **Main Method**: `subtensor.set_delegate_take()` - Automatically chooses increase/decrease based on current value
-  - `bittensor/bittensor/core/subtensor.py:3283-3366` - `set_delegate_take()` implementation
-- **Direct Methods**: `increase_take_extrinsic()` and `decrease_take_extrinsic()` for specific operations
-  - `bittensor/bittensor/core/extrinsics/take.py:1-110` - Direct extrinsic implementations
-- **Async Support**: `async_subtensor.set_delegate_take()` for asynchronous operations
-  - `bittensor/bittensor/core/async_subtensor.py:4537-4619` - Async implementation
-
-**Basic Usage Example:**
-```python
-import bittensor as bt
-
-# Initialize subtensor connection
-subtensor = bt.subtensor()
-
-# Create wallet (must own the hotkey)
-wallet = bt.wallet()
-
-# Set validator take to 15% (0.15)
-success, message = subtensor.set_delegate_take(
-    wallet=wallet,
-    hotkey_ss58=wallet.hotkey.ss58_address,
-    take=0.15,  # 15% take
-    wait_for_inclusion=True,
-    wait_for_finalization=True
-)
-
-if success:
-    print(f"✅ Take updated successfully: {message}")
-else:
-    print(f"❌ Failed to update take: {message}")
-```
-
-**Getting Current Take:**
-```python
-# Get current take for a hotkey
-current_take = subtensor.get_delegate_take(hotkey_ss58="5F...")
-print(f"Current take: {current_take:.2%}")  # e.g., "Current take: 18.00%"
-```
-
-**Error Handling:**
-- **DelegateTakeTooHigh**: Take exceeds maximum (18%)
-  - `bittensor/bittensor/core/errors.py:63-67` - Error definition
-- **DelegateTakeTooLow**: Take below minimum (9%) or invalid decrease
-  - `bittensor/bittensor/core/errors.py:70-75` - Error definition
-- **DelegateTxRateLimitExceeded**: Too frequent take changes
-  - `bittensor/bittensor/core/errors.py:165-171` - Rate limit error
-- **NonAssociatedColdKey**: Wallet doesn't own the hotkey
-- **HotKeyAccountNotExists**: Hotkey not registered
-
-**Advanced Usage:**
-```python
-# Async usage
-async def update_validator_take():
-    async with bt.subtensor() as subtensor:
-        success, message = await subtensor.set_delegate_take(
-            wallet=wallet,
-            hotkey_ss58=wallet.hotkey.ss58_address,
-            take=0.12,  # 12% take
-            raise_error=True  # Raise exceptions instead of returning False
-        )
-        return success, message
-
-# Direct extrinsic calls (for specific increase/decrease)
-from bittensor.core.extrinsics.take import increase_take_extrinsic, decrease_take_extrinsic
-
-# Force increase take
-success, message = increase_take_extrinsic(
-    subtensor=subtensor,
-    wallet=wallet,
-    hotkey_ss58=wallet.hotkey.ss58_address,
-    take=13107,  # u16 value for ~20% (13107/65535)
-    wait_for_inclusion=True
-)
-```
-
-**Take Value Conversion:**
-- **Float to u16**: `take_u16 = int(take_float * 0xFFFF)`
-  - `bittensor/bittensor/core/subtensor.py:3330` - Conversion implementation
-- **u16 to Float**: `take_float = take_u16 / 0xFFFF`
-  - `bittensor/bittensor/core/subtensor.py:1117` - `u16_normalized_float()` usage
-- **Example**: 18% = 0.18 * 65535 = 11,796 u16 value
-
-**Testing Examples:**
-- **E2E Tests**: `bittensor/tests/e2e_tests/test_delegate.py:84-170` - Comprehensive testing
-- **Unit Tests**: `bittensor/tests/unit_tests/test_subtensor_extended.py:956-1002` - SDK method testing
-- **Async Tests**: `bittensor/tests/unit_tests/test_async_subtensor.py:2692-2750` - Async method testing
 
 ### Delegation
 
@@ -1376,9 +807,50 @@ A denomination of TAO, representing one billionth (10<sup>-9</sup>) of a TAO.
 
 ### Rank
 
-A measure of a subnet miner's performance relative to other subnet miners in the same subnet, calculated based on the subnet miner's trust and incentive scores. This is the sum of weighted stake, contributing to the emission process.
+This metagraph property represents the final aggregate judgment of a each miner, computed by Yuma Consensus alogirithm operating over the miner-ratings submitted by a subnet's validators each tempo. The final `rank` score represent a miner's performance after any outlier weights set by validators have been removed through consensus clipping. This ensures that only weights near the median consensus are used in final calculations.
 
-**See also:** [Emissions](./emissions.md), [Yuma Consensus](./yuma-consensus.md)
+Ranks are calculated as the stake-weighted sum of consensus-clipped weights and directly determine emissions to miners.
+
+
+**See also:** [Emissions](./emissions.md), [Yuma Consensus](./yuma-consensus.md), [Subnet Metagraph](./subnets/metagraph.md)
+
+**Relationship to Other Metrics:**
+- **Ranks vs Consensus**: Ranks are calculated using consensus-clipped weights
+- **Ranks vs Trust**: Trust measures how much consensus clipping affected the rank
+- **Ranks vs Incentive**: Ranks are normalized to become incentive values
+- **Ranks vs Validator Trust**: Validator trust measures validator influence in consensus
+
+**Calculation Process:**
+1. **Pre-ranks**: Initial stake-weighted sum of all weights before consensus filtering
+2. **Consensus calculation**: Stake-weighted median of weights per neuron (consensus threshold)
+3. **Weight clipping**: Weights clipped at consensus threshold to remove outliers
+4. **Final ranks**: Stake-weighted sum of clipped weights (the rank value)
+
+**Properties and Interpretation:**
+- **Range**: [0, 1] normalized values after final normalization
+- **High Rank**: Values close to 1 indicate strong consensus-based performance
+- **Low Rank**: Values close to 0 indicate weak consensus-based performance
+- **Incentive Distribution**: Ranks directly determine incentive allocation to miner neurons
+
+**Network Security Properties:**
+- **Consensus-Based**: Ranks reflect network consensus rather than individual validator opinions
+- **Outlier Protection**: Consensus clipping prevents manipulation by outlier weights
+- **Stake-Weighted**: Higher stake validators have more influence in rank calculation
+- **Dynamic Updates**: Ranks are recalculated every epoch based on current network state
+
+**Mathematical Definition:**
+For each neuron $j$, the rank $R_j$ is calculated as:
+$$R_j = \sum_{i \in \text{validators}} S_i \cdot \overline{W_{ij}}$$
+
+Where:
+- $S_i$ is the stake of validator $i$
+- $\overline{W_{ij}}$ is the consensus-clipped weight from validator $i$ to neuron $j$
+- The sum is taken over all validators in the subnet
+
+**Source**: 
+- [`bittensor/bittensor/core/metagraph.py:325-331`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/metagraph.py#L325-331)
+- [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:605`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L605)
+
 
 ### Recycling, burning, and locking
 
@@ -1429,6 +901,42 @@ Stake determines a validator's weight in consensus as well as their emissions.
 
 **See also:** [Managing Stake with btcli](./staking-and-delegation/managing-stake-btcli.md), [Managing Stake with SDK](./staking-and-delegation/managing-stake-sdk.md), [Delegation](./staking-and-delegation/delegation.md)
 
+
+
+### Stake Weight
+
+The computed total stake value for a validator that determines their consensus power and emissions in a subnet. Stake weight combines a validator's alpha stake and TAO stake using the TAO weight parameter to calculate their total influence in the network.
+
+**See also:** [TAO Weight](#tao-weight), [Understanding Subnets](./subnets/understanding-subnets.md)
+
+
+**Mathematical Definition:**
+For a validator with alpha stake $\alpha$ and TAO stake $\tau$, the stake weight $W$ is calculated as:
+$$
+W = {\alpha + \tau \ \times w_{\tau}}
+$$
+
+Where $w_{\tau}$ is the global TAO weight parameter (currently 0.18)
+
+A validator's relative influence in a subnet is calculated as:
+$$
+\text{Relative Stake Weight} = \frac{\text{Stake Weight}_i}{\sum_{v \in \text{validators}} \text{Stake Weight}_v}
+$$
+
+**Consensus Power:**
+- **Weight Setting**: Higher stake weight means more influence when setting weights
+- **Validator Permits**: Stake weight determines eligibility for validator permits
+- **Bond Formation**: Stake weight influences bond calculations and retention
+
+**Validator Emissions:**
+- **Relative Distribution**: Higher stake weight -> higher emission share
+
+**Code References:**
+
+- **Yuma Consensus**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:530`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L530)
+- **Validator dividend distribution**: [`subtensor/pallets/subtensor/src/coinbase/run_coinbase.rs:165`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/coinbase/run_coinbase.rs#L165)
+
+
 ### Staking
 
 The process of attaching TAO to a hotkey, i.e., locking TAO to a hotkey, to participate as a subnet validator, and to secure a validator permit.
@@ -1451,7 +959,7 @@ The framework that governs the behavior of subnet miners and ensures consensus a
 
 The task-performing entity within a Bittensor subnet. A subnet miner is a type of node in a Bittensor subnet that is connected only to subnet validators. Subnet miners are isolated from the external world and communicate bidirectionally with subnet validators. A subnet miner is responsible for performing tasks given to them by the subnet validators in that subnet. 
 
-**See also:** [Subnet Miners](./miners/), [Subnet Miner Documentation](./miners/subnet_miner_docs.md)
+**See also:** [Subnet Miner Documentation](./miners/)
 
 ### Subnet Creator
 
@@ -1511,6 +1019,11 @@ The cryptocurrency of the Bittensor network, used to incentivize participation i
 
 **See also:** [Emissions](./emissions.md), [Wallets](./getting-started/wallets.md)
 
+### TAO Weight
+
+A global parameter (currently set to 0.18) that determines the relative influence of TAO stake versus alpha stake when calculating a validator's total stake weight, a critical value that influence's a validator's consensus power and emissions.
+
+**See also:** [Stake Weight](#stake-weight)
 ### Tempo
 
 A 360-block period during which the Yuma Consensus calculates emissions to subnet participants based on the latest available ranking weight matrix. A single block is processed every 12 seconds, hence a 360-block tempo occurs every 4320 seconds or 72 minutes. 
@@ -1531,213 +1044,60 @@ A group of three Opentensor Foundation employees responsible for creating propos
 
 ### Trust
 
-A measure of a subnet miner's reputation and reliability, calculated based on the consensus of subnet validators.
+In the Yuma Consensus algorithm, trust represents how much a miner's rank was affected by consensus clipping. Trust is calculated as the ratio of final rank to pre-rank. It represents how much of the original validator support survived the consensus clipping process, providing insight into whether a neuron received controversial or outlier weight assignments.
 
-Code References and Implementation Details
+**See also:** [Yuma Consensus](./yuma-consensus.md), [Subnet Metagraph](./subnets/metagraph.md)
 
-**Trust as a Core Network Metric:**
-- Trust is stored as a `float` value in both `NeuronInfo` and `NeuronInfoLite` data structures
-  - `bittensor/core/chain_data/neuron_info.py:32` - `trust (float): The trust score.`
-  - `bittensor/core/chain_data/neuron_info_lite.py:29` - `trust (float): Trust value of the neuron.`
-- Trust values are normalized using `u16_normalized_float()` function, converting from 16-bit unsigned integers to float values between 0 and 1
-  - `bittensor/core/chain_data/neuron_info.py:158` - `trust=u16_normalized_float(decoded["trust"]),`
-  - `bittensor/core/chain_data/neuron_info_lite.py:126` - `trust=u16_normalized_float(decoded["trust"]),`
-- In the metagraph, trust is represented as a tensor (numpy array or torch tensor) accessible via `metagraph.T` property
-  - `bittensor/core/metagraph.py:392` - `return self.trust`
 
-**Trust Calculation and Sources:**
-- Trust values are directly read from the blockchain state via `neuron.trust` field
-  - `bittensor/core/metagraph.py:759-762` - `self.trust = self._create_tensor([neuron.trust for neuron in self.neurons], dtype=self._dtype_registry["float32"],)`
-- The trust matrix is "inferred from the network's inter-peer weights" according to metagraph documentation
-  - `bittensor/core/metagraph.py:385-386` - `The trust matrix is inferred from the network's inter-peer weights, indicating the level of trust each neuron has in others.`
-- Trust represents the collective assessment of a neuron's reliability by other neurons in the network
-- Higher trust values indicate stronger trust relationships between neurons
+**Mathematical Definition:**
+For each neuron $j$, the trust $T_j$ is calculated as:
+$$
+T_j = \frac{R_j}{P_j}
+$$
 
-**Trust vs Validator Trust:**
-- **Trust (T)**: General trust score for all neurons, primarily miners
-  - `bittensor/core/metagraph.py:380-393` - Property T() documentation
-- **Validator Trust (Tv)**: Specialized trust score specifically for validator neurons
-  - `bittensor/core/metagraph.py:397-409` - Property Tv() documentation
-- Both are stored separately in the blockchain state and metagraph
-  - `bittensor/core/chain_data/neuron_info.py:33` - `validator_trust (float): The validation trust score.`
-  - `bittensor/core/chain_data/neuron_info_lite.py:30` - `validator_trust (float): Validator trust value of the neuron.`
-- Validator trust is crucial for network security and validation processes
+Where:
+- $R_j$ is the final rank after consensus clipping
+- $P_j$ is the pre-rank before consensus clipping
+- The ratio indicates the proportion of original support that survived consensus filtering
 
-**Trust in Consensus and Emission Calculation:**
+Interpretation:
+- **Range**: [0, 1] where 1.0 indicates perfect consensus alignment
+- **`Trust = 1.0`**: Neuron's rank unchanged by consensus (high consensus alignment)
+- **`Trust < 1.0`**: Neuron's rank reduced by consensus clipping (lower value means more reduction)
+- **`Trust = 0.0`**: Neuron's rank eliminated by consensus (no consensus support)
 
-**The Staked Weighted Trust System:**
-The consensus mechanism in Bittensor operates on a "staked weighted trust system" where trust values are combined with stake weights to determine consensus scores. This system leverages the collective judgment of all participating peers to create a robust consensus mechanism.
+Calculation Process:
+1. **Pre-ranks calculation**: $P_j = \sum_{i} S_i \cdot W_{ij}$ (stake-weighted sum of all weights)
+2. **Consensus filtering**: Weights clipped at consensus threshold to remove outliers
+3. **Final ranks calculation**: $R_j = \sum_{i} S_i \cdot \overline{W_{ij}}$ (stake-weighted sum of clipped weights)
+4. **Trust calculation**: $T_j = R_j / P_j$ (ratio of final to pre-rank)
 
-**Natural Language Analysis:**
-In simple terms, the consensus system works like a weighted voting mechanism where:
-1. Each neuron's opinion (weight) about other neurons is weighted by their stake
-2. Trust values determine how much influence each neuron has in the consensus
-3. Higher trust means more influence in the consensus calculation
-4. The $\kappa$-centered sigmoid function transforms trust values into consensus scores
+**Relationship to Other Metrics:**
+- **Trust vs Consensus**: Trust measures the impact of consensus filtering
+- **Trust vs Ranks**: Trust is the ratio of final rank to pre-rank
+- **Trust vs Validator Trust**: Trust is per-neuron, Validator Trust is per-validator
+- **Trust vs Incentive**: Trust influences incentive through consensus mechanisms
 
-**Code Implementation Details:**
+**Metric Comparison Table**
 
-**Consensus Property in Metagraph:**
-- Consensus values are stored as tensors in the metagraph and accessed via `metagraph.C`
-  - `bittensor/core/metagraph.py:360-372` - Property C() documentation and implementation
-- The consensus property returns `self.consensus` which contains consensus scores for all neurons
-  - `bittensor/core/metagraph.py:372` - `return self.consensus`
+| Metric | Purpose | Calculation | Range | Interpretation |
+|--------|---------|-------------|-------|----------------|
+| **Consensus** | Consensus threshold | Stake-weighted median of weights per neuron | [0, 1] | Higher = stronger validator agreement |
+| **Ranks** | Performance scoring | Stake-weighted sum of clipped weights | [0, 1] | Higher = better performance after consensus |
+| **Trust** | Consensus alignment | Final rank / Pre-rank | [0, 1] | 1.0 = no clipping, < 1.0 = some clipping |
+| **Validator Trust** | Validator influence | Sum of clipped weights per validator | [0, 1] | Higher = more consensus-aligned validator |
 
-**Consensus Data Flow:**
-- Consensus values are read from blockchain state and stored in neuron data structures
-  - `bittensor/core/chain_data/neuron_info.py:147` - `consensus=u16_normalized_float(decoded["consensus"]),`
-  - `bittensor/core/chain_data/neuron_info_lite.py:113` - `consensus=u16_normalized_float(decoded["consensus"]),`
-- Consensus values are normalized using `u16_normalized_float()` function, converting from 16-bit integers to float values between 0 and 1
-- In the metagraph, consensus is represented as a tensor accessible via `metagraph.C` property
-  - `bittensor/core/metagraph.py:759-762` - `self.consensus = self._create_tensor([neuron.consensus for neuron in self.neurons], dtype=self._dtype_registry["float32"],)`
+**Source**: 
+- [`bittensor/bittensor/core/metagraph.py:380-393`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/metagraph.py#L380-393)
+- [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:608`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L608)
 
-**Trust → Consensus → Rank → Incentive → Emission Pipeline:**
 
-**Step 1: Trust Calculation from Weights**
-- Trust values are "inferred from the network's inter-peer weights"
-  - `bittensor/core/metagraph.py:385-386` - `The trust matrix is inferred from the network's inter-peer weights, indicating the level of trust each neuron has in others.`
-- Each neuron i sets weights w_ij towards other neurons j, reflecting trust assessments
-  - `bittensor/core/metagraph.py:442-443` - `These weights are reflective of the neuron's assessment or judgment of other neurons in the network.`
-- Higher weights from neuron i to neuron j imply greater trust or value placed on neuron j's contributions
-  - `bittensor/core/metagraph.py:449` - `can imply greater trust or value placed on that neuron's contributions.`
 
-**Step 2: Consensus Calculation via $\kappa$-Centered Sigmoid**
-- Trust influences consensus through the $\kappa$-centered sigmoid function
-- `bittensor/core/glossary.md:52` - `This is a $\kappa$-centered sigmoid of trust, influencing the emission calculation.`
-- The $\kappa$-centered sigmoid transforms trust values into consensus scores, creating a non-linear relationship that amplifies high trust values and dampens low trust values
 
-**Step 3: Rank Calculation from Trust and Incentive**
-- Rank is calculated based on the subnet miner's trust and incentive scores
-  - `bittensor/core/glossary.md:232` - `calculated based on the subnet miner's trust and incentive scores.`
-- Rank values are stored in neuron data structures and normalized
-  - `bittensor/core/chain_data/neuron_info.py:154` - `rank=u16_normalized_float(decoded["rank"]),`
-  - `bittensor/core/chain_data/neuron_info_lite.py:120` - `rank=u16_normalized_float(decoded["rank"]),`
-- Rank determines a neuron's position in the network hierarchy and influences emission distribution
 
-**Step 4: Incentive Calculation**
-- Incentive values represent rewards neurons receive for their contributions
-  - `bittensor/core/metagraph.py:332-342` - Property I() documentation
-- Incentive is based on informational value, stake, and consensus with other peers
-  - `bittensor/core/metagraph.py:334-336` - `The Bittensor network employs an incentive mechanism that rewards neurons based on their informational value, stake, and consensus with other peers.`
-- Trust values are used in the Yuma Consensus algorithm for computing emissions
-- Incentive values are normalized and stored in neuron structures
-  - `bittensor/core/chain_data/neuron_info.py:145` - `incentive=u16_normalized_float(decoded["incentive"]),`
-  - `bittensor/core/chain_data/neuron_info_lite.py:111` - `incentive=u16_normalized_float(decoded["incentive"]),`
+The relationship between these metrics creates a feedback loop: consensus determines weight clipping, which affects ranks and trust, which influences validator trust, which feeds back into future consensus calculations. This system ensures that the network rewards neurons with strong validator agreement while penalizing those with controversial or outlier weight assignments, creating a robust mechanism for maintaining network quality and security.
 
-**Step 5: Emission Distribution**
-- Emission values denote the distribution of rewards to neurons
-  - `bittensor/core/metagraph.py:344-354` - Property E() documentation
-- Emissions are based on stake and performance, with trust influencing the distribution
-  - `bittensor/core/metagraph.py:348-350` - `Emissions refer to the distribution or release of rewards (often in the form of cryptocurrency) to neurons, typically based on their stake and performance.`
-- The emission mechanism ensures active and contributing neurons are appropriately rewarded
 
-**Testing Evidence of the Pipeline:**
-
-**Initial State (New Neurons):**
-- Trust starts at 0 for new neurons
-  - `tests/e2e_tests/test_incentive.py:69` - `assert bob_neuron.trust == 0`
-- Consensus, incentive, and rank all start at 0
-  - `tests/e2e_tests/test_incentive.py:71-73` - `assert bob_neuron.incentive == 0`, `assert bob_neuron.consensus == 0`, `assert bob_neuron.rank == 0`
-
-**After Successful Operation:**
-- Miner trust reaches 1.0 (full trust)
-  - `tests/e2e_tests/test_incentive.py:129` - `assert bob_neuron.trust == 1`
-- Consensus, incentive, and rank all increase above 0.5
-  - `tests/e2e_tests/test_incentive.py:125-127` - `assert bob_neuron.incentive > 0.5`, `assert bob_neuron.consensus > 0.5`, `assert bob_neuron.rank > 0.5`
-- Validator trust approaches 1.0 (\>0.99) for properly functioning validators
-  - `tests/e2e_tests/test_incentive.py:119` - `assert alice_neuron.validator_trust > 0.99`
-
-**Validator vs Miner Dynamics:**
-- Validators receive dividends (1.0) and have high validator_trust (\>0.99)
-  - `tests/e2e_tests/test_incentive.py:116-117` - `assert alice_neuron.dividends == 1.0`, `assert alice_neuron.validator_trust > 0.99`
-- Validators have lower incentive, consensus, and rank (\<0.5) compared to miners
-  - `tests/e2e_tests/test_incentive.py:118,120-121` - `assert alice_neuron.incentive < 0.5`, `assert alice_neuron.consensus < 0.5`, `assert alice_neuron.rank < 0.5`
-- Miners have higher incentive, consensus, and rank (\>0.5) and full trust (1.0)
-  - `tests/e2e_tests/test_incentive.py:125-127,129` - Various assertions showing miner values
-
-**Mathematical Relationship:**
-The relationship between trust, consensus, rank, incentive, and emission can be conceptualized as:
-1. **Trust (T)** = f(weights_matrix) - Collective assessment from inter-peer weights
-2. **Consensus (C)** = $\kappa$-sigmoid(T, stake_weights) - $\kappa$-centered sigmoid of trust weighted by stake
-3. **Rank (R)** = g(T, I) - Function of trust and incentive scores
-4. **Incentive (I)** = h(consensus, stake, informational_value) - Based on consensus and other factors
-5. **Emission (E)** = i(rank, stake, performance) - Final reward distribution
-
-**Network Security Implications:**
-- Trust mechanisms prevent malicious actors from gaining undue influence
-- The $\kappa$-centered sigmoid creates a non-linear trust amplification that rewards high-trust neurons
-- The staked weighted system ensures that high-stake validators have more influence in consensus
-- Trust creates a reputation system that guides network decision-making and emission distribution
-- The entire pipeline ensures that reliable contributors are identified and rewarded appropriately
-
-**Complete Trust Flow Implementation:**
-
-**1. Weight Setting and Storage:**
-- Validators set weights via `set_weights()` extrinsic
-  - `pallets/subtensor/src/subnets/weights.rs:676` - `pub fn do_set_weights()`
-- Weights are stored in blockchain storage as `Weights<T>` double map
-  - `pallets/subtensor/src/lib.rs:1543-1549` - `pub type Weights<T: Config> = StorageDoubleMap`
-- Weights are max-upscaled and normalized before storage
-  - `pallets/subtensor/src/subnets/weights.rs:750` - `let max_upscaled_weights: Vec<u16> = vec_u16_max_upscale_to_u16(&values);`
-
-**2. Weight Retrieval in Epoch:**
-- Weights are retrieved during epoch execution via `get_weights_sparse()`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:905` - `pub fn get_weights_sparse(netuid: u16) -> Vec<Vec<(u16, I32F32)>>`
-- Weights are converted from u16 to I32F32 fixed-point format
-  - `pallets/subtensor/src/epoch/run_epoch.rs:920` - `I32F32::saturating_from_num(*weight_ij)`
-
-**3. Trust Calculation in Yuma Consensus:**
-- **Pre-ranks calculation**: `preranks = matmul_sparse(&weights, &active_stake, n)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:591` - `let preranks: Vec<I32F32> = matmul_sparse(&weights, &active_stake, n);`
-- **Consensus calculation**: `consensus = weighted_median_col_sparse(&active_stake, &weights, n, kappa)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:595` - `let consensus: Vec<I32F32> = weighted_median_col_sparse(&active_stake, &weights, n, kappa);`
-- **Weight clipping**: `clipped_weights = col_clip_sparse(&weights, &consensus)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:598` - `let clipped_weights: Vec<Vec<(u16, I32F32)>> = col_clip_sparse(&weights, &consensus);`
-- **Post-clip ranks**: `ranks = matmul_sparse(&clipped_weights, &active_stake, n)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:605` - `let mut ranks: Vec<I32F32> = matmul_sparse(&clipped_weights, &active_stake, n);`
-
-**4. Trust Formula Implementation:**
-- **Trust calculation**: `trust = vecdiv(&ranks, &preranks)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:608` - `let trust: Vec<I32F32> = vecdiv(&ranks, &preranks);`
-- **vecdiv function**: Element-wise division with zero protection
-  - `pallets/subtensor/src/epoch/math.rs:322` - `pub fn vecdiv(x: &[I32F32], y: &[I32F32]) -> Vec<I32F32>`
-- **Mathematical meaning**: Trust = (rank_after_clipping) / (rank_before_clipping)
-  - Range: [0, 1] where 1.0 means no clipping occurred (full consensus)
-
-**5. Storage and Metagraph Reporting:**
-- Trust values are converted to u16 for storage
-  - `pallets/subtensor/src/epoch/run_epoch.rs:850` - `let cloned_trust: Vec<u16> = trust.iter().map(|xi| fixed_proportion_to_u16(*xi)).collect();`
-- Trust is stored in blockchain state
-  - `pallets/subtensor/src/epoch/run_epoch.rs:857` - `Trust::<T>::insert(netuid, cloned_trust);`
-- Metagraph retrieves trust from blockchain state
-  - `pallets/subtensor/src/rpc_info/metagraph.rs:754` - `trust: Trust::<T>::get(netuid).into_iter().map(Compact::from).collect()`
-
-**6. Validator Trust Calculation:**
-- **Validator trust**: Sum of clipped weights set by each validator
-  - `pallets/subtensor/src/epoch/run_epoch.rs:600` - `let validator_trust: Vec<I32F32> = row_sum_sparse(&clipped_weights);`
-- **row_sum_sparse function**: Sums across each row of the sparse matrix
-  - `pallets/subtensor/src/epoch/math.rs:374` - `pub fn row_sum_sparse(sparse_matrix: &[Vec<(u16, I32F32)>]) -> Vec<I32F32>`
-- **Mathematical meaning**: Validator trust = sum of all clipped weights set by that validator
-
-**7. Trust in Emission Calculation:**
-- Trust influences incentive calculation through consensus mechanism
-  - `pallets/subtensor/src/epoch/run_epoch.rs:610` - `let incentive: Vec<I32F32> = ranks.clone();`
-- Trust affects bond formation and validator dividends
-  - `pallets/subtensor/src/epoch/run_epoch.rs:631` - `let weights_for_bonds: Vec<Vec<(u16, I32F32)>> = interpolate_sparse(&weights, &clipped_weights, n, bonds_penalty);`
-- Trust creates feedback loop: high trust → better consensus → higher rewards → stronger bonds
-
-**Notes:**
-1. **Trust = 1.0**: Neuron's weights were not clipped, indicating full consensus agreement
-2. **Trust < 1.0**: Neuron's weights were clipped, indicating disagreement with consensus
-3. **Trust = 0.0**: Neuron received no consensus weight, indicating complete disagreement
-4. **Validator Trust**: Measures how much consensus weight each validator contributes
-5. **Dynamic Nature**: Trust updates every epoch based on current weight submissions
-
-**Security Properties:**
-- **Anti-manipulation**: $\kappa$-centered clipping prevents weight manipulation
-- **Stake-weighted**: Higher stake validators have more influence in consensus
-- **Consensus-driven**: Trust rewards alignment with majority opinion
-- **Bond formation**: Trust influences long-term validator-miner relationships
 
 ## U 
 
@@ -1749,161 +1109,17 @@ A position occupied by a subnet miner or subnet validator within a subnet, ident
 
 ## V 
 
+### Validator Permit
+
+A boolean flag indicating whether a specific neuron has validation rights within a subnet. Validator permits are awarded to the top K neurons by stake weight and are required for setting weights and participating in consensus.
+
+**See also:** [VPermit](#vpermit), [Validator Requirements](./validators/index.md#requirements-for-validation), [Stake Weight](#stake-weight)
+
 ### VPermit
 
-Validator permits held by the delegate for specific subnets.
+A list of subnet IDs (netuids) indicating which subnets a delegate is authorized to validate on. VPermits are delegate-level permissions that aggregate individual validator permits across multiple subnets, allowing delegates to participate in validation activities on specific subnets.
 
-Code References and Implementation Details
-
-**VPermit as Delegator Authorization:**
-- VPermit represents the list of subnets that a delegate is authorized to validate on
-  - `bittensor/core/chain_data/delegate_info.py:17` - `validator_permits (list[int]): List of subnets that the delegate is allowed to validate on.`
-  - `bittensor/core/chain_data/delegate_info_lite.py:19` - `validator_permits (list[int]): List of subnets that the delegate is allowed to validate on.`
-- VPermit is stored as a list of subnet IDs (netuids) in delegate information structures
-  - `bittensor/core/chain_data/delegate_info.py:26` - `validator_permits: list[int]`
-  - `bittensor/core/chain_data/delegate_info_lite.py:29` - `validator_permits: list[int]`
-
-**VPermit vs Validator Permit:**
-- **VPermit**: List of subnets a delegate can validate on (delegate-level authorization)
-  - `bittensor/core/chain_data/delegate_info.py:76` - `validator_permits=list(decoded.get("validator_permits", [])),`
-  - `bittensor/core/chain_data/delegate_info_lite.py:43` - `validator_permits=decoded["validator_permits"],`
-- **Validator Permit**: Boolean flag indicating if a specific neuron has validation rights (neuron-level authorization)
-  - `bittensor/core/chain_data/neuron_info.py:36` - `validator_permit (bool): Validator permit status.`
-  - `bittensor/core/chain_data/neuron_info_lite.py:33` - `validator_permit (bool): Indicates if the neuron has a validator permit.`
-
-**VPermit in Delegate Information:**
-- VPermit is included in both full and lite delegate information structures
-  - `bittensor/core/chain_data/delegate_info.py:76` - `validator_permits=list(decoded.get("validator_permits", [])),`
-  - `bittensor/core/chain_data/delegate_info_lite.py:43` - `validator_permits=decoded["validator_permits"],`
-- VPermit is also included in delegated information for specific subnet contexts
-  - `bittensor/core/chain_data/delegate_info.py:108` - `validator_permits=list(delegate_info.get("validator_permits", [])),`
-
-**VPermit in Testing and Validation:**
-- Test scenarios verify VPermit functionality for delegates
-  - `tests/e2e_tests/test_delegate.py:210` - `validator_permits=[],`
-  - `tests/e2e_tests/test_delegate.py:224` - `validator_permits=[],`
-  - `tests/e2e_tests/test_delegate.py:282` - `validator_permits=[alice_subnet_netuid],`
-- Tests verify that delegates can gain VPermits for specific subnets
-  - `tests/e2e_tests/test_delegate.py:273` - `# let chain update validator_permits`
-
-**VPermit in Network Operations:**
-- VPermit determines which subnets a delegate can participate in as a validator
-- VPermit is used to control delegate access to subnet validation activities
-- VPermit is part of the delegate nomination and authorization system
-- VPermit enables subnet-specific validation permissions for delegates
-
-**VPermit vs Validator Permit in Metagraph:**
-- The metagraph tracks validator_permit (boolean) for individual neurons
-  - `bittensor/core/metagraph.py:203` - `validator_permit: Indicates if a neuron is authorized to act as a validator.`
-  - `bittensor/core/metagraph.py:791-792` - `self.validator_permit = self._create_tensor([neuron.validator_permit for neuron in self.neurons], dtype=bool)`
-- VPermit (delegate-level) and validator_permit (neuron-level) work together to control validation access
-- Both are essential for the network's validation security and access control mechanisms
-
-**Complete Validator Permit Flow Implementation:**
-
-**1. Validator Permit Calculation in Epoch:**
-- **Stake filtering**: Only neurons with sufficient stake are considered for validator permits
-  - `pallets/subtensor/src/epoch/run_epoch.rs:489-500` - Stake filtering based on minimum stake threshold
-- **Top-K selection**: Validator permits are awarded to the top K neurons by stake
-  - `pallets/subtensor/src/epoch/run_epoch.rs:520-523` - `let new_validator_permits: Vec<bool> = is_topk_nonzero(&stake, max_allowed_validators as usize);`
-- **is_topk_nonzero function**: Selects top K non-zero stake neurons
-  - `pallets/subtensor/src/epoch/math.rs:250-260` - `pub fn is_topk_nonzero(vector: &[I32F32], k: usize) -> Vec<bool>`
-
-**2. Validator Permit Algorithm Details:**
-- **Step 1**: Filter neurons with non-zero stake
-  - `pallets/subtensor/src/epoch/math.rs:253` - `let mut result: Vec<bool> = vector.iter().map(|&elem| elem != I32F32::from(0)).collect();`
-- **Step 2**: Sort neurons by stake in ascending order
-  - `pallets/subtensor/src/epoch/math.rs:257` - `idxs.sort_by_key(|&idx| &vector[idx]); // ascending stable sort`
-- **Step 3**: Select top K neurons (highest stake)
-  - `pallets/subtensor/src/epoch/math.rs:258-260` - `for &idx in idxs.iter().take(n.saturating_sub(k)) { result[idx] = false; }`
-- **Mathematical meaning**: Validator permits = top K neurons by stake, where K = max_allowed_validators
-
-**3. Validator Permit Storage and Retrieval:**
-- **Storage**: Validator permits stored as boolean vector in blockchain state
-  - `pallets/subtensor/src/lib.rs:1550-1552` - `pub type ValidatorPermit<T: Config> = StorageMap<_, Identity, u16, Vec<bool>, ValueQuery, EmptyBoolVec<T>>;`
-- **Retrieval**: Validator permits retrieved during epoch execution
-  - `pallets/subtensor/src/epoch/run_epoch.rs:515` - `let validator_permits: Vec<bool> = Self::get_validator_permit(netuid);`
-- **Update**: New validator permits calculated and stored every epoch
-  - `pallets/subtensor/src/epoch/run_epoch.rs:847` - `ValidatorPermit::<T>::insert(netuid, new_validator_permits.clone());`
-
-**4. Validator Permit Access Control:**
-- **Weight setting restriction**: Only neurons with validator permits can set non-self weights
-  - `pallets/subtensor/src/subnets/weights.rs:745-748` - `ensure!(Self::check_validator_permit(netuid, neuron_uid, &uids, &values), Error::<T>::NeuronNoValidatorPermit);`
-- **check_validator_permit function**: Validates permit status for weight setting
-  - `pallets/subtensor/src/subnets/weights.rs:960-967` - `pub fn check_validator_permit(netuid: u16, uid: u16, uids: &[u16], weights: &[u16]) -> bool`
-- **Self-weight exception**: All neurons can set self-weights regardless of permit status
-  - `pallets/subtensor/src/subnets/weights.rs:961-963` - `if Self::is_self_weight(uid, uids, weights) { return true; }`
-
-**5. Validator Permit in Consensus Calculation:**
-- **Active stake filtering**: Only validator-permitted neurons contribute to active stake
-  - `pallets/subtensor/src/epoch/run_epoch.rs:530-532` - `inplace_mask_vector(&validator_forbids, &mut active_stake);`
-- **Weight matrix filtering**: Only validator-permitted neurons' weights are used in consensus
-  - `pallets/subtensor/src/epoch/run_epoch.rs:545-546` - `weights = mask_rows_sparse(&validator_forbids, &weights);`
-- **Consensus participation**: Validator permits determine which neurons participate in Yuma Consensus
-
-**6. Validator Permit in Bond Management:**
-- **Bond retention**: Neurons retain bonds only if they keep validator permits
-  - `pallets/subtensor/src/epoch/run_epoch.rs:849-862` - Bond management based on permit status
-- **Bond clearing**: Bonds are cleared when neurons lose validator permits
-  - `pallets/subtensor/src/epoch/run_epoch.rs:856-860` - `if *new_permit { /* retain bonds */ } else if validator_permit { /* clear bonds */ }`
-
-**7. Validator Permit in Delegate Information:**
-- **VPermit calculation**: Delegate VPermits calculated from individual neuron permits
-  - `pallets/subtensor/src/rpc_info/delegate_info.rs:88-96` - VPermit calculation for delegates
-- **Subnet-specific permits**: Each delegate's VPermit list contains netuids where they have validator permits
-  - `pallets/subtensor/src/rpc_info/delegate_info.rs:92-95` - `if validator_permit { validator_permits.push((*netuid).into()); }`
-
-**8. Validator Permit Testing and Validation:**
-- **Stake-based permit testing**: Tests verify that validator permits are awarded based on stake
-  - `pallets/subtensor/src/tests/epoch.rs:2175-2213` - Comprehensive validator permit testing
-- **Weight setting access testing**: Tests verify that only permitted neurons can set weights
-  - `pallets/subtensor/src/tests/weights.rs:474-520` - Weight setting access control testing
-- **Permit revocation testing**: Tests verify that permits are revoked when stake decreases
-  - `pallets/subtensor/src/tests/epoch.rs:2195-2213` - Permit revocation scenarios
-
-**9. Validator Permit in Metagraph Reporting:**
-- **Metagraph inclusion**: Validator permits included in metagraph data structures
-  - `pallets/subtensor/src/rpc_info/metagraph.rs:754` - `validator_permit: ValidatorPermit::<T>::get(netuid)`
-- **Neuron info inclusion**: Validator permits included in individual neuron information
-  - `pallets/subtensor/src/rpc_info/neuron_info.rs:36` - `validator_permit: bool` field in NeuronInfo
-
-**10. Validator Permit Security Properties:**
-- **Stake-based selection**: Validator permits awarded based on economic stake, ensuring skin-in-the-game
-- **Dynamic adjustment**: Permits recalculated every epoch based on current stake distribution
-- **Access control**: Permits control critical network functions like weight setting and consensus participation
-- **Bond alignment**: Permits align with bond retention, creating economic incentives for validators
-- **Network security**: Permits ensure only high-stake, trusted neurons participate in consensus
-
-**Key Mathematical Insights:**
-1. **Validator Permit = Top K by Stake**: Permits awarded to K neurons with highest stake
-2. **K = max_allowed_validators**: Network parameter controlling validator count
-3. **Stake Threshold**: Minimum stake required to be considered for permits
-4. **Dynamic Nature**: Permits recalculated every epoch based on current stake
-5. **Economic Security**: High stake requirement ensures validator commitment
-
-**Network Security Implications:**
-- **Economic barrier**: High stake requirement prevents Sybil attacks
-- **Consensus control**: Only permitted validators participate in consensus
-- **Weight manipulation prevention**: Permits prevent unauthorized weight setting
-- **Bond alignment**: Permits align with bond retention for economic security
-- **Dynamic adjustment**: Permits adapt to changing network conditions and stake distribution
-
-**Complete Validator Permit Flow:**
-1. **Stake Calculation** → Total stake calculated for each neuron
-2. **Threshold Filtering** → Neurons below minimum stake excluded
-3. **Top-K Selection** → Top K neurons by stake awarded permits
-4. **Storage Update** → New permits stored in blockchain state
-5. **Access Control** → Permits control weight setting and consensus participation
-6. **Bond Management** → Permits determine bond retention/clearing
-7. **Metagraph Reporting** → Permits included in network state reporting
-8. **Delegate VPermits** → Individual permits aggregated into delegate VPermits
-
-**Validator Permit vs VPermit Relationship:**
-- **Validator Permit**: Neuron-level boolean flag (has permit or not)
-- **VPermit**: Delegate-level list of subnet IDs where delegate has permits
-- **Aggregation**: VPermit = list of netuids where delegate's neurons have validator_permit = true
-- **Hierarchy**: VPermit aggregates multiple validator permits across subnets for a single delegate
-- **Purpose**: Validator permit controls individual neuron access, VPermit controls delegate-level permissions
+**See also:** [Validator Permits](#validator-permit), [Delegation](./staking-and-delegation/delegation.md), [Validator Requirements](./validators/index.md#requirements-for-validation)
 
 
 ### Validator
@@ -1911,6 +1127,53 @@ Code References and Implementation Details
 A type of node in a subnet that creates tasks, evaluates the performance of subnet miners and sets weights based on their output. A subnet validator is connected only to subnet miners and to the external world. Subnet validators receive inputs from the external world and communicate bidirectionally with subnet miners. 
 
 **See also:** [Subnet Validators](./validators/), [Validators btcli Guide](./validators/validators-btcli-guide.md)
+
+### Validator Trust
+
+A specialized trust metric for validator neurons that measures their influence in the consensus process. Validator trust is calculated as the sum of all clipped weights set by each validator across all neurons, indicating how much weight a validator successfully contributed to consensus.
+
+**See also:** [Yuma Consensus](./yuma-consensus.md), [Subnet Metagraph](./subnets/metagraph.md), [Validator-Miner Bonds](#validator-miner-bonds)
+
+**Basic Concept:**
+Validator trust specifically measures validator neurons' influence in the consensus process. It represents how much weight each validator successfully contributed to the consensus after weight clipping, providing insight into validator alignment with network consensus.
+
+**Mathematical Definition:**
+For each validator $i$, the validator trust $T_{vi}$ is calculated as:
+$$T_{vi} = \sum_{j \in \text{neurons}} \overline{W_{ij}}$$
+
+Where:
+- $\overline{W_{ij}}$ is the consensus-clipped weight from validator $i$ to neuron $j$
+- The sum is taken over all neurons in the subnet
+- Validator trust measures the total influence a validator has in consensus
+
+**Calculation Process:**
+1. **Weight setting**: Validators set weights to all neurons in the subnet
+2. **Consensus calculation**: Stake-weighted median of weights per neuron (consensus threshold)
+3. **Weight clipping**: Weights clipped at consensus threshold to remove outliers
+4. **Validator trust calculation**: Sum of all clipped weights set by each validator
+
+**Properties and Interpretation:**
+- **Range**: [0, 1] normalized values
+- **High Validator Trust**: Values close to 1 indicate strong consensus alignment
+- **Low Validator Trust**: Values close to 0 indicate outlier weight assignments
+- **Validator Influence**: Higher validator trust means more influence in consensus decisions
+
+**Network Security Properties:**
+- **Consensus Alignment**: Validator trust measures how well validators align with consensus
+- **Outlier Detection**: Low validator trust indicates potential manipulation attempts
+- **Validator Quality**: High validator trust indicates quality validation services
+- **Economic Incentives**: Validator trust influences validator rewards and bond retention
+
+**Source**: 
+- [`bittensor/bittensor/core/metagraph.py:397-409`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/metagraph.py#L397-409)
+- [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:600`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L600)
+
+**Relationship to Other Metrics:**
+- **Validator Trust vs Trust**: Validator trust is per-validator, Trust is per-neuron
+- **Validator Trust vs Consensus**: Validator trust measures validator influence in consensus
+- **Validator Trust vs Ranks**: Validator trust influences rank calculation through consensus
+- **Validator Trust vs Bonds**: Validator trust affects bond retention and validator permits
+
 
 ### Validator-Miner Bonds
 
@@ -1988,19 +1251,12 @@ Where $M_j$ is miner $j$'s share of miner emissions.
 - EMA smoothing prevents exploitation of rapid bond changes
 - Bonds provide stability while allowing for network evolution
 
-**Technical Implementation:**
-
-**Storage:**
-- Bonds are stored as sparse matrices in blockchain state
-- Each validator's bonds to miners are stored as vectors of (miner_uid, bond_value) pairs
-- Bonds are updated every epoch during Yuma Consensus execution
-
 **Retrieval:**
 - Bonds can be queried via the `bonds()` method in the Subtensor API
 - Metagraph includes bonds matrix accessible via `metagraph.B` property
 - Bonds are included in neuron information structures
 
-**Hyperparameters:**
+**Related hyperparameters:**
 - `bonds_penalty`: Controls penalty for out-of-consensus weights (0-65535)
 - `bonds_moving_avg`: Controls bond decay rate (typically 900,000)
 - `liquid_alpha_enabled`: Enables dynamic alpha adjustment for bonds
@@ -2030,141 +1286,14 @@ Where $M_j$ is miner $j$'s share of miner emissions.
 
 **See also:** [Yuma Consensus](./yuma-consensus), [Emissions](./emissions), [Trust](#trust), [Validator Permits](#vpermit)
 
-Code References and Implementation Details
 
-**Bonds as Core Network Data Structure:**
-- Bonds are stored as sparse matrices in blockchain state via `Bonds<T>` storage map
-  - `subtensor/pallets/subtensor/src/lib.rs:1560-1566` - `pub type Bonds<T: Config> = StorageDoubleMap<_, Identity, u16, Identity, u16, Vec<(u16, u16)>, ValueQuery, DefaultBonds<T>>;`
-- Bonds are represented as vectors of (miner_uid, bond_value) pairs for each validator
-  - `bittensor/core/chain_data/neuron_info.py:47` - `bonds (list[list[int]]): List of bonds associated with the neuron.`
-- Bonds are included in both full and lite neuron information structures
-  - `bittensor/core/chain_data/neuron_info.py:158` - `bonds=[[e[0], e[1]] for e in decoded["bonds"]],`
-  - Note: `NeuronInfoLite` does not include bonds to reduce data size
+### Validator Take %
 
-**Bonds in Metagraph Representation:**
-- Bonds are accessible via `metagraph.B` property in the metagraph
-  - `bittensor/core/metagraph.py:427-436` - Property B() documentation and implementation
-- Bonds are processed using `_process_weights_or_bonds()` method
-  - `bittensor/core/metagraph.py:673-690` - `_process_weights_or_bonds()` method for processing bonds data
-- Bonds are converted to tensors using `convert_bond_uids_and_vals_to_tensor()`
-  - `bittensor/utils/weight_utils.py:143-162` - `convert_bond_uids_and_vals_to_tensor()` function
+The percentage of emissions a validator takes, of the portion that depends on delegated stake (not including their emissions in proportion to their own self-stake), before the remainder is extracted back to the stakers.
 
-**Bonds API and Retrieval:**
-- Bonds can be queried via the `bonds()` method in AsyncSubtensor
-  - `bittensor/core/async_subtensor.py:931-976` - `bonds()` method implementation
-- Bonds are retrieved from blockchain storage via `SubtensorModule::Bonds` storage map
-  - `bittensor/core/async_subtensor.py:963-965` - `storage_function="Bonds"` query
-- Bonds are returned as list of tuples mapping neuron UID to bond tuples
-  - `bittensor/core/async_subtensor.py:976` - `return b_map`
+Effectively, this represents the fee percentage that validators charge delegators for validation services.
 
-**Bond Calculation in Yuma Consensus:**
-
-**1. Bond-Weight Calculation:**
-- **Bonds penalty retrieval**: `bonds_penalty = Self::get_float_bonds_penalty(netuid)`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:207-208` - Bonds penalty retrieval
-- **Weight interpolation**: `weights_for_bonds = interpolate_sparse(&weights, &clipped_weights, n, bonds_penalty)`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:625-627` - Weight interpolation for bonds
-- **Mathematical meaning**: $\widetilde{W_{ij}} = (1-\beta)W_{ij} + \beta\overline{W_{ij}}$ where $\beta$ is bonds penalty
-
-**2. Instant Bond Calculation:**
-- **Bonds delta**: `bonds_delta = row_hadamard_sparse(&weights_for_bonds, &active_stake)`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:680-682` - Instant bond calculation
-- **Normalization**: `inplace_col_normalize_sparse(&mut bonds_delta, n)`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:684` - Bond normalization
-- **Mathematical meaning**: $\Delta B_{ij} = \frac{S_i \cdot \widetilde{W_{ij}}}{\sum_{k \in \mathbb{V}} S_k \cdot \widetilde{W_{kj}}}$
-
-**3. EMA Bond Computation:**
-- **Alpha calculation**: `alpha = 1 - bonds_moving_avg / 1_000_000`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:1020-1025` - Alpha calculation
-- **EMA computation**: `ema_bonds = mat_ema_sparse(&bonds_delta, &bonds, alpha)`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:687` - EMA bond computation
-
-**4. Bond Storage and Management:**
-- **Permit-based retention**: Bonds stored only if neuron retains validator permit
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:849-862` - Bond retention logic
-- **Storage format**: Bonds stored as `Vec<(u16, u16)>` pairs
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:852-854` - Bond storage format
-
-**5. Dividend Calculation:**
-- **Dividend computation**: `dividends = matmul_transpose_sparse(&ema_bonds, &incentive)`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:713` - Dividend calculation
-- **Normalization**: `inplace_normalize(&mut dividends)`
-  - `subtensor/pallets/subtensor/src/epoch/run_epoch.rs:714` - Dividend normalization
-- **Mathematical meaning**: $D_i = \sum_{j \in \mathbb{M}} B_{ij} \times I_j$ where:
-  - $B_{ij}$ is the EMA bond from validator $i$ to miner $j$
-  - $I_j$ is miner $j$'s incentive share
-
-**Key Mathematical Insights:**
-1. **Bonds = Economic Investment**: Bonds represent validator "investment" in miner performance
-2. **Penalty Mechanism**: Bonds penalty ($\beta$) reduces bond value for out-of-consensus weights
-3. **EMA Smoothing**: Bonds change gradually over time, preventing manipulation
-4. **Consensus Alignment**: Bonds incentivize validators to align with network consensus
-5. **Economic Security**: Bonds create skin-in-the-game for validators
-
-**Network Security Properties:**
-- **Anti-manipulation**: Bond penalties make weight manipulation economically costly
-- **Consensus stability**: Bonds create economic incentives for consensus alignment
-- **Validator commitment**: Bonds require validators to commit to their evaluations
-- **Market-based incentives**: Bonds create a market for validator-miner relationships
-- **Dynamic adjustment**: Bonds adapt to changing network conditions and consensus
-
-**Complete Bond Flow Implementation:**
-
-**1. Weight Setting and Storage:**
-- Validators set weights via `set_weights()` extrinsic
-  - `pallets/subtensor/src/subnets/weights.rs:676` - `pub fn do_set_weights()`
-- Weights are stored in blockchain storage as `Weights<T>` double map
-  - `pallets/subtensor/src/lib.rs:1543-1549` - `pub type Weights<T: Config> = StorageDoubleMap`
-
-**2. Consensus Calculation:**
-- **Consensus computation**: `consensus = weighted_median_col_sparse(&active_stake, &weights, n, kappa)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:595` - Consensus calculation
-- **Weight clipping**: `clipped_weights = col_clip_sparse(&weights, &consensus)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:598` - Weight clipping at consensus
-
-**3. Bond-Weight Calculation:**
-- **Bonds penalty retrieval**: `bonds_penalty = Self::get_float_bonds_penalty(netuid)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:625` - Bonds penalty retrieval
-- **Weight interpolation**: `weights_for_bonds = interpolate_sparse(&weights, &clipped_weights, n, bonds_penalty)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:625-627` - Bond-weight calculation
-
-**4. Instant Bond Formation:**
-- **Bonds delta**: `bonds_delta = row_hadamard_sparse(&weights_for_bonds, &active_stake)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:680-682` - Instant bond calculation
-- **Normalization**: `inplace_col_normalize_sparse(&mut bonds_delta, n)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:684` - Bond normalization
-
-**5. EMA Bond Computation:**
-- **Alpha calculation**: `alpha = 1 - bonds_moving_avg / 1_000_000`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:1020-1025` - Alpha calculation
-- **EMA computation**: `ema_bonds = mat_ema_sparse(&bonds_delta, &bonds, alpha)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:687` - EMA bond computation
-
-**6. Bond Storage and Management:**
-- **Permit-based retention**: Bonds stored only if neuron retains validator permit
-  - `pallets/subtensor/src/epoch/run_epoch.rs:849-862` - Bond retention logic
-- **Storage format**: Bonds stored as `Vec<(u16, u16)>` pairs
-  - `pallets/subtensor/src/epoch/run_epoch.rs:852-854` - Bond storage format
-
-**7. Dividend Calculation:**
-- **Dividend computation**: `dividends = matmul_transpose_sparse(&ema_bonds, &incentive)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:713` - Dividend calculation
-- **Normalization**: `inplace_normalize(&mut dividends)`
-  - `pallets/subtensor/src/epoch/run_epoch.rs:714` - Dividend normalization
-
-**Key Mathematical Insights:**
-1. **Bonds = Economic Investment**: Bonds represent validator "investment" in miner performance
-2. **Penalty Mechanism**: Bonds penalty ($\beta$) reduces bond value for out-of-consensus weights
-3. **EMA Smoothing**: Bonds change gradually over time, preventing manipulation
-4. **Consensus Alignment**: Bonds incentivize validators to align with network consensus
-5. **Economic Security**: Bonds create skin-in-the-game for validators
-
-**Network Security Properties:**
-- **Anti-manipulation**: Bond penalties make weight manipulation economically costly
-- **Consensus stability**: Bonds create economic incentives for consensus alignment
-- **Validator commitment**: Bonds require validators to commit to their evaluations
-- **Market-based incentives**: Bonds create a market for validator-miner relationships
-- **Dynamic adjustment**: Bonds adapt to changing network conditions and consensus
+**See also:** [Emissions](./emissions.md)
 
 
 ## W 

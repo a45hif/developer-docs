@@ -129,95 +129,55 @@ In the Bittensor Python SDK, the `Metagraph` class encapsulates the following in
   <summary>Metagraph Properties</summary>
 | Name | Description |
 |------|--|
-| `netuid`  | The subnet's unique identifier |
+| `netuid`  | The subnet's unique identifier within the Bittensor network |
 | `network`  | Name of the Bittensor network, i.e. mainnet ('finney'), test, or a locally deployed chain |
 | `version`  | Bittensor version number |
 | `n`  | Total number of neurons registered on the subnet |
 | `block`  | Block number when the metagraph record was retrieved |
-| `total_stake`  | Total stake (alpha + TAO × 0.18) across all neurons | 
-| **Stake** / `S` | Total stake (alpha + TAO × 0.18) of each neuron |
-| **Alpha Stake** / `AS` | Alpha token stake |
-| **Tao Stake** / `TS` | TAO token stake |
-| **Ranks** / `R` | Consensus ranking scores after weight clipping | 
-| **Trust** / `T` | Consensus alignment ratio (final rank / pre-rank) |
-| **Validator Trust** / `Tv` | Validator-specific trust scores |
-| **Consensus** / `C` | Stake-weighted median of weights (consensus threshold) |
-| **Incentive** / `I` | Normalized ranks (reward allocation for miners) |
-| **Emission** / `E` | Token emission amounts in RAO |
-| **Dividends** / `D` | Bond-based rewards for validators |
-| **Bonds** / `B` | Inter-neuronal bond matrix (speculative investments) |
-| **Weights** / `W` | Weight matrix (validator → miner assignments) |
-| `uids` |  Unique neuron identifiers |
-| `hotkeys` |  Neuron hotkey addresses |
-| `coldkeys` |  Neuron coldkey addresses |
+| `total_stake`  | Total [stake weight](../glossary.md#stake-weight) (α + τ × 0.18) across all neurons | 
+| **Stake** / `S` | Total [stake weight](../glossary.md#stake-weight) (α + τ × 0.18) of each neuron, determining consensus power and emissions |
+| **Alpha Stake** / `AS` | Alpha token stake (α) for each neuron |
+| **Tao Stake** / `TS` | [TAO](../glossary.md#tao-τ) token stake (τ) for each neuron |
+| **Ranks** / `R` | Final performance scores after [consensus](../glossary.md#consensus-score) weight clipping - [stake-weighted](../glossary.md#stake-weight) sum of clipped weights that directly determine emissions to miners |
+| **Trust** / `T` | [Consensus alignment](../glossary.md#trust) ratio (final rank / pre-rank) - measures how much consensus clipping affected the rank, where 1.0 indicates perfect consensus alignment |
+| **Validator Trust** / `Tv` | [Validator trust](../glossary.md#validator-trust) - sum of clipped weights set by each validator, measuring validator influence in consensus |
+| **Consensus** / `C` | [Consensus score](../glossary.md#consensus-score) - stake-weighted median of weights per neuron, serving as consensus threshold for weight clipping |
+| **Incentive** / `I` | Normalized ranks representing [incentive](../glossary.md#incentives) allocation for miners based on performance |
+| **Emission** / `E` | Token [emission](../glossary.md#emission) amounts in [RAO](../glossary.md#rao) (10^-9 TAO) per block |
+| **Dividends** / `D` | [Bond](../glossary.md#validator-miner-bonds)-based rewards for validators from their investments in miners |
+| **Bonds** / `B` | Inter-neuronal [bond matrix](../glossary.md#validator-miner-bonds) representing validator investments in miners, used to calculate validator emissions |
+| **Weights** / `W` | [Weight matrix](../glossary.md#weight-matrix) (validator → miner assignments) formed from validator weight vectors, input for [Yuma Consensus](../glossary.md#yuma-consensus) |
+| `uids` |  Unique [UID](../glossary.md#uid-slot) identifiers for each neuron |
+| `hotkeys` |  Neuron [hotkey](../glossary.md#hotkey) addresses |
+| `coldkeys` |  Neuron [coldkey](../glossary.md#coldkey) addresses |
 | `addresses` |  Network IP addresses |
-| `axons` |  Network connection details |
-| `neurons` |  Complete neuron objects |
-| `active` |  Neuron activity status |
-| `last_update` |  Last update block numbers |
-| `validator_permit` |  Bool array indicating whether each neuron can set weights (act as validator) |
+| `axons` |  Network connection details for [axon](../glossary.md#axon) servers |
+| `neurons` |  Complete [neuron](../glossary.md#neuron) objects with all metadata |
+| `active` |  Neuron activity status within the [`activity_cutoff`](./subnet-hyperparameters.md#activity_cutoff) window |
+| `last_update` |  Last update block numbers for staleness detection |
+| `validator_permit` |  Boolean array indicating whether each neuron has [validator permits](../glossary.md#validator-permit) to set weights and participate in consensus |
 | `name` |  Subnet name |
 | `symbol` |  Subnet token symbol |
-| `network_registered_at` |  Registration block |
+| `network_registered_at` |  Registration block when subnet was created |
 | `num_uids` |  Current number of neurons |
-| `max_uids` |  Maximum allowed neurons |
+| `max_uids` |  Maximum allowed neurons (typically 256) |
 | `identities` |  List of chain identities |
 | `identity` |  Subnet identity information |
-| `pruning_score` |  List of pruning scores |
-| `block_at_registration` |  List of registration blocks |
-| `tao_dividends_per_hotkey` |  TAO dividends by hotkey |
+| `pruning_score` |  List of pruning scores based on emissions, used for [deregistration](../glossary.md#deregistration) when subnet is full |
+| `block_at_registration` |  List of registration blocks for each neuron, used for [immunity period](../glossary.md#immunity-period) calculations |
+| `tao_dividends_per_hotkey` |  [TAO](../glossary.md#tao-τ) dividends by hotkey |
 | `alpha_dividends_per_hotkey` |  Alpha dividends by hotkey |
 | `last_step` |  Last step block number |
-| `tempo` |  Block interval for updates |
+| `tempo` |  [Tempo](../glossary.md#tempo) - block interval for updates (360 blocks = 72 minutes) |
 | `blocks_since_last_step` |  Blocks since last step |
-| `owner_coldkey` |  Subnet owner coldkey |
-| `owner_hotkey` |  Subnet owner hotkey |
-| `hparams` |  Subnet hyperparameters (`MetagraphInfoParams`) |
+| `owner_coldkey` |  Subnet owner [coldkey](../glossary.md#coldkey) |
+| `owner_hotkey` |  Subnet owner [hotkey](../glossary.md#hotkey) |
+| `hparams` |  Subnet [hyperparameters](./subnet-hyperparameters.md) (`MetagraphInfoParams`) |
 | `pool` |  Liquidity pool information (`MetagraphInfoPool`) |
 | `emissions` |  Emission configuration (`MetagraphInfoEmissions`) |
 </details>
 
-### Stake Calculation
 
-The total stake combines alpha and TAO stakes with a weighting factor:
-
-**Formula**: `Total Stake = Alpha Stake + (TAO Stake × 0.18)`
-
-**Source**: [`bittensor/bittensor/core/chain_data/metagraph_info.py:340`](https://github.com/opentensor/bittensor/blob/main/bittensor/core/chain_data/metagraph_info.py#L340)
-
-```python
-tao_stake = [
-    _tbwu(ts) * settings.ROOT_TAO_STAKE_WEIGHT  # ROOT_TAO_STAKE_WEIGHT = 0.18
-    for ts in decoded["tao_stake"]
-]
-```
-
-### Consensus Metrics (Ranks, Trust, Consensus)
-
-The Yuma Consensus algorithm calculates these metrics through a multi-step process:
-
-**Source**: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:175-200`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L175-L200)
-
-1. **Pre-ranks**: `preranks = matmul(weights, active_stake)` - stake-weighted sum of incoming weights
-2. **Consensus**: `consensus = weighted_median_col(active_stake, weights, kappa)` - stake-weighted median of weights per neuron (consensus threshold)
-3. **Weight clipping**: Weights clipped at consensus threshold to remove outliers
-4. **Final ranks**: `ranks = matmul(clipped_weights, active_stake)` - stake-weighted sum of clipped weights
-5. **Trust**: `trust = ranks / preranks` - ratio of final rank to pre-rank (consensus alignment)
-
-**Metric Details**:
-- **Consensus**: Stake-weighted median of weights assigned to each neuron by validators. Higher values indicate stronger validator agreement.
-- **Ranks**: Final consensus-based ranking after weight clipping. Used for incentive distribution.
-- **Trust**: Measures how much a neuron's rank was affected by consensus clipping (0-1 range).
-- **Validator Trust**: Sum of clipped weights set by each validator (measures validator influence).
-
-**Trust interpretation**:
-- `Trust = 1.0`: Neuron's rank unchanged by consensus (high consensus alignment)
-- `Trust < 1.0`: Neuron's rank reduced by consensus clipping (lower consensus alignment)
-- `Trust = 0.0`: Neuron's rank eliminated by consensus (no consensus)
-
-**Incentive vs Dividends**:
-- **Incentive**: Normalized ranks distributed to miners based on consensus performance
-- **Dividends**: Bond-based rewards distributed to validators based on their bond investments
 
 
 ### Neuron Info
@@ -232,23 +192,23 @@ See also:
   <summary>Neuron Info Properties</summary>
 | Name | Description |
 --|--
-`uid` | Unique identifier
-`hotkey` | Hotkey address
-`coldkey` | Coldkey address
-`stake` | Total stake
-`rank` | Performance rank
-`trust` | Trust score
-`consensus` | Consensus score
-`incentive` | Incentive score
-`emission` | Emission rate
-`dividends` | Dividend amount
-`validator_trust` | Validator trust
-`active` | Activity status
-`last_update` | Last update block
-`validator_permit` | Validator permission
-`weights` | Weight assignments
-`bonds` | Bond investments
-`axon_info` | Network connection
+`uid` | Unique [UID](../glossary.md#uid-slot) identifier for the neuron within the subnet
+`hotkey` | [Hotkey](../glossary.md#hotkey) address for network operations and signing
+`coldkey` | [Coldkey](../glossary.md#coldkey) address for secure storage and high-risk operations
+`stake` | Total [stake weight](../glossary.md#stake-weight) (α + τ × 0.18) determining consensus power and emissions
+`rank` | Final [performance rank](../glossary.md#rank) after consensus weight clipping, directly determining emissions
+`trust` | [Consensus alignment](../glossary.md#trust) ratio (final rank / pre-rank) measuring impact of consensus filtering
+`consensus` | [Consensus score](../glossary.md#consensus-score) - stake-weighted median of weights serving as clipping threshold
+`incentive` | Normalized [incentive](../glossary.md#incentives) score representing reward allocation for miners
+`emission` | Token [emission](../glossary.md#emission) rate in [RAO](../glossary.md#rao) per block
+`dividends` | [Bond](../glossary.md#validator-miner-bonds)-based dividend amount for validators
+`validator_trust` | [Validator trust](../glossary.md#validator-trust) measuring validator influence in consensus
+`active` | Activity status within the [`activity_cutoff`](./subnet-hyperparameters.md#activity_cutoff) window
+`last_update` | Last update block number for staleness detection
+`validator_permit` | Boolean indicating [validator permit](../glossary.md#validator-permit) status for weight setting and consensus participation
+`weights` | [Weight vector](../glossary.md#weight-vector) assignments from this neuron to others
+`bonds` | [Bond](../glossary.md#validator-miner-bonds) investments from this neuron to others
+`axon_info` | Network connection details for the [axon](../glossary.md#axon) server
   </details>
 
 
@@ -266,14 +226,14 @@ See also:
 
 | Name | Description |
 --|--
-`hotkey`                 | Neuron hotkey
-`coldkey`                | Neuron coldkey
-`ip`                     | IP address
-`port`                   | Port number
-`ip_type`                | IP type
-`version`                | Protocol version
-`placeholder1`           | Reserved field
-`placeholder2`           | Reserved field
+`hotkey`                 | Neuron [hotkey](../glossary.md#hotkey) address
+`coldkey`                | Neuron [coldkey](../glossary.md#coldkey) address
+`ip`                     | IP address for the [axon](../glossary.md#axon) server
+`port`                   | Port number for the axon server
+`ip_type`                | IP type (IPv4/IPv6)
+`version`                | Protocol version for axon-dendrite communication
+`placeholder1`           | Reserved field for future use
+`placeholder2`           | Reserved field for future use
 </details>
 
 ### MetagraphInfoParams
@@ -315,9 +275,9 @@ See also:
 `rho`                  | Rho parameter
 `serving_rate_limit`     | Serving rate limit
 `target_regs_per_interval`  | Target registrations per interval
-`tempo`                  | Tempo
-`weights_rate_limit`     | Weights rate limit
-`weights_version`        | Weights version
+`tempo`                  | [Tempo](../glossary.md#tempo) - block interval for updates (360 blocks = 72 minutes)
+`weights_rate_limit`     | [Weights](../glossary.md#weight-vector) rate limit for submissions
+`weights_version`        | [Weights](../glossary.md#weight-vector) version for protocol compatibility
 </details>
 
 ### MetagraphInfoPool
@@ -333,13 +293,13 @@ See also:
   <summary>MetagraphInfoPool properties</summary>
 | Name | Description |
 --|--
-`alpha_out`            | Alpha out amount
-`alpha_in`             | Alpha in amount
-`tao_in`               | TAO in amount
-`subnet_volume`        | Subnet volume
-`moving_price`         | Moving price
+`alpha_out`            | Alpha token quanitity bound for emission to subnet participants
+`alpha_in`             | Alpha token quanitity emitted to the liquidity pool
+`tao_in`               | Tao token emission to the liquidity pool
+`subnet_volume`        | Total trading volume in the subnet's liquidity pool
+`moving_price`         | Moving average price of the subnet token
 </details>
-
+<!-- What's the difference between above and below?  -->
 ### MetagraphInfoEmissions
 
 Contains detailed information about the subnet's emissions.
@@ -353,12 +313,12 @@ See also:
   <summary>MetagraphInfoEmissions properties</summary>
 | Name | Description |
 --|--
-`alpha_out_emission`   | Alpha out emission
-`alpha_in_emission`    | Alpha in emission
-`subnet_emission`      | Subnet emission
-`tao_in_emission`      | TAO in emission
-`pending_alpha_emission`  | Pending alpha emission
-`pending_root_emission`   | Pending root emission
+`alpha_out_emission`   | Alpha token outflow [emission](../glossary.md#emission) rate
+`alpha_in_emission`    | Alpha token inflow [emission](../glossary.md#emission) rate
+`subnet_emission`      | Subnet [emission](../glossary.md#emission) rate to participants
+`tao_in_emission`      | [TAO](../glossary.md#tao-τ) token inflow [emission](../glossary.md#emission) rate
+`pending_alpha_emission`  | Pending alpha token [emission](../glossary.md#emission) amount
+`pending_root_emission`   | Pending root network [emission](../glossary.md#emission) amount
 </details>
 
 
