@@ -263,7 +263,7 @@ The primary Bittensor blockchain network, used for production purposes and conne
 
 A data structure that contains comprehensive information about the current state of a subnet, including detailed information on all the nodes (neurons) such as subnet validator stakes and subnet weights in the subnet. Metagraph aids in calculating emissions.
 
-**See also:** [Subtensor API](./sdk/subtensor-api.md), [Understanding Subnets](./subnets/understanding-subnets.md)
+**See:** [The Subnet Metagraph](./subnets/metagraph)
 
 ### Miner Deregistration
 

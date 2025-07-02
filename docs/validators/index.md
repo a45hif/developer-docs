@@ -95,6 +95,17 @@ Every subnet has an `immunity_period` hyperparameter expressed in a number of bl
 
 A subnet neuron (miner or validator) at a UID (in that subnet) has `immunity_period` blocks to improve its performance. When `immunity_period` expires, that miner or validator can be deregistered if it has the lowest performance in the subnet and a new registration arrives.
 
+**Implementation Details:**
+
+Immunity status is calculated dynamically using the formula `is_immune = (current_block - registered_at) < immunity_period`, where:
+- `current_block` is the current blockchain block number
+- `registered_at` is the block number when the neuron was registered
+- `immunity_period` is the configured protection period for the subnet (default: 4096 blocks ≈ 13.7 hours)
+
+**Code References:**
+- [`subtensor/pallets/subtensor/src/utils/misc.rs:442-448`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/utils/misc.rs#L442-448) - Immunity status calculation
+- [`subtensor/pallets/subtensor/src/subnets/registration.rs:409-485`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/subnets/registration.rs#L409-485) - Pruning algorithm with immunity priority
+
 :::tip Special cases
 
 - In the unlikely event that all neurons are still immune, the one with the lowest "pruning score" will be deregistered by the next incoming registration.
@@ -142,6 +153,44 @@ wallet = bt.wallet( name = 'my_coldkey', hotkey = 'my_validator_hotkey' )
 my_uid = subnet.hotkeys.index( wallet.hotkey.ss58_address )
 print(f'Validator permit: {subnet.validator_permit(my_uid)}')
 ```
+
+## Validator Permits 
+
+
+Validator permits control which neurons can participate in validation activities within a subnet. The system operates on a stake-weighted basis, ensuring that only high-stake, trusted neurons can influence consensus.
+
+### Permit Calculation Algorithm
+
+Validator permits are calculated every epoch using the following process:
+
+1. **Stake Filtering**: Only neurons with sufficient stake (minimum 1000 stake weight) are considered
+2. **Top-K Selection**: The top K neurons by stake weight are awarded validator permits (typically top 64)
+3. **Dynamic Updates**: Permits are recalculated every epoch based on current stake distribution
+
+### Access Control and Security
+
+Validator permits control several critical network functions:
+
+- **Weight Setting**: Only permitted neurons can set non-self weights
+- **Consensus Participation**: Only permitted neurons contribute to Yuma Consensus
+- **Bond Management**: Neurons retain bonds only if they keep validator permits
+- **Active Stake**: Only permitted neurons contribute to active stake calculations
+
+### Permit Requirements
+
+To obtain a validator permit, a neuron must meet these criteria:
+
+- **Minimum Stake**: At least 1000 stake weight (α + 0.18 × τ)
+- **Top K Ranking**: Be among the top K neurons by stake weight
+- **Active Status**: Maintain active participation in the subnet
+
+
+### Code References
+
+- Validator permit calculation: [`subtensor/pallets/subtensor/src/epoch/run_epoch.rs:520-523`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs#L520-523)
+- Top-K selection algorithm: [`subtensor/pallets/subtensor/src/epoch/math.rs:250-260`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/math.rs#L250-260)
+- Access control: [`subtensor/pallets/subtensor/src/subnets/weights.rs:745-748`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/subnets/weights.rs#L745-748)
+
 
 ## Inspecting UIDs
 
