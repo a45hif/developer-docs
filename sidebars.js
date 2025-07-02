@@ -88,6 +88,7 @@ const sidebars = {
       collapsed: true,
       items: [
         "subnets/metagraph",
+        "liquidity-provider",
         "subnets/create-a-subnet",
         "subnets/subnet-creators-btcli-guide",
         "subnets/subnet-hyperparameters",
