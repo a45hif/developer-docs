@@ -134,7 +134,7 @@ The number of blocks for the stake to become inactive for the purpose of epoch i
 
 **Description**:
 
-`AdjustmentInterval` is number of blocks that pass between difficulty and burn adjustments. So, I was wrong about "next block" when I said that if root sets difficulty outside of range, it will get back in range. Difficulty will get back in range at most after `AdjustmentInterval` blocks pass.
+`AdjustmentInterval` is number of blocks that pass between difficulty and burn adjustments.
 
 ### AlphaSigmoidSteepness
 
@@ -150,6 +150,7 @@ The number of blocks for the stake to become inactive for the purpose of epoch i
 
 **Description**:
 `AlphaSigmoidSteepness` determines how the consensus mechanism assigns an alpha value for a given miner-validator pair based on voting alignment. Lower steepness values result in moderate alpha values, while higher steepness values push alpha values closer to the defined `alpha_low` or `alpha_high` values.
+
 
 ### BondsMovingAverage
 

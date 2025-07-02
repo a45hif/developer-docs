@@ -16,8 +16,8 @@ In this tutorial you will learn how to interact with staking precompile in two w
 
 ## Prerequisites
 
+1. Read [Bittensor EVM Smart Contracts](./) for a basic introduction to Bittensor EVM
 1. You should also be comfortable using [Remix IDE](https://remix.ethereum.org/).
-2. Read [EVM on Subtensor](./evm-on-subtensor.md) for a basic understanding of what an ABI is and how to use it.
 
 ## Setup EVM localnet, subnet and delegate
 
@@ -25,10 +25,11 @@ In this tutorial you will learn how to interact with staking precompile in two w
 
 2. On this EVM localnet create one subnet and a delegate hotkey. The commands below will create a subnet, register a neuron and nominate your hotkey as a delegate, in that order:
 
-   ```bash
-   btcli subnet create --subtensor.chain_endpoint ws://127.0.0.1:9944
-   btcli subnet register --subtensor.chain_endpoint ws://127.0.0.1:9944
-   ```
+```sh
+btcli subnet create --network ws://127.0.0.1:9944
+btcli subnet register --network ws://127.0.0.1:9944    
+```
+
 
 3. Save the delegate hotkey address. You will use this in the staking pool use case below.
 
@@ -105,9 +106,11 @@ In this tutorial, you will interact directly with the staking precompile by usin
 
 3. Remix IDE will find the precompile at the precompile address on the subtensor EVM and show it in the list of deployed contracts. Expand the contract, then expand the `addStake` method, and paste the public key of your delegate hotkey into the `hotkey` field. Then click **transact** and wait for the transaction to be completed.
 
+
 4. Follow these steps to see that the stake record is updated in [Polkadot JS app](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/chainstate):
 
    1. Select **subtensorModule** + **stake** in the drop-down list.
    2. Paste the delegate hotkey account ID in the first parameter.
    3. Toggle **include option** OFF for the second parameter.
    4. Click the **+** button and find the new stake record.
+

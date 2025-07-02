@@ -185,7 +185,7 @@ For example, if you want to set a new value to `alpha_low` but do not want to ch
 **Syntax**
 
 ```bash
-btcli sudo set hyperparameters --netuid <your_preferred_netuid> --param liquid_alpha_enabled --value <True> or <False>
+btcli sudo set --netuid <your_preferred_netuid> --param liquid_alpha_enabled --value <True> or <False>
 ```
 
 **Example**
@@ -193,7 +193,7 @@ btcli sudo set hyperparameters --netuid <your_preferred_netuid> --param liquid_a
 For subnet 1 (`netuid` of `1`):
 
 ```bash
-btcli sudo set hyperparameters --netuid 1 --param liquid_alpha_enabled --value True
+btcli sudo set --netuid 1 --param liquid_alpha_enabled --value True
 ```
 
 or you can also use,
@@ -221,7 +221,7 @@ When you use `btcli sudo set` you can use `1` or `0` to enable or disable the `l
 **Syntax**
 
 ```bash
-btcli sudo set hyperparameters --netuid <your_preferred_netuid> --param alpha_values --value <value-of-alpha_low,value-of-alpha_high>
+btcli sudo set --netuid <your_preferred_netuid> --param alpha_values --value <value-of-alpha_low,value-of-alpha_high>
 ```
 
 **Example**
@@ -229,7 +229,7 @@ btcli sudo set hyperparameters --netuid <your_preferred_netuid> --param alpha_va
 Setting the value of `alpha_low` to the decimal `0.1` (integer `6554`) and `alpha_high` to the decimal `0.8` (integer `52428`) for subnet 1 (`netuid` of `1`):
 
 ```bash
-btcli sudo set hyperparameters --netuid 1 --param alpha_values --value 6554,52429
+btcli sudo set --netuid 1 --param alpha_values --value 6554,52429
 ```
 
 Output:
@@ -251,5 +251,5 @@ When you use `btcli sudo set,` the display will not show the `alpha_values` para
 Use the current value of `alpha_low` from the above display and the new desired value of `alpha_high` and set both like below:
 
 ```bash
-btcli sudo set hyperparameters --netuid 1 --param alpha_values --value 6554,55706
+btcli sudo set --netuid 1 --param alpha_values --value 6554,55706
 ```
