@@ -65,7 +65,7 @@ The commit reveal feature is designed to solve the weight-copying problem by giv
 **See also:** [Commit Reveal](./subnets/commit-reveal.md)
 
 ### Consensus Score
-
+<!-- To fix: immunity period -->
 The consensus score is calculated as the stake-weighted median of all weights assigned to a specific neuron by validators. This creates a consensus threshold that filters out outlier weights, ensuring that only weights near the median consensus are used in final rank calculations.
 
 **See also:** [Yuma Consensus](./yuma-consensus.md), [Consensus-Based Weights](./subnets/consensus-based-weights.md)
@@ -948,10 +948,7 @@ Where:
 
 ### Validator-Miner Bonds
 
-A mechanism in the Bittensor network that represents the investment relationship between validators and miners, used to calculate validator emissions and incentivize consistent, honest evaluation of miner performance.
-
-**Core Concept:**
-Bonds represent the "investment" a validator has made in evaluating a specific miner. This bonding mechanism is integral to the network's market-based approach to measuring and rewarding machine intelligence through the Yuma Consensus algorithm.
+Bonds represent the "investment" a validator has made in evaluating a specific miner. This bonding mechanism is integral to the Yuma Consensus' design intent of incentivizing high-quality performance by miners, and honest evaluation by validators.
 
 **Bond Formation Process:**
 
@@ -977,23 +974,15 @@ Where:
 Instant bonds are smoothed over time using EMA to prevent abrupt changes:
 $$B_{ij}^{(t)} = \alpha \Delta B_{ij} + (1-\alpha)B_{ij}^{(t-1)}$$
 
-Where $\alpha$ is the EMA smoothing factor (typically around 10%).
+Where $\alpha$ is the EMA smoothing factor.
 
-**Bond Mechanics and Incentives:**
+**Bond Mechanics and Design:**
 
 **Consensus Alignment:**
 - Validators who stay near consensus build stronger EMA bonds
 - Bonds are penalized when validators overstate miner performance
 - The EMA smooths out abrupt swings in validator behavior
 - Bonds incentivize consistent alignment with consensus
-
-**Validator Emissions:**
-Each validator's share of validator emissions (41% of subnet emissions) is calculated as:
-$$V_i = \sum_{j \in \mathbb{M}} (B_{ij} \times M_j)$$
-
-Where $M_j$ is miner $j$'s share of miner emissions.
-
-**Bond Management:**
 
 **Bond Retention:**
 - Neurons retain bonds only if they keep validator permits
@@ -1004,8 +993,6 @@ Where $M_j$ is miner $j$'s share of miner emissions.
 - Bonds decay over time based on the `bonds_moving_avg` parameter
 - Higher decay rates make bonds more responsive to recent performance
 - Lower decay rates allow bonds to persist longer
-
-**Network Security Properties:**
 
 **Anti-Manipulation:**
 - Bonds prevent weight manipulation through economic penalties
@@ -1050,13 +1037,12 @@ Where $M_j$ is miner $j$'s share of miner emissions.
 - Bonds create market-based incentive alignment
 
 **Code References:**
-- `pallets/subtensor/src/epoch/run_epoch.rs:631` - Bond calculation in epoch execution
-- `pallets/subtensor/src/epoch/math.rs:1475` - EMA bond computation
-- `bittensor/core/async_subtensor.py:931` - Bonds API method
-- `pallets/subtensor/src/lib.rs:1560` - Bonds storage definition
+- [Bond calculation in epoch execution]https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/run_epoch.rs:631)
+- [EMA bond computation]https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/epoch/math.rs:1475)
+- [Bonds API method]https://github.com/opentensor/subtensor/blob/main/bittensor/core/async_subtensor.py:931)
+- [Bonds storage definition]https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/lib.rs:1560)
 
-**See also:** [Yuma Consensus](./yuma-consensus), [Emissions](./emissions), [Trust](#trust), [Validator Permits](#vpermit)
-
+**See also:** [Yuma Consensus](./yuma-consensus), [Emissions](./emissions)
 
 ### Validator Take %
 
