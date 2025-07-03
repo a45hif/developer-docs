@@ -128,17 +128,32 @@ The `calculate_fees()` function calculates both TAO and Alpha fees based on glob
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L130-L158)
 
+## Dynamic token composition
 
-## Risk Considerations
+Liquidity providers experience changes in their token composition based on price movements relative to their specified range:
 
-### Impermanent Loss
-Liquidity providers face impermanent loss when the price moves outside their specified range:
-- **In-Range**: Earns trading fees
-- **Out-of-Range**: No fees earned, potential for impermanent loss
 
-### Dynamic TAO/alpha composition
+
+**Price Movement Effects**:
+
+1. **Price Below Range** (`current_price < price_low`):
+   - Position becomes **100% Alpha tokens**
+   - `amount_alpha = liquidity * (1/sqrt_price_low - 1/sqrt_price_high)`
+   - `amount_tao = 0`
+
+2. **Price Above Range** (`current_price > price_high`):
+   - Position becomes **100% TAO tokens**
+   - `amount_alpha = 0`
+   - `amount_tao = liquidity * (sqrt_price_high - sqrt_price_low)`
+
+3. **Price Within Range** (`price_low <= current_price <= price_high`):
+   - Position maintains **mixed token composition**
+   - `amount_alpha = liquidity * (1/sqrt_current_price - 1/sqrt_price_high)`
+   - `amount_tao = liquidity * (sqrt_current_price - sqrt_price_low)`
+
 
 The `LiquidityPosition.to_token_amounts()` method shows how token composition changes based on current price vs. range boundaries.
+
 
 ```python
 def to_token_amounts(
@@ -168,9 +183,9 @@ def to_token_amounts(
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L28-L58)
 
-### Price Range Risk
-- **Narrow Ranges**: Higher fee concentration but higher risk
-- **Wide Ranges**: Lower risk but potentially lower fee earnings
+### Price Range Considerations
+- **Narrow Ranges**: Higher fee concentration but more likely to become single-token when price moves
+- **Wide Ranges**: Lower fee concentration but more likely to maintain mixed token composition
 
 ## Comparison with Staking
 
@@ -180,7 +195,7 @@ def to_token_amounts(
 | **Token Conversion** | TAO → Alpha | TAO + Alpha pool |
 | **Price Range** | Current market price | User-defined range |
 | **Rewards** | Subnet participation | Trading fees |
-| **Risk** | Validator performance | Impermanent loss |
+| **Risk** | Validator performance | Token composition changes |
 | **Complexity** | Simple stake/unstake | Position management |
 
 
@@ -230,19 +245,12 @@ The fee calculation from global and tick-level data is implemented in [`bittenso
 
 **Token Return**: When removing a position entirely:
 
-1. The liquidity accumulated to the position is credited to the user, the amounts depending on the current subnet token price. See [Dynamic TAO/alpha composition](#dynamic-taoalpha-composition)]
+1. The position's liquidity is converted back to tokens based on the current subnet price relative to your position's price range. See [Token Composition Scenarios](#token-composition-scenarios)
 2. Position is deleted from the system
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L127-L185)
 
-## Impermanent Loss Scenarios
 
-**Price Movement Effects**:
-- **Price Increases**: Position may end up with more TAO and less Alpha than initially provided
-- **Price Decreases**: Position may end up with more Alpha and less TAO than initially provided
-- **Out-of-Range**: Position becomes single-token (either all TAO or all Alpha)
-
-**Fee Compensation**: Trading fees earned can offset impermanent loss, potentially making the position profitable even with price movements.
 
 ## Tracking your positions
 
