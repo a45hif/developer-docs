@@ -780,11 +780,6 @@ Where $\alpha$ is the EMA smoothing factor.
 - Higher decay rates make bonds more responsive to recent performance
 - Lower decay rates allow bonds to persist longer
 
-**Anti-Manipulation:**
-- Bonds prevent weight manipulation through economic penalties
-- Validators must "put skin in the game" to influence consensus
-- Bond penalties discourage collusive over-evaluation of miners
-
 **Economic Alignment:**
 - Bonds create long-term relationships between validators and miners
 - Validators are incentivized to discover and support promising miners early
@@ -804,13 +799,6 @@ Where $\alpha$ is the EMA smoothing factor.
 - `bonds_penalty`: Controls penalty for out-of-consensus weights (0-65535)
 - `bonds_moving_avg`: Controls bond decay rate (typically 900,000)
 - `liquid_alpha_enabled`: Enables dynamic alpha adjustment for bonds
-
-**Relationship to Other Network Components:**
-
-**Trust and Consensus:**
-- Bonds influence trust calculation through consensus mechanisms
-- High bond values indicate strong validator-miner relationships
-- Trust creates feedback loop: high trust → better consensus → higher bonds
 
 **Validator Permits:**
 - Bonds are retained only by neurons with validator permits
