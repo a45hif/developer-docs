@@ -369,7 +369,7 @@ This metagraph property represents the final aggregate judgment of a each miner,
 Ranks are calculated as the stake-weighted sum of consensus-clipped weights and directly determine emissions to miners.
 
 
-**See also:** [Emissions](./emissions.md), [Yuma Consensus](./yuma-consensus.md), [Subnet Metagraph](./subnets/metagraph.md)
+**See also:** [Emissions](./emissions.md), [Yuma Consensus](./yuma-consensus.md), [Subnet Metagraph](./subnets/metagraph)
 
 **Relationship to Other Metrics:**
 - **Ranks vs Consensus**: Ranks are calculated using consensus-clipped weights
@@ -603,7 +603,7 @@ A group of three Opentensor Foundation employees responsible for creating propos
 
 In the Yuma Consensus algorithm, trust represents how much a miner's rank was affected by consensus clipping. Trust is calculated as the ratio of final rank to pre-rank. It represents how much of the original validator support survived the consensus clipping process, providing insight into whether a neuron received controversial or outlier weight assignments.
 
-**See also:** [Yuma Consensus](./yuma-consensus.md), [Subnet Metagraph](./subnets/metagraph.md)
+**See also:** [Yuma Consensus](./yuma-consensus.md), [Subnet Metagraph](./subnets/metagraph)
 
 
 **Mathematical Definition:**
