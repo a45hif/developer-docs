@@ -86,16 +86,18 @@ btcli config set [OPTIONS]
 
 **Options**:
 
-- `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`: Name of the wallet.
-- `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path` : Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`: Hotkey of the wallet
-- `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`: The subtensor network to connect to. Default: finney.
-- `--cache`, `--cache / --no-cache`, `--no_cache`: Disable caching of some commands. This will disable the `--reuse-last` and `--html` flags on commands such as `subnets metagraph`, `stake show` and `subnets list`.
-- `--slippage, --slippage-tolerance, --tolerance`: Set the rate tolerance percentage for transactions (e.g. 0.1 for 0.1%).
-- `--safe-staking`, `--safe / --no-safe-staking`, `--unsafe`: Enable or disable safe staking mode.
-- `--allow-partial-stake`, `--partial`, `--allow / --no-allow-partial-stake`, `--no-partial`, `--not-allow`
-- `--dashboard-path`, `--dashboard_path`, `--dash_path`, `--dash.path`: Path to save the dashboard HTML file. For example: `~/.bittensor/dashboard`.
-- `--help`: Show this message and exit.
+| Option                                                                                                    | Type  | Description                                                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                               | TEXT  | Name of the wallet.                                                                                                                                                 |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                                   | TEXT  | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                                                                                |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`                                 | TEXT  | Hotkey of the wallet                                                                                                                                                |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                               | TEXT  | The subtensor network to connect to. Default: finney.                                                                                                               |
+| `--cache`, `--cache`/`--no-cache`, `--no_cache`                                                           |       | Disable caching of some commands. This will disable the `--reuse-last` and `--html` flags on commands such as `subnets metagraph`, `stake show` and `subnets list`. |
+| `--slippage`, `--slippage-tolerance`, `--tolerance`                                                       | FLOAT | Set the rate tolerance percentage for transactions (e.g. 0.1 for 0.1%)                                                                                              |
+| `--safe-staking`, `--safe`/`--no-safe-staking`, `--unsafe`                                                |       | Enable or disable safe staking mode.                                                                                                                                |
+| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |       | Allow or prevent parial stakes                                                                                                                                      |
+| `--dashboard-path`, `--dashboard_path`, `--dash_path`, `--dash.path`                                      | TEXT  | Path to save the dashboard HTML file. For example: `~/.bittensor/dashboard`.                                                                                        |
+| `--help`                                                                                                  |       | Show this message and exit.                                                                                                                                         |
 
 ### `btcli config get`
 
@@ -109,7 +111,9 @@ btcli config get [OPTIONS]
 
 **Options**:
 
-- `--help`: Show this message and exit.
+| Option   | Type | Description                 |
+| -------- | ---- | --------------------------- |
+| `--help` |      | Show this message and exit. |
 
 ### `btcli config clear`
 
@@ -135,16 +139,19 @@ btcli config clear [OPTIONS]
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name`
-- `-p, --wallet-path, --wallet_path, --wallet.path`
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey`
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint`
-- `--cache`
-- `--slippage, --slippage-tolerance, --tolerance`
-- `--safe-staking, --safe / --no-safe-staking, --unsafe`: [default: no-safe-staking]
-- `--allow-partial-stake, --partial, --allow / --no-allow-partial-stake, --no-partial, --not-allow`: [default: no-allow-partial-stake]
-- `--all`
-- `--help`: Show this message and exit.
+| Option                                                                                                    | Type  | Description                                                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                               | TEXT  | Name of the wallet.                                                                                                                                                 |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                                   | TEXT  | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                                                                                |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`                                 | TEXT  | Hotkey of the wallet                                                                                                                                                |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                               | TEXT  | The subtensor network to connect to. Default: finney.                                                                                                               |
+| `--cache`                                                                                                 |       | Disable caching of some commands. This will disable the `--reuse-last` and `--html` flags on commands such as `subnets metagraph`, `stake show` and `subnets list`. |
+| `--slippage`, `--slippage-tolerance`, `--tolerance`                                                       | FLOAT | Set the rate tolerance percentage for transactions (e.g. 0.1 for 0.1%)                                                                                              |
+| `--safe-staking`, `--safe`/`--no-safe-staking`, `--unsafe`                                                |       | Enable or disable safe staking mode.                                                                                                                                |
+| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |       | Allow or prevent parial stakes                                                                                                                                      |
+| `--all`                                                                                                   |       | Clears the entire config.                                                                                                                                           |
+| `--dashboard-path`, `--dashboard_path`, `--dash_path`, `--dash.path`                                      | TEXT  | Path to save the dashboard HTML file. For example: `~/.bittensor/dashboard`.                                                                                        |
+| `--help`                                                                                                  |       | Show this message and exit.                                                                                                                                         |
 
 ## `btcli view`
 
@@ -173,6 +180,12 @@ Display html dashboard with subnets list, stake, and neuron information.
 ```bash
 btcli view dashboard
 ```
+
+**Options**:
+
+| Option   | Type | Description                 |
+| -------- | ---- | --------------------------- |
+| `--help` |      | Show this message and exit. |
 
 ## `btcli wallet`
 
@@ -228,10 +241,12 @@ btcli wallet list [OPTIONS]
 
 **Options**:
 
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                  | Type | Description                                                                          |
+| ------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path` | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `--quiet`                                               |      | Display only critical information on the console.                                    |
+| `--verbose`                                             |      | Enable verbose output.                                                               |
+| `--help`                                                |      | Show this message and exit.                                                          |
 
 ### `btcli wallet swap-hotkey`
 
@@ -264,14 +279,19 @@ alias: swap_hotkey
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                          |
+| --------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT    | Hotkey of the wallet                                                                 |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).                                   |
+| ` --all-netuids`/`--no-all-netuids`,                                        |         | Use all netuids                                                                      |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--quiet`                                                                   |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                 |         | Enable verbose output.                                                               |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                                               |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                    |         | Show this message and exit.                                                          |
 
 ### `btcli wallet regen-coldkey`
 
@@ -303,17 +323,21 @@ alias: regen_coldkey
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--mnemonic TEXT`: Mnemonic used to regenerate your key. For example: horse cart dog ...
-- `--seed TEXT`: Seed hex string used to regenerate your key. For example: 0x1234...
-- `-j, --json TEXT`: Path to a JSON file containing the encrypted key backup. For example, a JSON file from PolkadotJS.
-- `--json-password TEXT`: Password to decrypt the JSON file.
-- `--use-password / --no-use-password`: Set this to `True` to protect the generated Bittensor key with a password. [default: use-password]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                    | Type | Description                                                                          |
+| ------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`               | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                   | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` | TEXT | Hotkey of the wallet                                                                 |
+| `--mnemonic`                                                              | TEXT | Mnemonic used to regenerate your key.                                                |
+| `--seed`,                                                                 | TEXT | Seed hex string used to regenerate your key.                                         |
+| `--json`, `-j`                                                            | TEXT | Path to a JSON file containing the encrypted key backup.                             |
+| `--json-password`,                                                        | TEXT | Password to decrypt the JSON file.key.                                               |
+| `--use-password`/`--no-use-password `,                                    |      | Set this to `True` to protect the generated Bittensor key with a password.           |
+| `--overwrite`/`--no-overwrite`                                            |      | Overwrite the existing wallet file with the new one.                                 |
+| `--quiet`                                                                 |      | Display only critical information on the console.                                    |
+| `--verbose`                                                               |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                             |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                  |      | Show this message and exit.                                                          |
 
 ### `btcli wallet regen-coldkeypub`
 
@@ -344,14 +368,18 @@ alias: regen_coldkeypub
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--public-key-hex TEXT`: The public key in hex format.
-- `--ss58, --ss58-address TEXT`: The SS58 address of the coldkey.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                    | Type | Description                                                                          |
+| ------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`               | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                   | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` | TEXT | Hotkey of the wallet                                                                 |
+| `--public-key-hex`,                                                       | TEXT | The public key in hex format.                                                        |
+| `--ss58`, `--ss58-address`,                                               | TEXT | The SS58 address of the coldkey.                                                     |
+| `--overwrite`/`--no-overwrite`                                            |      | Overwrite the existing wallet file with the new one.                                 |
+| `--quiet`                                                                 |      | Display only critical information on the console.                                    |
+| `--verbose`                                                               |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                             |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                  |      | Show this message and exit.                                                          |
 
 ### `btcli wallet regen-hotkey`
 
@@ -382,17 +410,21 @@ alias: regen_hotkey
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--mnemonic TEXT`: Mnemonic used to regenerate your key. For example: horse cart dog ...
-- `--seed TEXT`: Seed hex string used to regenerate your key. For example: 0x1234...
-- `-j, --json TEXT`: Path to a JSON file containing the encrypted key backup. For example, a JSON file from PolkadotJS.
-- `--json-password TEXT`: Password to decrypt the JSON file.
-- `--use-password / --no-use-password`: Set to 'True' to protect the generated Bittensor key with a password. [default: no-use-password]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                    | Type | Description                                                                          |
+| ------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`               | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                   | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` | TEXT | Hotkey of the wallet                                                                 |
+| `--mnemonic`                                                              | TEXT | Mnemonic used to regenerate your key.                                                |
+| `--seed`,                                                                 | TEXT | Seed hex string used to regenerate your key.                                         |
+| `--json`, `-j`                                                            | TEXT | Path to a JSON file containing the encrypted key backup.                             |
+| `--json-password`,                                                        | TEXT | Password to decrypt the JSON file.key.                                               |
+| `--use-password`/`--no-use-password`,                                     |      | Set this to `True` to protect the generated Bittensor key with a password.           |
+| `--overwrite`/`--no-overwrite`                                            |      | Overwrite the existing wallet file with the new one.                                 |
+| `--quiet`                                                                 |      | Display only critical information on the console.                                    |
+| `--verbose`                                                               |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                             |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                  |      | Show this message and exit.                                                          |
 
 ### `btcli wallet new-hotkey`
 
@@ -423,15 +455,19 @@ alias: new_hotkey
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--n-words, --n_words INTEGER`: The number of words used in the mnemonic. Options: [12, 15, 18, 21, 24]
-- `--use-password / --no-use-password`: Set to 'True' to protect the generated Bittensor key with a password. [default: no-use-password]
-- `--uri TEXT`: Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie', 'Dave', 'Eve')
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                    | Type    | Description                                                                          |
+| ------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`               | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                   | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` | TEXT    | Hotkey of the wallet                                                                 |
+| `--n-words`, `--n_words`                                                  | INTEGER | The number of words used in the mnemonic.                                            |
+| `--use-password`/`--no-use-password `,                                    |         | Set this to `True` to protect the generated Bittensor key with a password.           |
+| `--uri`                                                                   | TEXT    | Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie')                              |
+| `--overwrite`/`--no-overwrite`                                            |         | Overwrite the existing wallet file with the new one.                                 |
+| `--quiet`                                                                 |         | Display only critical information on the console.                                    |
+| `--verbose`                                                               |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                             |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                  |         | Show this message and exit.                                                          |
 
 ### `btcli wallet new-coldkey`
 
@@ -461,15 +497,19 @@ alias: new_coldkey
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--n-words, --n_words INTEGER`: The number of words used in the mnemonic. Options: [12, 15, 18, 21, 24]
-- `--use-password / --no-use-password`: Set this to `True` to protect the generated Bittensor key with a password. [default: use-password]
-- `--uri TEXT`: Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie', 'Dave', 'Eve')
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                    | Type    | Description                                                                          |
+| ------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`               | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                   | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` | TEXT    | Hotkey of the wallet                                                                 |
+| `--n-words`, `--n_words`                                                  | INTEGER | The number of words used in the mnemonic.                                            |
+| `--use-password`/`--no-use-password `,                                    |         | Set this to `True` to protect the generated Bittensor key with a password.           |
+| `--uri`                                                                   | TEXT    | Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie')                              |
+| `--overwrite`/`--no-overwrite`                                            |         | Overwrite the existing wallet file with the new one.                                 |
+| `--quiet`                                                                 |         | Display only critical information on the console.                                    |
+| `--verbose`                                                               |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                             |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                  |         | Show this message and exit.                                                          |
 
 ### `btcli wallet create`
 
@@ -495,15 +535,19 @@ btcli wallet create [OPTIONS]
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--n-words INTEGER`
-- `--use-password / --no-use-password`: Set this to `True` to protect the generated Bittensor key with a password. [default: use-password]
-- `--uri TEXT`: Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie', 'Dave', 'Eve')
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                    | Type    | Description                                                                          |
+| ------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`               | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                   | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` | TEXT    | Hotkey of the wallet                                                                 |
+| `--n-words`, `--n_words`                                                  | INTEGER | The number of words used in the mnemonic.                                            |
+| `--use-password`/`--no-use-password `,                                    |         | Set this to `True` to protect the generated Bittensor key with a password.           |
+| `--uri`                                                                   | TEXT    | Create wallet from uri (e.g. 'Alice', 'Bob', 'Charlie')                              |
+| `--overwrite`/`--no-overwrite`                                            |         | Overwrite the existing wallet file with the new one.                                 |
+| `--quiet`                                                                 |         | Display only critical information on the console.                                    |
+| `--verbose`                                                               |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                             |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                  |         | Show this message and exit.                                                          |
 
 ### `btcli wallet balance`
 
@@ -545,15 +589,18 @@ btcli wallet balance [OPTIONS]
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--ss58, --ss58-address TEXT`: The SS58 address of the coldkey.
-- `-a, --all`: Whether to display the balances for all the wallets.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                                                          |
+| --------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT | Hotkey of the wallet                                                                 |
+| `--ss58`, `--ss58-address`,                                                 | TEXT | The SS58 address of the coldkey.                                                     |
+| `--all`, `-a`                                                               |      | Whether to display the balances for all the wallets.                                 |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney.                                |
+| `--quiet`                                                                   |      | Display only critical information on the console.                                    |
+| `--verbose`                                                                 |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                    |      | Show this message and exit.                                                          |
 
 ### `btcli wallet overview`
 
@@ -583,19 +630,22 @@ btcli wallet overview [OPTIONS]
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-a, --all`: See an overview for all the wallets
-- `--sort-by, --sort_by TEXT`: Sort the hotkeys by the specified column title. For example: name, uid, axon.
-- `--sort-order, --sort_order TEXT`: Sort the hotkeys in the specified order (ascending/asc or descending/desc/reverse).
-- `-in, --include-hotkeys TEXT`: Hotkeys to include. Specify by name or ss58 address. If left empty, all hotkeys, except those in the '--exclude-hotkeys', will be included.
-- `-ex, --exclude-hotkeys TEXT`: Hotkeys to exclude. Specify by name or ss58 address. If left empty, all hotkeys, except those in the '--include-hotkeys', will be excluded.
-- `-n, --netuids, --netuid TEXT`: Set the netuid(s) to exclude. Separate multiple netuids with a comma, for example: `-n 0,1,2`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                                                                                                                 |
+| --------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT | Name of the wallet.                                                                                                                         |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                                                        |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT | Hotkey of the wallet                                                                                                                        |
+| `--all`, `-a`                                                               |      | See an overview for all the wallets                                                                                                         |
+| `--sort-by`, `--sort_by`                                                    | TEXT | Sort the hotkeys by the specified column title. For example: name, uid, axon.                                                               |
+| `--sort-order`, `--sort_order`                                              | TEXT | Sort the hotkeys in the specified order (ascending/asc or descending/desc/reverse).                                                         |
+| `--include-hotkeys`, `-in`                                                  | TEXT | Hotkeys to include. Specify by name or ss58 address. If left empty, all hotkeys, except those in the `--exclude-hotkeys`, will be included. |
+| `--exclude-hotkeys`, `-ex`                                                  | TEXT | Hotkeys to exclude. Specify by name or ss58 address. If left empty, all hotkeys, except those in the `--include-hotkeys`, will be excluded. |
+| `--netuids`, `--netuid`, `-n`                                               | TEXT | Set the netuid(s) to exclude. Separate multiple netuids with a comma, for example: `-n 0,1,2`.                                              |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney.                                                                                       |
+| `--quiet`                                                                   |      | Display only critical information on the console.                                                                                           |
+| `--verbose`                                                                 |      | Enable verbose output.                                                                                                                      |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.                                                                                                  |
+| `--help`                                                                    |      | Show this message and exit.                                                                                                                 |
 
 ### `btcli wallet transfer`
 
@@ -626,16 +676,22 @@ btcli wallet transfer [OPTIONS]
 
 **Options**:
 
-- `-d, --destination, --dest TEXT`: Destination address (ss58) of the wallet (coldkey).
-- `-a, --amount FLOAT`: Amount (in TAO) to transfer.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                          |
+| --------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `--destination`, `--dest`, `-d`                                             | TEXT    | Destination address (ss58) of the wallet (coldkey).                                  |
+| `--amount`, `-a`                                                            | FLOAT   | Amount (in TAO) to transfer.                                                         |
+| `--all`                                                                     |         | Transfer all available balance.                                                      |
+| `--all`, `-a`                                                               |         | Whether to display the balances for all the wallets.                                 |
+| `--period`, `-era`                                                          | INTEGER | Length (in blocks) for which the transaction should be valid.                        |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT    | Hotkey of the wallet                                                                 |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                   |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                 |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                    |         | Show this message and exit.                                                          |
 
 ### `btcli wallet set-identity`
 
@@ -669,21 +725,24 @@ alias: set_identity
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--name TEXT`: The display name for the identity.
-- `--web-url, --web TEXT`: The web URL for the identity.
-- `--image-url, --image TEXT`: The image URL for the identity.
-- `--discord TEXT`: The Discord handle for the identity.
-- `--description TEXT`: The description for the identity.
-- `--additional TEXT`: Additional details for the identity.
-- `--github TEXT`: The GitHub repository for the identity.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                                                          |
+| --------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT | Hotkey of the wallet                                                                 |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney.                                |
+| `--name`                                                                    | TEXT | The display name for the identity.                                                   |
+| `--web-url`, `--web`                                                        | TEXT | The web URL for the identity.                                                        |
+| `--image-url`, `--image`                                                    | TEXT | The image URL for the identity.                                                      |
+| `--discord`                                                                 | TEXT | The Discord handle for the identity.                                                 |
+| `--description`                                                             | TEXT | The description for the identity.                                                    |
+| `--additional`                                                              | TEXT | Additional details for the identity.                                                 |
+| `--github`                                                                  | TEXT | The GitHub repository for the identity.                                              |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |      | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                   |      | Display only critical information on the console.                                    |
+| `--verbose`                                                                 |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                    |      | Show this message and exit.                                                          |
 
 ### `btcli wallet get-identity`
 
@@ -717,14 +776,17 @@ alias: get_identity
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-k, --ss58, --coldkey_ss58, --coldkey.ss58_address, --coldkey.ss58, --key TEXT`: Coldkey address of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                 | Type | Description                                                                          |
+| -------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                            | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`              | TEXT | Hotkey of the wallet                                                                 |
+| `--ss58`, `--coldkey_ss58`, `--coldkey.ss58_address`, `--coldkey.ss58`, `--key`, `-k ` | TEXT | Coldkey address of the wallet                                                        |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`            | TEXT | The subtensor network to connect to. Default: finney.                                |
+| `--quiet`                                                                              |      | Display only critical information on the console.                                    |
+| `--verbose`                                                                            |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                          |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                               |      | Show this message and exit.                                                          |
 
 ### `btcli wallet sign`
 
@@ -752,14 +814,17 @@ btcli wallet sign [OPTIONS]
 
 **Options**:
 
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--use-hotkey / --no-use-hotkey`: If specified, the message will be signed by the hotkey. If not specified, the user will be prompted.
-- `--message TEXT`: The message to encode and sign
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                    | Type | Description                                                                                          |
+| ------------------------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------------- |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`               | TEXT | Name of the wallet.                                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                   | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                 |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` | TEXT | Hotkey of the wallet                                                                                 |
+| `--use-hotkey` / `--no-use-hotkey`                                        |      | If specified, the message will be signed by the hotkey. If not specified, the user will be prompted. |
+| `--message`                                                               | TEXT | The message to encode and sign.                                                                      |
+| `--quiet`                                                                 |      | Display only critical information on the console.                                                    |
+| `--verbose`                                                               |      | Enable verbose output.                                                                               |
+| `--json-output`, `--json-out`                                             |      | Outputs the result of the command as JSON.                                                           |
+| `--help`                                                                  |      | Show this message and exit.                                                                          |
 
 ## `btcli stake`
 
@@ -1978,12 +2043,14 @@ alias: get_identity
 
 **Options**:
 
-- `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` TEXT: The subtensor network to connect to.
-- `--netuid` INTEGER: The netuid of the subnet in the network, (e.g. 1).
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--json-output`, `--json-out`: Outputs the result of the command as JSON.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                           |
+| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney. |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).    |
+| `--quiet`                                                                   |         | Display only critical information on the console.     |
+| `--verbose`                                                                 |         | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |         | Show this message and exit.                           |
 
 ## `btcli weights`
 
