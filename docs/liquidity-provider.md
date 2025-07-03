@@ -56,11 +56,14 @@ await subtensor.add_liquidity(
     netuid=netuid,
     liquidity=Balance.from_tao(1000),
     price_low=Balance.from_tao(1.5),
-    price_high=Balance.from_tao(2.0)
+    price_high=Balance.from_tao(2.0),
+    wait_for_inclusion=True,
+    wait_for_finalization=False,
+    period=None
 )
 ```
 
-[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L13-L72)
+[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/subtensor.py#L2997-L3056)
 
 ### Modifying a position
 
@@ -71,12 +74,14 @@ await subtensor.modify_liquidity(
     wallet=wallet,
     netuid=netuid,
     position_id=position_id,
-    liquidity_delta=Balance.from_tao(500)
+    liquidity_delta=Balance.from_tao(500),
+    wait_for_inclusion=True,
+    wait_for_finalization=False,
+    period=None
 )
-
 ```
 
-[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L74-L125)
+[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/subtensor.py#L3210-L3269)
 
 ### Removing a liquidity position
 
@@ -86,11 +91,14 @@ Removes liquidity and credits balances back to the creator's wallet.
 await subtensor.remove_liquidity(
     wallet=wallet,
     netuid=netuid,
-    position_id=position_id
+    position_id=position_id,
+    wait_for_inclusion=True,
+    wait_for_finalization=False,
+    period=None
 )
 ```
 
- [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L127-L185)
+ [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/subtensor.py#L3418-L3477)
 
 ### Listing positions
 
@@ -99,11 +107,12 @@ Get all positions on a specific subnet for a specific wallet. Returns a list of 
 ```python
 positions = await subtensor.get_liquidity_list(
     wallet=wallet,
-    netuid=netuid
+    netuid=netuid,
+    block=None
 )
 ```
 
-[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L1862-L2034)
+[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/subtensor.py#L1451-L1523)
 
 ## Fee Structure
 
@@ -245,3 +254,4 @@ The fee calculation from global and tick-level data is implemented in [`bittenso
 - `netuid`: Associated subnet
 
 The `LiquidityPosition` dataclass definition and position creation are implemented in [`bittensor/utils/liquidity.py`](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L18-L26) and [`bittensor/core/async_subtensor.py`](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L2000-L2030).
+
