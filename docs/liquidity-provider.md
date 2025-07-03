@@ -246,3 +246,83 @@ The fee calculation from global and tick-level data is implemented in [`bittenso
 
 The `LiquidityPosition` dataclass definition and position creation are implemented in [`bittensor/utils/liquidity.py`](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L18-L26) and [`bittensor/core/async_subtensor.py`](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L2000-L2030).
 
+
+## Comparison with Uniswap V3
+
+### **Similarities with Uniswap V3**
+
+The Bittensor liquidity provider system is heavily inspired by Uniswap V3's concentrated liquidity model, with several key similarities:
+
+#### **1. Concentrated Liquidity Model**
+- **Bittensor**: Users specify `price_low` and `price_high` to define liquidity range [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L50-L51)
+- **Uniswap V3**: Users specify `tickLower` and `tickUpper` to define price range
+- **Similarity**: Both allow liquidity providers to concentrate their capital in specific price ranges
+
+#### **2. Tick-Based Pricing System**
+- **Bittensor**: Uses `price_to_tick()` and `tick_to_price()` functions with `PRICE_STEP = 1.0001` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L61-L80)
+- **Uniswap V3**: Uses ticks with 0.01% price spacing (1.0001 multiplier)
+- **Similarity**: Identical tick spacing and price conversion mechanics
+
+#### **3. Position Management**
+- **Bittensor**: `add_liquidity()`, `modify_liquidity()`, `remove_liquidity()` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L13-L185)
+- **Uniswap V3**: `mint()`, `increaseLiquidity()`, `decreaseLiquidity()`, `burn()`
+- **Similarity**: Similar lifecycle operations for position management
+
+#### **4. Fee Collection**
+- **Bittensor**: Global and tick-level fee tracking with `calculate_fees()` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L130-L158)
+- **Uniswap V3**: Fee accumulation in positions with `collect()` function
+- **Similarity**: Both track fees at multiple levels and allow fee collection
+
+#### **5. Single-Side Liquidity**
+- **Bittensor**: Positions can become single-token when price moves outside range [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L28-L58)
+- **Uniswap V3**: Single-side positions when current price is outside the range
+- **Similarity**: Both support single-token liquidity positions
+
+### **Key Differences from Uniswap V3**
+
+#### **1. Token Pair Structure**
+- **Bittensor**: TAO (network token) vs Alpha (subnet-specific token)
+- **Uniswap V3**: Generic token pairs (any ERC-20 tokens)
+- **Difference**: Bittensor has a fixed token relationship across all pools
+
+#### **2. Position Representation**
+- **Bittensor**: Uses `LiquidityPosition` dataclass with direct fee tracking [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L18-L26)
+- **Uniswap V3**: Uses NFT-based positions via `NonfungiblePositionManager`
+- **Difference**: Bittensor positions are not NFTs and have built-in fee tracking
+
+#### **3. Subnet Integration**
+- **Bittensor**: Positions are subnet-specific with `netuid` parameter [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L2000-L2030)
+- **Uniswap V3**: Pool-specific positions
+- **Difference**: Bittensor integrates liquidity with subnet governance and operations
+
+#### **4. Fee Structure**
+- **Bittensor**: Separate tracking of TAO and Alpha fees with `fees_tao` and `fees_alpha` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L1890-L1930)
+- **Uniswap V3**: Single fee rate per pool (0.01%, 0.05%, 0.3%, 1%)
+- **Difference**: Bittensor has dual-token fee structure tied to subnet economics
+
+#### **5. Access Control**
+- **Bittensor**: Subnet owners can enable/disable user liquidity via `toggle_user_liquidity` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L4863-L4904)
+- **Uniswap V3**: Open access to all users
+- **Difference**: Bittensor has subnet-level governance over liquidity provision
+
+#### **6. Implementation Architecture**
+- **Bittensor**: Built into the core blockchain as a "Swap" module
+- **Uniswap V3**: Separate smart contracts on Ethereum
+- **Difference**: Bittensor liquidity is native to the blockchain, not a separate protocol
+
+### **Technical Implementation Notes**
+
+#### **Uniswap V3 References**
+- **Tick System**: Bittensor uses identical tick spacing (1.0001) as Uniswap V3
+- **Price Conversion**: `price_to_tick()` and `tick_to_price()` functions mirror Uniswap V3's implementation
+- **Liquidity Math**: The `to_token_amounts()` method uses similar sqrt price calculations [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L28-L58)
+
+#### **Bittensor-Specific Adaptations**
+- **Subnet Economics**: Fee structure designed around subnet participation and Alpha token economics
+- **Network Integration**: Liquidity positions tied to subnet operations and governance
+- **Simplified Interface**: Direct API methods without NFT complexity
+
+#### **References**
+- **Uniswap V3 Documentation**: https://docs.uniswap.org/sdk/v3/guides/liquidity/position-data
+- **Concentrated Liquidity**: https://uniswap.org/whitepaper-v3.pdf
+- **Tick System**: https://docs.uniswap.org/concepts/protocol/concentrated-liquidity
