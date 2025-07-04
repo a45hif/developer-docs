@@ -95,7 +95,7 @@ btcli config set [OPTIONS]
 | `--cache`, `--cache`/`--no-cache`, `--no_cache`                                                           |       | Disable caching of some commands. This will disable the `--reuse-last` and `--html` flags on commands such as `subnets metagraph`, `stake show` and `subnets list`. |
 | `--slippage`, `--slippage-tolerance`, `--tolerance`                                                       | FLOAT | Set the rate tolerance percentage for transactions (e.g. 0.1 for 0.1%)                                                                                              |
 | `--safe-staking`, `--safe`/`--no-safe-staking`, `--unsafe`                                                |       | Enable or disable safe staking mode.                                                                                                                                |
-| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |       | Allow or prevent parial stakes                                                                                                                                      |
+| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |       | Allow or prevent partial stakes                                                                                                                                     |
 | `--dashboard-path`, `--dashboard_path`, `--dash_path`, `--dash.path`                                      | TEXT  | Path to save the dashboard HTML file. For example: `~/.bittensor/dashboard`.                                                                                        |
 | `--help`                                                                                                  |       | Show this message and exit.                                                                                                                                         |
 
@@ -148,7 +148,7 @@ btcli config clear [OPTIONS]
 | `--cache`                                                                                                 |       | Disable caching of some commands. This will disable the `--reuse-last` and `--html` flags on commands such as `subnets metagraph`, `stake show` and `subnets list`. |
 | `--slippage`, `--slippage-tolerance`, `--tolerance`                                                       | FLOAT | Set the rate tolerance percentage for transactions (e.g. 0.1 for 0.1%)                                                                                              |
 | `--safe-staking`, `--safe`/`--no-safe-staking`, `--unsafe`                                                |       | Enable or disable safe staking mode.                                                                                                                                |
-| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |       | Allow or prevent parial stakes                                                                                                                                      |
+| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |       | Allow or prevent partial stakes                                                                                                                                     |
 | `--all`                                                                                                   |       | Clears the entire config.                                                                                                                                           |
 | `--dashboard-path`, `--dashboard_path`, `--dash_path`, `--dash.path`                                      | TEXT  | Path to save the dashboard HTML file. For example: `~/.bittensor/dashboard`.                                                                                        |
 | `--help`                                                                                                  |       | Show this message and exit.                                                                                                                                         |
@@ -206,7 +206,7 @@ aliases: w, wallets
 - `list`: Displays all the wallets and their corresponding hotkeys that are located in the wallet path specified in the config.
 - `swap-hotkey`: Swap hotkeys of a given wallet on the blockchain.
 - `regen-coldkey`: Regenerate a coldkey for a wallet on the Bittensor blockchain network.
-- `regen-coldkeypub`: Regenerates the public part of a coldkey (coldkeypub.txt) for a wallet.
+- `regen-coldkeypub`: Regenerates the public part of a coldkey (`coldkeypub.txt`) for a wallet.
 - `regen-hotkey`: Regenerates a hotkey for a wallet.
 - `new-hotkey`: Create a new hotkey for a wallet.
 - `new-coldkey`: Create a new coldkey.
@@ -341,13 +341,13 @@ alias: regen_coldkey
 
 ### `btcli wallet regen-coldkeypub`
 
-Regenerates the public part of a coldkey (coldkeypub.txt) for a wallet.
+Regenerates the public part of a coldkey (`coldkeypub.txt`) for a wallet.
 
-Use this command when you need to move machine for subnet mining. Use the public key or SS58 address from your coldkeypub.txt that you have on another machine to regenerate the coldkeypub.txt on this new machine.
+Use this command when you need to move machine for subnet mining. Use the public key or SS58 address from your `coldkeypub.txt` that you have on another machine to regenerate the `coldkeypub.txt` on this new machine.
 
 **Usage:**
 
-The command requires either a public key in hexadecimal format or an `SS58` address from the existing coldkeypub.txt from old machine to regenerate the coldkeypub on the new machine.
+The command requires either a public key in hexadecimal format or an `SS58` address from the existing `coldkeypub.txt` from old machine to regenerate the coldkeypub on the new machine.
 
 **Example:**
 
@@ -356,7 +356,7 @@ btcli wallet regen_coldkeypub --ss58_address 5DkQ4...
 ```
 
 :::info
-This command is particularly useful for users who need to regenerate their coldkeypub, perhaps due to file corruption or loss. You will need either ss58 address or public hex key from your old coldkeypub.txt for the wallet. It is a recovery-focused utility that ensures continued access to your wallet functionalities.
+This command is particularly useful for users who need to regenerate their coldkeypub, perhaps due to file corruption or loss. You will need either ss58 address or public hex key from your old `coldkeypub.txt` for the wallet. It is a recovery-focused utility that ensures continued access to your wallet functionalities.
 :::
 **Usage**:
 
@@ -912,24 +912,28 @@ btcli stake add [OPTIONS]
 
 **Options**:
 
-- `-a, --all-tokens, --all`: When set, the command stakes all the available TAO from the coldkey.
-- `--amount FLOAT`: The amount of TAO to stake [default: 0.0]
-- `-in, --include-hotkeys, --hotkey-ss58-address TEXT`: Specifies hotkeys by name or ss58 address to stake to. For example, `-in hk1,hk2`
-- `-ex, --exclude-hotkeys TEXT`: Specifies hotkeys by name or ss58 address to not to stake to (use this option only with `--all-hotkeys`) i.e. `--all-hotkeys -ex hk3,hk4`
-- `--all-hotkeys / --no-all-hotkeys`: When set, this command stakes to all hotkeys associated with the wallet. Do not use if specifying hotkeys in `--include-hotkeys`. [default: no-all-hotkeys]
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--all-netuids / --no-all-netuids`: Use all netuids [default: no-all-netuids]
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--slippage, --slippage-tolerance, --tolerance FLOAT`: Set the rate tolerance percentage for transactions (default: 0.05%).
-- `--safe-staking, --safe / --no-safe-staking, --unsafe`: Enable or disable safe staking mode (default: enabled).
-- `--allow-partial-stake, --partial, --allow, --allow-partial / --no-allow-partial-stake, --no-partial, --not-allow, --not-partial`: Enable or disable partial stake mode (default: disabled).
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                                    | Type    | Description                                                                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `--all-tokens`, `--all`, `-a`                                                                             |         | When set, the command stakes all the available TAO from the coldkey.                                                                      |
+| `--amount`                                                                                                | FLOAT   | The amount of TAO to stake                                                                                                                |
+| `--include-hotkeys`, `--hotkey-ss58-address`, `-in`                                                       | TEXT    | Specifies hotkeys by name or ss58 address to stake to. For example, `-in hk1,hk2`                                                         |
+| `--exclude-hotkeys`, `-ex`                                                                                | TEXT    | Specifies hotkeys by name or ss58 address to not to stake to (use this option only with `--all-hotkeys`) i.e. `--all-hotkeys -ex hk3,hk4` |
+| `--all-hotkeys`/ `--no-all-hotkeys`                                                                       |         | When set, this command stakes to all hotkeys associated with the wallet. Do not use if specifying hotkeys in `--include-hotkeys`.         |
+| `--netuids`, `--netuid`, `-n`                                                                             | TEXT    | Netuid(s) to for which to add stake. Specify multiple netuids by separating with a comma, for example: `-n 0,1,2`.                        |
+| `--all-netuids`/ `--no-all-netuid`                                                                        |         | Use all netuids.                                                                                                                          |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                               | TEXT    | Name of the wallet.                                                                                                                       |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                                   | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                                                      |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`                                 | TEXT    | Hotkey of the wallet                                                                                                                      |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                               | TEXT    | The subtensor network to connect to. Default: finney.                                                                                     |
+| `--slippage`, `--slippage-tolerance`, `--tolerance`                                                       | FLOAT   | Set the rate tolerance percentage for transactions (e.g. 0.1 for 0.1%)                                                                    |
+| `--safe-staking`, `--safe`/`--no-safe-staking`, `--unsafe`                                                |         | Enable or disable safe staking mode.                                                                                                      |
+| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |         | Allow or prevent partial stakes                                                                                                           |
+| `--period`, `-era`                                                                                        | INTEGER | Length (in blocks) for which the transaction should be valid.                                                                             |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                                       |         | Enable or disable interactive prompts.                                                                                                    |
+| `--quiet`                                                                                                 |         | Display only critical information on the console.                                                                                         |
+| `--verbose`                                                                                               |         | Enable verbose output.                                                                                                                    |
+| `--json-output`, `--json-out`                                                                             |         | Outputs the result of the command as JSON.                                                                                                |
+| `--help`                                                                                                  |         | Show this message and exit.                                                                                                               |
 
 ### `btcli stake remove`
 
@@ -987,25 +991,31 @@ btcli stake remove [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--all-netuids / --no-all-netuids`: Use all netuids [default: no-all-netuids]
-- `-a, --amount FLOAT`: The amount of TAO to unstake. [default: 0.0]
-- `--hotkey-ss58-address TEXT`: The ss58 address of the hotkey to unstake from.
-- `-in, --include-hotkeys TEXT`: Specifies the hotkeys by name or ss58 address to unstake from. For example, `-in hk1,hk2`
-- `-ex, --exclude-hotkeys TEXT`: Specifies the hotkeys by name or ss58 address not to unstake from (only use with `--all-hotkeys`) i.e. `--all-hotkeys -ex hk3,hk4`
-- `--all-hotkeys / --no-all-hotkeys`: When set, this command unstakes from all the hotkeys associated with the wallet. Do not use if specifying hotkeys in `--include-hotkeys`. [default: no-all-hotkeys]
-- `--slippage, --slippage-tolerance, --tolerance FLOAT`: Set the rate tolerance percentage for transactions (default: 0.05%).
-- `--safe-staking, --safe / --no-safe-staking, --unsafe`: Enable or disable safe staking mode (default: enabled).
-- `--allow-partial-stake, --partial, --allow, --allow-partial / --no-allow-partial-stake, --no-partial, --not-allow, --not-partial`: Enable or disable partial stake mode (default: disabled).
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `-i, --interactive`: Enter interactive mode for unstaking.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                                    | Type    | Description                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                               | TEXT    | The subtensor network to connect to. Default: finney.                                                                                         |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                               | TEXT    | Name of the wallet.                                                                                                                           |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                                   | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                                                          |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`                                 | TEXT    | Hotkey of the wallet                                                                                                                          |
+| `--netuid`,                                                                                               | INTEGER | The netuid of the subnet in the network, (e.g. 1).                                                                                            |
+| `--all-netuids`/ `--no-all-netuid`                                                                        |         | Use all netuids.                                                                                                                              |
+| `--unstake-all`, `--all`                                                                                  |         | When set, this command unstakes all staked TAO + Alpha from the all hotkeys.                                                                  |
+| `--unstake-all-alpha`, `--all-alpha`                                                                      |         | When set, this command unstakes all staked Alpha from the all hotkeys.                                                                        |
+| `--amount`, `-a`                                                                                          | FLOAT   | The amount of TAO to unstake                                                                                                                  |
+| `--hotkey-ss58-address`                                                                                   | TEXT    | The ss58 address of the hotkey to unstake from.                                                                                               |
+| `--include-hotkeys`, `-in`                                                                                | TEXT    | Specifies hotkeys by name or ss58 address to unstake from. For example, `-in hk1,hk2`                                                         |
+| `--exclude-hotkeys`, `-ex`                                                                                | TEXT    | Specifies hotkeys by name or ss58 address to not to unstake from (use this option only with `--all-hotkeys`) i.e. `--all-hotkeys -ex hk3,hk4` |
+| `--all-hotkeys`/ `--no-all-hotkeys`                                                                       |         | When set, this command unstakes from all hotkeys associated with the wallet. Do not use if specifying hotkeys in `--include-hotkeys`.         |
+| `--slippage`, `--slippage-tolerance`, `--tolerance`                                                       | FLOAT   | Set the rate tolerance percentage for transactions (e.g. 0.1 for 0.1%)                                                                        |
+| `--safe-staking`, `--safe`/`--no-safe-staking`, `--unsafe`                                                |         | Enable or disable safe staking mode.                                                                                                          |
+| `--allow-partial-stake`, `--partial`, `--allow`/`--no-allow-partial-stake`, `--no-partial`, `--not-allow` |         | Allow or prevent partial stakes                                                                                                               |
+| `--period`, `-era`                                                                                        | INTEGER | Length (in blocks) for which the transaction should be valid.                                                                                 |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                                       |         | Enable or disable interactive prompts.                                                                                                        |
+| `--interactive`, `-t`                                                                                     |         | Enter interactive mode for unstaking.                                                                                                         |
+| `--quiet`                                                                                                 |         | Display only critical information on the console.                                                                                             |
+| `--verbose`                                                                                               |         | Enable verbose output.                                                                                                                        |
+| `--json-output`, `--json-out`                                                                             |         | Outputs the result of the command as JSON.                                                                                                    |
+| `--help`                                                                                                  |         | Show this message and exit.                                                                                                                   |
 
 ### `btcli stake list`
 
@@ -1047,16 +1057,19 @@ btcli stake list [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--ss58, --coldkey_ss58, --coldkey.ss58_address, --coldkey.ss58 TEXT`: Coldkey address of the wallet
-- `--live`: Display live view of the table
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
+| Option                                                                                 | Type | Description                                                                          |
+| -------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`            | TEXT | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                            | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`              | TEXT | Hotkey of the wallet                                                                 |
+| `--ss58`, `--coldkey_ss58`, `--coldkey.ss58_address`, `--coldkey.ss58`, `--key`, `-k ` | TEXT | Coldkey address of the wallet                                                        |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                    |      | Enable or disable interactive prompts.                                               |
+| `--live`                                                                               |      | Display live view of the table                                                       |
+| `--quiet`                                                                              |      | Display only critical information on the console.                                    |
+| `--verbose`                                                                            |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                          |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                               |      | Show this message and exit.                                                          |
 
 ### `btcli stake move`
 
@@ -1091,17 +1104,23 @@ btcli stake move [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--origin-netuid INTEGER`: Origin netuid
-- `--dest-netuid INTEGER`: Destination netuid
-- `--dest-ss58, --dest TEXT`: Destination hotkey
-- `--amount FLOAT`: The amount of TAO to stake
-- `--stake-all, --all`: Stake all
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                            |
+| `--origin-netuid`                                                                          | INTEGER | Origin netuid.                                                                       |
+| `--dest-netuid`                                                                            | INTEGER | Destination netuid.                                                                  |
+| `--dest-ss58`, `--dest`                                                                    | TEXT    | Destination hotkey.                                                                  |
+| `--amount`                                                                                 | FLOAT   | The amount of TAO to stake                                                           |
+| `--stake-all`, `--all`                                                                     |         | Stake all.                                                                           |
+| `--period`, `-era`                                                                         | INTEGER | Length (in blocks) for which the transaction should be valid.                        |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |         | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |         | Show this message and exit.                                                          |
 
 ### `btcli stake transfer`
 
@@ -1144,18 +1163,23 @@ btcli stake transfer [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--origin-netuid INTEGER`: The netuid to transfer stake from
-- `--dest-netuid INTEGER`: The netuid to transfer stake to
-- `--dest-ss58, --dest, --dest-coldkey TEXT`: The destination wallet name or SS58 address to transfer stake to
-- `-a, --amount FLOAT`: Amount of stake to transfer
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                            |
+| `--origin-netuid`                                                                          | INTEGER | The netuid to transfer stake from.                                                   |
+| `--dest-netuid`                                                                            | INTEGER | The netuid to transfer stake to.                                                     |
+| `--dest-ss58`, `--dest`                                                                    | TEXT    | The destination wallet name or SS58 address to transfer stake to.                    |
+| `--amount`                                                                                 | FLOAT   | The amount of stake to transfer.                                                     |
+| `--stake-all`, `--all`                                                                     |         | Stake all.                                                                           |
+| `--period`, `-era`                                                                         | INTEGER | Length (in blocks) for which the transaction should be valid.                        |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |         | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |         | Show this message and exit.                                                          |
 
 ### `btcli stake swap`
 
@@ -1191,20 +1215,24 @@ btcli stake swap [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-o, --origin-netuid, --origin INTEGER`: The netuid to swap stake from
-- `-d, --dest-netuid, --dest INTEGER`: The netuid to swap stake to
-- `-a, --amount FLOAT`: Amount of stake to swap
-- `--swap-all, --all`: Swap all available stake
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--wait-for-inclusion / --no-wait-for-inclusion`: If `True`, waits until the transaction is included in a block. [default: wait-for-inclusion]
-- `--wait-for-finalization / --no-wait-for-finalization`: If `True`, waits until the transaction is finalized on the blockchain. [default: wait-for-finalization]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                            |
+| `--origin-netuid`, `-o`                                                                    | INTEGER | The netuid to swap stake from.                                                       |
+| `--dest-netuid`, `-d`                                                                      | INTEGER | The netuid to swap stake to.                                                         |
+| `--amount`, `-a`                                                                           | FLOAT   | The amount of stake to swap.                                                         |
+| `--swap-all`, `--all`                                                                      |         | Swap all available stake.                                                            |
+| `--period`, `-era`                                                                         | INTEGER | Length (in blocks) for which the transaction should be valid.                        |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |         | Enable or disable interactive prompts.                                               |
+| `--wait-for-inclusion`/ `--no-wait-for-inclusion`                                          |         | If `True`, waits until the transaction is included in a block.                       |
+| `--wait-for-finalization`/ `--no-wait-for-finalization`                                    |         | If `True`, waits until the transaction is finalized on the blockchain.               |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |         | Show this message and exit.                                                          |
 
 ### `btcli stake child`
 
@@ -1253,15 +1281,18 @@ alias: children
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet (e.g. 2)
-- `--all-netuids, --all, --allnetuids`: When set, gets the child hotkeys from all the subnets.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                            |
+| `--netuid`                                                                                 | INTEGER | The netuid of the subnet.                                                            |
+| `--all-netuids`, `--all`, `--allnetuids`                                                   |         | When set, gets the child hotkeys from all the subnets.                               |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |         | Show this message and exit.                                                          |
 
 #### `btcli stake child set`
 
@@ -1287,19 +1318,23 @@ alias: children
 
 **Options**:
 
-- `-c, --children TEXT`: Enter child hotkeys (ss58)
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--all-netuids / --no-all-netuids`: Use all netuids [default: no-all-netuids]
-- `-p, --proportions, --prop FLOAT`: Enter the stake weight proportions for the child hotkeys (sum should be less than or equal to 1)
-- `--wait-for-inclusion / --no-wait-for-inclusion`: If `True`, waits until the transaction is included in a block. [default: wait-for-inclusion]
-- `--wait-for-finalization / --no-wait-for-finalization`: If `True`, waits until the transaction is finalized on the blockchain. [default: wait-for-finalization]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                                      |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------------------ |
+| `--children`, `-c`                                                                         | TEXT    | Enter child hotkeys (ss58)                                                                       |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                            |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                              |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.             |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                                        |
+| `--netuid`                                                                                 | INTEGER | The netuid of the subnet in the network.                                                         |
+| `--all-netuids`/`--no-all-netuids`                                                         |         | Use all netuids.                                                                                 |
+| `--proportions`, `--prop`                                                                  | FLOAT   | Enter the stake weight proportions for the child hotkeys (sum should be less than or equal to 1) |
+| `--wait-for-inclusion`/ `--no-wait-for-inclusion`                                          |         | If `True`, waits until the transaction is included in a block.                                   |
+| `--wait-for-finalization`/ `--no-wait-for-finalization`                                    |         | If `True`, waits until the transaction is finalized on the blockchain.                           |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                                |
+| `--verbose`                                                                                |         | Enable verbose output.                                                                           |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |         | Enable or disable interactive prompts.                                                           |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                                       |
+| `--help`                                                                                   |         | Show this message and exit.                                                                      |
 
 #### `btcli stake child revoke`
 
@@ -1323,17 +1358,21 @@ alias: children
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet, (e.g. 8)
-- `--all-netuids, --all, --allnetuids`: When this flag is used it sets child hotkeys on all the subnets.
-- `--wait-for-inclusion / --no-wait-for-inclusion`: If `True`, waits until the transaction is included in a block. [default: wait-for-inclusion]
-- `--wait-for-finalization / --no-wait-for-finalization`: If `True`, waits until the transaction is finalized on the blockchain. [default: wait-for-finalization]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                            |
+| `--netuid`                                                                                 | INTEGER | The netuid of the subnet in the network.                                             |
+| `--all-netuids`, `--all`, `--allnetuids`                                                   |         | When this flag is used it sets child hotkeys on all the subnets.                     |
+| `--wait-for-inclusion`/ `--no-wait-for-inclusion`                                          |         | If `True`, waits until the transaction is included in a block.                       |
+| `--wait-for-finalization`/ `--no-wait-for-finalization`                                    |         | If `True`, waits until the transaction is finalized on the blockchain.               |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |         | Enable verbose output.                                                               |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |         | Enable or disable interactive prompts.                                               |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |         | Show this message and exit.                                                          |
 
 #### `btcli stake child take`
 
@@ -1365,20 +1404,22 @@ alias: children
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--hotkey TEXT`
-- `--netuid INTEGER`: The netuid of the subnet, (e.g. 23)
-- `--all-netuids, --all, --allnetuids`: When this flag is used it sets child hotkeys on all the subnets.
-- `-t, --take FLOAT`: Use to set the take value for your child hotkey. When not used, the command will fetch the current take value.
-- `--wait-for-inclusion / --no-wait-for-inclusion`: If `True`, waits until the transaction is included in a block. [default: wait-for-inclusion]
-- `--wait-for-finalization / --no-wait-for-finalization`: If `True`, waits until the transaction is finalized on the blockchain. [default: wait-for-finalization]
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                                                    |
+| ------------------------------------------------------------------------------------------ | ------- | -------------------------------------------------------------------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                                          |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                                            |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                           |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                                                      |
+| `--netuid`                                                                                 | INTEGER | The netuid of the subnet in the network.                                                                       |
+| `--all-netuids`, `--all`, `--allnetuids`                                                   |         | When this flag is used it sets child hotkeys on all the subnets.                                               |
+| `--take`                                                                                   | FLOAT   | Use to set the take value for your child hotkey. When not used, the command will fetch the current take value. |
+| `--wait-for-inclusion`/ `--no-wait-for-inclusion`                                          |         | If `True`, waits until the transaction is included in a block.                                                 |
+| `--wait-for-finalization`/ `--no-wait-for-finalization`                                    |         | If `True`, waits until the transaction is finalized on the blockchain.                                         |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |         | Enable or disable interactive prompts.                                                                         |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                                              |
+| `--verbose`                                                                                |         | Enable verbose output.                                                                                         |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                                                     |
+| `--help`                                                                                   |         | Show this message and exit.                                                                                    |
 
 ## `btcli sudo`
 
@@ -1424,16 +1465,20 @@ btcli sudo set [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--param, --parameter TEXT`: The subnet hyperparameter to set
-- `--value TEXT`: Value to set the hyperparameter to.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type    | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT    | Hotkey name or SS58 address of the hotkey                                            |
+| `--netuid`                                                                                 | INTEGER | The netuid of the subnet in the network.                                             |
+| `--param`, `--parameter`                                                                   | TEXT    | The subnet hyperparameter to set                                                     |
+| `--value`                                                                                  | TEXT    | Value to set the hyperparameter to.                                                  |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |         | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                                  |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                              |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |         | Show this message and exit.                                                          |
 
 ### `btcli sudo get`
 
@@ -1453,11 +1498,14 @@ btcli sudo get [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                           |
+| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney. |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network.              |
+| `--quiet`                                                                   |         | Display only critical information on the console.     |
+| `--verbose`                                                                 |         | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |         | Show this message and exit.                           |
 
 ### `btcli sudo senate`
 
@@ -1479,10 +1527,13 @@ btcli sudo senate [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                           |
+| --------------------------------------------------------------------------- | ---- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney. |
+| `--quiet`                                                                   |      | Display only critical information on the console.     |
+| `--verbose`                                                                 |      | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |      | Show this message and exit.                           |
 
 ### `btcli sudo proposals`
 
@@ -1504,10 +1555,13 @@ btcli sudo proposals [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                           |
+| --------------------------------------------------------------------------- | ---- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney. |
+| `--quiet`                                                                   |      | Display only critical information on the console.     |
+| `--verbose`                                                                 |      | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |      | Show this message and exit.                           |
 
 ### `btcli sudo senate-vote`
 
@@ -1534,16 +1588,18 @@ alias: senate_vote
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--proposal, --proposal-hash TEXT`: The hash of the proposal to vote on.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--vote-aye / --vote-nay`: The vote casted on the proposal
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ---- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT | Hotkey name or SS58 address of the hotkey                                            |
+| `--proposal`, `--proposal-hash`                                                            | TEXT | The hash of the proposal to vote on.                                                 |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |      | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                                  |      | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |      | Enable verbose output.                                                               |
+| `--vote-aye`/`--json-nay`                                                                  |      | The vote casted on the proposal.                                                     |
+| `--help`                                                                                   |      | Show this message and exit.                                                          |
 
 ### `btcli sudo set-take`
 
@@ -1568,14 +1624,18 @@ alias: set_take
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--take FLOAT`: The new take value.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type  | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ----- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT  | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT  | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT  | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT  | Hotkey name or SS58 address of the hotkey                                            |
+| `--take`                                                                                   | FLOAT | The new take value.                                                                  |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`                        |       | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                                  |       | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |       | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                              |       | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |       | Show this message and exit.                                                          |
 
 ### `btcli sudo get-take`
 
@@ -1599,13 +1659,16 @@ alias: get_take
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                                     | Type | Description                                                                          |
+| ------------------------------------------------------------------------------------------ | ---- | ------------------------------------------------------------------------------------ |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint`                | TEXT | The subtensor network to connect to. Default: finney.                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                                | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                                    | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`, `--hotkey-ss58` | TEXT | Hotkey name or SS58 address of the hotkey                                            |
+| `--quiet`                                                                                  |      | Display only critical information on the console.                                    |
+| `--verbose`                                                                                |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                                              |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                                   |      | Show this message and exit.                                                          |
 
 ## `btcli subnets`
 
@@ -1654,11 +1717,14 @@ btcli subnets hyperparameters [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                           |
+| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney. |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).    |
+| `--quiet`                                                                   |         | Display only critical information on the console.     |
+| `--verbose`                                                                 |         | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |         | Show this message and exit.                           |
 
 ### `btcli subnets list`
 
@@ -1702,11 +1768,14 @@ btcli subnets list [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--live`: Display live view of the table
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                           |
+| --------------------------------------------------------------------------- | ---- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney. |
+| `--quiet`                                                                   |      | Display only critical information on the console.     |
+| `--verbose`                                                                 |      | Enable verbose output.                                |
+| `--live`                                                                    |      | Display live view of the table                        |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |      | Show this message and exit.                           |
 
 ### `btcli subnets burn-cost`
 
@@ -1730,14 +1799,17 @@ alias: burn_cost
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                           |
+| --------------------------------------------------------------------------- | ---- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney. |
+| `--quiet`                                                                   |      | Display only critical information on the console.     |
+| `--verbose`                                                                 |      | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |      | Show this message and exit.                           |
 
 ### `btcli subnets create`
 
-Registers a new subnet on the network.
+Creates a new subnet on the network.
 
 This command allows you to create a new subnet and set the subnet's identity.
 You also have the option to set your own identity after the registration is complete.
@@ -1764,21 +1836,24 @@ btcli subnets create [OPTIONS]
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--subnet-name, --name TEXT`: Name of the subnet
-- `--github-repo, --repo TEXT`: GitHub repository URL
-- `--subnet-contact, --contact, --email TEXT`: Contact email for subnet
-- `--subnet-url, --url TEXT`: Subnet URL
-- `--discord-handle, --discord TEXT`: Discord handle
-- `--description TEXT`: Description
-- `--additional-info TEXT`: Additional information
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type | Description                                                                          |
+| --------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT | Hotkey of the wallet                                                                 |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT | The subtensor network to connect to. Default: finney.                                |
+| `--subnet-name`                                                             | TEXT | Name of the subnet.                                                                  |
+| `--github-repo`, `repo`                                                     | TEXT | The GitHub repository URL.                                                           |
+| `--subnet-contact`, `--contact`, `--email`                                  | TEXT | Contact email for subnet.                                                            |
+| `--subnet-url`, `--url`                                                     | TEXT | The web URL for the subnet.                                                          |
+| `--discord-handle`, `discord`                                               | TEXT | The Discord handle for the subnet.                                                   |
+| `--description`                                                             | TEXT | The description for the subnet.                                                      |
+| `--additional-info`                                                         | TEXT | Additional details for the subnet.                                                   |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |      | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                   |      | Display only critical information on the console.                                    |
+| `--verbose`                                                                 |      | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                               |      | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                    |      | Show this message and exit.                                                          |
 
 ### `btcli subnets pow-register`
 
@@ -1811,19 +1886,22 @@ alias pow_register
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--processors INTEGER`: Number of processors to use for POW registration.
-- `-u, --update-interval INTEGER`: The number of nonces to process before checking for the next block during registration [default: 50000]
-- `--output-in-place / --no-output-in-place`: Whether to output the registration statistics in-place. [default: output-in-place]
-- `-v, --verbose`: Whether to output the registration statistics verbosely.
-- `--use-cuda, --cuda / --no-use-cuda, --no-cuda`: Set the flag to use CUDA for POW registration. [default: no-use-cuda]
-- `-d, --dev-id INTEGER`: Set the CUDA device id(s), in the order of the device speed (0 is the fastest). [default: 0]
-- `-tbp, --threads-per-block INTEGER`: Set the number of threads per block for CUDA. [default: 256]
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                            |
+| --------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------- |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT    | Name of the wallet.                                                                    |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.   |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT    | Hotkey of the wallet                                                                   |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                  |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).                                     |
+| `--processors`                                                              | INTEGER | Number of processors to use for POW registration.                                      |
+| `-u`, `--update-interval`                                                   | INTEGER | The number of nonces to process before checking for the next block during registration |
+| `--output-in-place`/`--no-output-in-place`                                  |         | Whether to output the registration statistics in-place.                                |
+| `--verbose`, `-v`                                                           |         | Enable verbose output.                                                                 |
+| `--use-cuda`, `--cuda`/`--no-use-cuda`, `--no-cuda`                         |         | Set the flag to use CUDA for POW registration.                                         |
+| `--dev-id`, `-d`                                                            | INTEGER | Set the CUDA device id(s), in the order of the device speed (0 is the fastest).        |
+| `--threads-per-block`, `-tpb`                                               | INTEGER | Set the number of threads per block for CUDA.                                          |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                                                 |
+| `--help`                                                                    |         | Show this message and exit.                                                            |
 
 ### `btcli subnets register`
 
@@ -1847,15 +1925,19 @@ btcli subnets register [OPTIONS]
 
 **Options**:
 
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                                                                                                                                          |
+| --------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                                                                                                                                |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT    | Name of the wallet.                                                                                                                                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                                                                                                                 |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT    | Hotkey of the wallet                                                                                                                                                                                 |
+| `--netuid`,                                                                 | INTEGER | The netuid of the subnet in the network, (e.g. 1).                                                                                                                                                   |
+| `--period`, `-era`                                                          | INTEGER | Length (in blocks) for which the transaction should be valid. Note that it is possible that if you use an era for this transaction that you may pay a different fee to register than the one stated. |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                                                                                                                                                               |
+| `--quiet`                                                                   |         | Display only critical information on the console.                                                                                                                                                    |
+| `--verbose`                                                                 |         | Enable verbose output.                                                                                                                                                                               |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.                                                                                                                                                           |
+| `--help`                                                                    |         | Show this message and exit.                                                                                                                                                                          |
 
 ### `btcli subnets metagraph`
 
@@ -1875,12 +1957,16 @@ btcli subnets metagraph [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                           |
+| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney. |
+| `--netuid`,                                                                 | INTEGER | The netuid of the subnet in the network, (e.g. 1).    |
+| `--sort`                                                                    |         | Sort the subnets by uid.                              |
+| `--quiet`                                                                   |         | Display only critical information on the console.     |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                |
+| `--verbose`                                                                 |         | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |         | Show this message and exit.                           |
 
 ### `btcli subnets show`
 
@@ -1900,12 +1986,16 @@ btcli subnets show [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--prompt, --prompt / -y, --no-prompt, --yes, --no_prompt`: Enable or disable interactive prompts. [default: prompt]
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                           |
+| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney. |
+| `--netuid`,                                                                 | INTEGER | The netuid of the subnet in the network, (e.g. 1).    |
+| `--sort`                                                                    |         | Sort the subnets by uid.                              |
+| `--quiet`                                                                   |         | Display only critical information on the console.     |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                |
+| `--verbose`                                                                 |         | Enable verbose output.                                |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.            |
+| `--help`                                                                    |         | Show this message and exit.                           |
 
 ### `btcli subnets price`
 
@@ -1943,13 +2033,18 @@ btcli subnets price [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `-n, --netuids, --netuid TEXT`: Netuid(s) to show the price for.
-- `--interval-hours, --interval INTEGER`: The number of hours to show the historical price for. [default: 24]
-- `--all-netuids, --all`: Show the price for all subnets.
-- `--log-scale, --log`: Show the price in log scale.
-- `--html`: Display the table as HTML in the browser.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                                     |
+| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                           |
+| `--netuids`, `--netuid`, `-n`                                               | TEXT    | Netuids to show the price for. Separate multiple netuids with a comma, for example: `-n 0,1,2`. |
+| `--interval-hours`, `--interval`                                            | INTEGER | The number of hours to show the historical price for.                                           |
+| `--all-netuids`, `--all`                                                    |         | Show the price for all subnets.                                                                 |
+| `--log-scale`, `--log`                                                      |         | Show the price in log scale.                                                                    |
+| `--html`                                                                    |         | Display the table as HTML in the browser.                                                       |
+| `--quiet`                                                                   |         | Display only critical information on the console.                                               |
+| `--verbose`                                                                 |         | Enable verbose output.                                                                          |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.                                                      |
+| `--help`                                                                    |         | Show this message and exit.                                                                     |
 
 ### `btcli subnets check-start`
 
@@ -1971,11 +2066,13 @@ alias check_start
 
 **Options**:
 
-- `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` TEXT: The subtensor network to connect to. Default: finney.
-- `--netuid`: INTEGER The netuid of the subnet in the network, (e.g. 1).
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                           |
+| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney. |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).    |
+| `--quiet`                                                                   |         | Display only critical information on the console.     |
+| `--verbose`                                                                 |         | Enable verbose output.                                |
+| `--help`                                                                    |         | Show this message and exit.                           |
 
 ### `btcli subnets set-identity`
 
@@ -2005,23 +2102,25 @@ alias: set_identity
 
 **Options**:
 
-- `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name` TEXT: Name of the wallet.
-- `--wallet-path`, `--wallet_path`, `--wallet.path`, `-p` TEXT: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey` `-H` TEXT: Hotkey of the wallet
-- `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` TEXT: The subtensor network to connect to.
-- `--netuid` INTEGER: The netuid of the subnet in the network, (e.g. 1).
-- `--subnet-name`, `--name` TEXT: Name of the subnet.
-- `--github-repo`, `--repo` TEXT: GitHub repository URL
-- `--subnet-contact`, `--contact`, `--email` TEXT: Contact email for subnet
-- `--subnet-url`, `--url` TEXT: Subnet URL
-- `--discord-handle`, `--discord` TEXT: Discord handle
-- `--description` TEXT: Description
-- `--additional-info` TEXT: Additional information
-- `--json-output`, `--json-out`: Outputs the result of the command as JSON.
-- `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`: Enable or disable interactive prompts.
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                          |
+| --------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT    | Name of the wallet.                                                                  |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`. |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT    | Hotkey of the wallet                                                                 |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).                                   |
+| `--subnet-name`, `--name`                                                   | TEXT    | Name of the subnet.                                                                  |
+| `--github-repo`, `repo`                                                     | TEXT    | The GitHub repository URL.                                                           |
+| `--subnet-contact`, `--contact`, `--email`                                  | TEXT    | Contact email for subnet.                                                            |
+| `--subnet-url`, `--url`                                                     | TEXT    | The web URL for the subnet.                                                          |
+| `--discord-handle`, `discord`                                               | TEXT    | The Discord handle for the subnet.                                                   |
+| `--description`                                                             | TEXT    | The description for the subnet.                                                      |
+| `--additional-info`                                                         | TEXT    | Additional details for the subnet.                                                   |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                                               |
+| `--quiet`                                                                   |         | Display only critical information on the console.                                    |
+| `--verbose`                                                                 |         | Enable verbose output.                                                               |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.                                           |
+| `--help`                                                                    |         | Show this message and exit.                                                          |
 
 ### `btcli subnets get-identity`
 
@@ -2091,17 +2190,21 @@ btcli weights reveal [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `-u, --uids TEXT`: Corresponding UIDs for the specified netuid, e.g. -u 1,2,3 ...
-- `-w, --weights TEXT`: Weights for the specified UIDs, e.g. `-w 0.2,0.4,0.1 ...` Must correspond to the order of the UIDs.
-- `-s, --salt TEXT`: Corresponding salt for the hash function, e.g. -s 163,241,217 ...
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                                                   |
+| --------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT    | Name of the wallet.                                                                                           |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                          |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT    | Hotkey of the wallet                                                                                          |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                                         |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).                                                            |
+| `--uids`, `-u`                                                              | TEXT    | Corresponding UIDs for the specified netuid, e.g. -u 1,2,3 ..                                                 |
+| `--weights`, `-w`                                                           | TEXT    | Weights for the specified UIDs, e.g. `-w 0.2,0.4,0.1 ...` Must correspond to the order of the specified UIDs. |
+| `--salt`, `-s`                                                              | TEXT    | Corresponding salt for the hash function, e.g. -s 163,241,217 ...                                             |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                                                                        |
+| `--quiet`                                                                   |         | Display only critical information on the console.                                                             |
+| `--verbose`                                                                 |         | Enable verbose output.                                                                                        |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.                                                                    |
+| `--help`                                                                    |         | Show this message and exit.                                                                                   |
 
 ### `btcli weights commit`
 
@@ -2126,17 +2229,21 @@ btcli weights commit [OPTIONS]
 
 **Options**:
 
-- `--network, --subtensor.network, --chain, --subtensor.chain_endpoint TEXT`: The subtensor network to connect to. Default: finney.
-- `--wallet-name, --name, --wallet_name, --wallet.name TEXT`: Name of the wallet.
-- `-p, --wallet-path, --wallet_path, --wallet.path TEXT`: Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.
-- `-H, --hotkey, --wallet_hotkey, --wallet-hotkey, --wallet.hotkey TEXT`: Hotkey of the wallet
-- `--netuid INTEGER`: The netuid of the subnet in the network, (e.g. 1).
-- `-u, --uids TEXT`: UIDs of interest for the specified netuid, e.g. -u 1,2,3 ...
-- `-w, --weights TEXT`: Weights for the specified UIDs, e.g. `-w 0.2,0.4,0.1 ...` Must correspond to the order of the UIDs.
-- `-s, --salt TEXT`: Corresponding salt for the hash function, e.g. -s 163 -s 241 -s 217 ...
-- `--quiet`: Display only critical information on the console.
-- `--verbose`: Enable verbose output.
-- `--help`: Show this message and exit.
+| Option                                                                      | Type    | Description                                                                                                   |
+| --------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `--wallet-name`, `--name`, `--wallet_name`, `--wallet.name`                 | TEXT    | Name of the wallet.                                                                                           |
+| `-p`, `--wallet-path`, `--wallet_path`, `--wallet.path`                     | TEXT    | Path where the wallets are located. For example: `/Users/btuser/.bittensor/wallets`.                          |
+| `-H`, `--hotkey`, `--wallet_hotkey`, `--wallet-hotkey`, `--wallet.hotkey`   | TEXT    | Hotkey of the wallet                                                                                          |
+| `--network`, `--subtensor.network`, `--chain`, `--subtensor.chain_endpoint` | TEXT    | The subtensor network to connect to. Default: finney.                                                         |
+| `--netuid`                                                                  | INTEGER | The netuid of the subnet in the network, (e.g. 1).                                                            |
+| `--uids`, `-u`                                                              | TEXT    | Corresponding UIDs for the specified netuid, e.g. -u 1,2,3 ..                                                 |
+| `--weights`, `-w`                                                           | TEXT    | Weights for the specified UIDs, e.g. `-w 0.2,0.4,0.1 ...` Must correspond to the order of the specified UIDs. |
+| `--salt`, `-s`                                                              | TEXT    | Corresponding salt for the hash function, e.g. -s 163,241,217 ...                                             |
+| `--prompt`, `--prompt`, `--no-prompt`, `--yes`, `--no_prompt`, `-y`         |         | Enable or disable interactive prompts.                                                                        |
+| `--quiet`                                                                   |         | Display only critical information on the console.                                                             |
+| `--verbose`                                                                 |         | Enable verbose output.                                                                                        |
+| `--json-output`, `--json-out`                                               |         | Outputs the result of the command as JSON.                                                                    |
+| `--help`                                                                    |         | Show this message and exit.                                                                                   |
 
 ## `btcli utils`
 
@@ -2166,9 +2273,11 @@ btcli utils convert [OPTIONS]
 
 **Options**:
 
-- `--rao TEXT`: Convert amount from Rao
-- `--tao FLOAT`: Convert amount from Tao
-- `--help`: Show this message and exit.
+| Option   | Type  | Description                 |
+| -------- | ----- | --------------------------- |
+| `--rao`  | TEXT  | Convert amount from Rao     |
+| `--tao`  | FLOAT | Convert amount from Tao     |
+| `--help` |       | Show this message and exit. |
 
 ---
 
