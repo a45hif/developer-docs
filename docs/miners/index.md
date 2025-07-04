@@ -85,6 +85,18 @@ Every subnet has an `immunity_period` hyperparameter expressed in a number of bl
 
 A subnet neuron (miner or validator) at a UID (in that subnet) has `immunity_period` blocks to improve its performance. When `immunity_period` expires, that miner or validator can be deregistered if it has the lowest performance in the subnet and a new registration arrives.
 
+**Implementation Details:**
+
+Immunity status is calculated dynamically using the formula `is_immune = (current_block - registered_at) < immunity_period`, where:
+- `current_block` is the current blockchain block number
+- `registered_at` is the block number when the neuron was registered
+- `immunity_period` is the configured protection period for the subnet (default: 4096 blocks ≈ 13.7 hours)
+
+
+**Code References:**
+- [`subtensor/pallets/subtensor/src/utils/misc.rs:442-448`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/utils/misc.rs#L442-448) - Immunity status calculation
+- [`subtensor/pallets/subtensor/src/subnets/registration.rs:409-485`](https://github.com/opentensor/subtensor/blob/main/pallets/subtensor/src/subnets/registration.rs#L409-485) - Pruning algorithm with immunity priority
+
 :::tip Special cases
 
 - In the unlikely event that all neurons are still immune, the one with the lowest "pruning score" will be deregistered by the next incoming registration.
