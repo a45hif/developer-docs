@@ -112,6 +112,8 @@ A Bittensor wallet created through the Bittensor website or using a tool like [s
 
 A development-only configuration that accelerates block production to 250ms intervals, enabling rapid local testing and immediate execution of on-chain operations.
 
+**See also:** [Create a local instance](./local-build/deploy.md?local-chain=docker#2-run-the-container)
+
 ## H
 
 ### Hotkey
@@ -203,6 +205,8 @@ A TAO holder who delegates their stake.
 ### Non-fast blocks
 
 A development-only configuration that adheres to Subtensor’s default 12-second block interval, simulating production timing for features like delayed subnet activation.
+
+**See also:** [Create a local instance](./local-build/deploy.md?local-chain=docker#2-run-the-container)
 
 ## O
 
