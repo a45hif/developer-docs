@@ -188,11 +188,23 @@ await subtensor.add_liquidity(
 Use `modify_liquidity` with the desired amount to add or subtract liquidity to an existing position.
 
 ```python
+# Adding liquidity (positive delta)
 await subtensor.modify_liquidity(
     wallet=wallet,
     netuid=netuid,
     position_id=position_id,
     liquidity_delta=Balance.from_tao(0.5),
+    wait_for_inclusion=True,
+    wait_for_finalization=False,
+    period=None
+)
+
+# Removing liquidity (negative delta)
+await subtensor.modify_liquidity(
+    wallet=wallet,
+    netuid=netuid,
+    position_id=position_id,
+    liquidity_delta=Balance.from_tao(0.6) * -1,  # or -Balance.from_tao(0.6)
     wait_for_inclusion=True,
     wait_for_finalization=False,
     period=None
