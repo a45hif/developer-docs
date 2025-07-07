@@ -117,14 +117,11 @@ When creating a liquidity position, users provide liquidity in the form of a sin
 4. Tokens are transferred from user's wallet to the liquidity pool
 5. A new `LiquidityPosition` is created with a unique `position_id`
 
-[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L61-L72)
-[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L50-L51)
-[`pallets/swap/src/pallet/mod.rs:337`](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L337)
-The main logic is handled by `do_add_liquidity` ([`pallets/swap/src/pallet/impls.rs:774`](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/impls.rs#L807)):
+[See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/impls.rs#L807):
 
 ### Modifying a Position
 
-Position management through `modify_liquidity` allows you to adjust existing positions. When adding liquidity with a positive `liquidity_delta`, additional TAO and Alpha tokens are transferred from your wallet and the position's liquidity field is updated. When removing liquidity with a negative `liquidity_delta`, a pro-rata amount of TAO and Alpha tokens are returned to your wallet and the position's liquidity field is updated.
+Position management through `modify_liquidity` allows you to adjust existing positions. When adding liquidity with a positive `liquidity_delta`, additional TAO and Alpha tokens are transferred from your wallet and the position's liquidity field is updated. When removing liquidity with a negative `liquidity_delta`, the system calculates the exact TAO and Alpha token amounts based on the current price and your position's price range using the same mathematical formulas as position creation [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/impls.rs#L952-L958). These calculated amounts are returned to your wallet and the position's liquidity field is updated.
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L74-L125)
 
@@ -152,6 +149,9 @@ Each position calculates its earned fees using the `collect_fees()` method, whic
 - **When modifying a position** (adding or removing liquidity): All accumulated fees are automatically collected and sent to your wallet [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L520-L535)
 - **When removing a position entirely**: All accumulated fees are collected along with your position's tokens [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L410-L415)
 
+:::tip
+Fees are **NOT added to your position's liquidity**. They are tracked separately in the position's `fees_tao` and `fees_alpha` fields and are only distributed to your wallet when you perform a position operation. This means your position's token composition and liquidity remain unchanged by fee accumulation - only the fee tracking variables are updated [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/position.rs#L110-L128).
+:::
 This means you must actively manage your positions to claim your earned fees - they remain locked in the position until you perform a position operation.
 
 :::tip Fee Claiming Strategy
