@@ -8,28 +8,38 @@ title: Provisioning Liquidity to Subnets
 
 The Liquidity Provider (LP) feature allows users to become providers of trading liquidity for specific subnets, within specified price ranges for the subnet $\alpha$ token. This system is based on Uniswap V3's concentrated liquidity model and enables users to earn fees from trading activity.
 
+### Key Concepts
 
-## Use Cases
+#### Liquidity Positions
+A liquidity position represents a user's contribution to a trading pool within a specific price range. Each position has:
+- **Price Range**: Defined by `price_low` and `price_high` in TAO
+- **Liquidity Amount**: The total liquidity provided (in RAO)
+- **Position ID**: Unique identifier for the position
+- **Fee Tracking**: Separate tracking for TAO and Alpha fees earned
 
-### For TAO holders
+#### Price Ranges and Ticks
+The system uses a tick-based pricing mechanism based on Uniswap V3:
+- **Ticks**: Discrete price points with 0.01% spacing (PRICE_STEP = 1.0001)
+- **Price Range**: Each position covers a range of ticks
+- **Concentrated Liquidity**: Liquidity is only active within the specified range
+
+### Use case
+
+#### For TAO holders
 - Provide liquidity in expected price ranges
 - Earn fees from trading activity
 - Participate in market making
 
-### For subnet creators
+#### For subnet creators
 - Enable user liquidity provision
 - Increase trading volume and liquidity
 - Improve price discovery
 
-Subnet creators can enable/disable user liquidity provision via the `toggle_user_liquidity` function.
+:::note
+Subnet creators can enable and disable user liquidity provision via the `toggle_user_liquidity` function.
+:::
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L187-L232)
-
-### Subnet configuration
-
-A subnet's creator can enable and disable user the Liquidity Provider feature via `toggle_user_liquidity`.
-
-[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L4863-L4904)
 
 
 ## Tokenomics
@@ -48,21 +58,19 @@ The `calculate_fees()` function calculates both TAO and Alpha fees based on glob
 
 ### Dynamic token composition
 
-Liquidity providers experience changes in their token composition based on price movements relative to their specified range:
+A liquidity position (LP) can hold TAO, alpha, or both. This depends on the subnet's current token price relative to the range specified for the LP when it was created.
 
-**Price Movement Effects**:
-
-1. **Price Below Range** (`current_price < price_low`):
+**Price Below Range** (`current_price < price_low`):
    - Position becomes **100% Alpha tokens**
    - `amount_alpha = liquidity * (1/sqrt_price_low - 1/sqrt_price_high)`
    - `amount_tao = 0`
 
-2. **Price Above Range** (`current_price > price_high`):
+**Price Above Range** (`current_price > price_high`):
    - Position becomes **100% TAO tokens**
    - `amount_alpha = 0`
    - `amount_tao = liquidity * (sqrt_price_high - sqrt_price_low)`
 
-3. **Price Within Range** (`price_low <= current_price <= price_high`):
+**Price Within Range** (`price_low <= current_price <= price_high`):
    - Position maintains **mixed token composition**
    - `amount_alpha = liquidity * (1/sqrt_current_price - 1/sqrt_price_high)`
    - `amount_tao = liquidity * (sqrt_current_price - sqrt_price_low)`
@@ -104,16 +112,17 @@ def to_token_amounts(
 - **Narrow Ranges**: Higher fee concentration but more likely to become single-token when price moves
 - **Wide Ranges**: Lower fee concentration but more likely to maintain mixed token composition
 
-## Comparison with Staking
+## Liquidity Positions vs. Staking
 
-| Aspect | Staking (add_stake) | Liquidity Provider |
-|--------|-------------------|-------------------|
-| **Purpose** | Support validators/miners | Provide trading liquidity |
-| **Token Conversion** | TAO → Alpha | TAO + Alpha pool |
-| **Price Range** | Current market price | User-defined range |
-| **Rewards** | Subnet participation | Trading fees |
-| **Risk** | Validator performance | Token composition changes |
-| **Complexity** | Simple stake/unstake | Position management |
+While both staking and liquidity provision involve committing tokens to support the Bittensor network, they serve different purposes and operate through distinct mechanisms.
+
+**Staking** is designed to support validators and miners by providing them with consensus power. When you stake TAO to a validator, you're essentially voting for that validator's participation in the subnet's consensus mechanism. The validator's total stake (including your delegation) determines their share of emissions and influence in the network.
+
+Stakers earn emissions off of their stake, which are distributed each tempo.
+
+**Liquidity provision**, on the other hand, is focused on market making and trading facilitation. By providing liquidity to a subnet's trading pool, you're enabling other users to trade between TAO and the subnet's Alpha tokens. This creates a more liquid market and improves price discovery for the subnet's token.
+
+Liquidity providers earn fees when others stake or unstake within the price range defined on the position.
 
 
 ## Liquidity Position Lifecycle
@@ -123,18 +132,15 @@ def to_token_amounts(
 When creating a liquidity position, users provide liquidity in the form of a single `liquidity` parameter (in RAO). The system automatically calculates and charges the appropriate amounts of TAO and Alpha tokens from the user's wallet based on the current price.
 
 1. User calls `add_liquidity()` with `liquidity`, `price_low`, and `price_high` parameters
-2. System converts price range to tick indices using `price_to_tick()` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L61-L72)
+2. System converts price range to tick indices using `price_to_tick()` 
 3. System calculates required TAO and Alpha amounts based on current price and range
 4. Tokens are transferred from user's wallet to the liquidity pool
 5. A new `LiquidityPosition` is created with a unique `position_id`
 
+[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L61-L72)
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L50-L51)
-
-#### Blockchain Implementation
-
-When the Python SDK calls `add_liquidity_extrinsic`, it triggers a sequence in the subtensor blockchain that starts with the extrinsic call mapping to the `add_liquidity` function in the **Swap pallet** ([`pallets/swap/src/pallet/mod.rs:337`](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L337)).
-
-The main logic is handled by `do_add_liquidity` ([`pallets/swap/src/pallet/impls.rs:774`](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/impls.rs#L774)):
+[`pallets/swap/src/pallet/mod.rs:337`](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L337)
+The main logic is handled by `do_add_liquidity` ([`pallets/swap/src/pallet/impls.rs:774`](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/impls.rs#L807)):
 
 ### Modifying a Position
 
@@ -144,11 +150,9 @@ Position management through `modify_liquidity` allows you to adjust existing pos
 
 ### Fee Accumulation
 
-As staking and unstaking on the relevant subnet token occur, within your position's price range, *fees* accumulate to your position. The system maintains global fee counters (`FeeGlobalTao`, `FeeGlobalAlpha`) and individual ticks track fees collected at specific price points. 
+As staking and unstaking on the relevant subnet token occur, within your position's price range, *fees* accumulate to your position. The blockchain maintains global fee counters (`FeeGlobalTao`, `FeeGlobalAlpha`) and individual ticks track fees collected at specific price points. 
 
 Fees earned by each position are calculated using `calculate_fees()` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L130-L158). Fee distribution is proportional to liquidity providers based on their share of total liquidity in the active price range and the duration their liquidity was active during trading.
-
-The fee calculation from global and tick-level data is implemented in [`bittensor/core/async_subtensor.py`](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/async_subtensor.py#L1890-L1930).
 
 ### Removing a Position
 
@@ -158,20 +162,6 @@ When a position is destroyed/removed, the position's liquidity is converted back
 
 
 
-## Key Concepts
-
-### Liquidity Positions
-A liquidity position represents a user's contribution to a trading pool within a specific price range. Each position has:
-- **Price Range**: Defined by `price_low` and `price_high` in TAO
-- **Liquidity Amount**: The total liquidity provided (in RAO)
-- **Position ID**: Unique identifier for the position
-- **Fee Tracking**: Separate tracking for TAO and Alpha fees earned
-
-### Price Ranges and Ticks
-The system uses a tick-based pricing mechanism based on Uniswap V3:
-- **Ticks**: Discrete price points with 0.01% spacing (PRICE_STEP = 1.0001)
-- **Price Range**: Each position covers a range of ticks
-- **Concentrated Liquidity**: Liquidity is only active within the specified range
 
 
 ## Managing positions
