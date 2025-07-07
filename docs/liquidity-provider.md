@@ -150,20 +150,18 @@ Each position calculates its earned fees using the `collect_fees()` method, whic
 - **When removing a position entirely**: All accumulated fees are collected along with your position's tokens [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L410-L415)
 
 :::tip
-Fees are **NOT added to your position's liquidity**. They are tracked separately in the position's `fees_tao` and `fees_alpha` fields and are only distributed to your wallet when you perform a position operation. This means your position's token composition and liquidity remain unchanged by fee accumulation - only the fee tracking variables are updated [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/position.rs#L110-L128).
+Fees are **NOT added to your position's liquidity**.
 :::
-This means you must actively manage your positions to claim your earned fees - they remain locked in the position until you perform a position operation.
 
-:::tip Fee Claiming Strategy
-Since fees are only distributed when you interact with your position, consider periodically modifying your position (even with 0 delta) to claim accumulated fees without changing your liquidity.
-:::
+Fees are tracked in the position's `fees_tao` and `fees_alpha` fields and are only distributed to your wallet when you perform a position operation. This means your position's token composition and liquidity remain unchanged by fee accumulation - only the fee tracking variables are updated [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/position.rs#L110-L128).
+
+This means you must actively manage your positions to claim your earned fees - they remain locked in the position until you perform a position operation (modify or remove).
 
 ### Removing a Position
 
 When a position is destroyed/removed, the position's liquidity is converted back to tokens based on the current subnet price relative to your position's price range. The position is then deleted from the system.
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L127-L185)
-
 
 ## Managing positions
 
@@ -218,7 +216,7 @@ await subtensor.remove_liquidity(
 )
 ```
 
- [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/subtensor.py#L3418-L3477)
+[See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/subtensor.py#L3418-L3477)
 
 ### Listing positions
 
