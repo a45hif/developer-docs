@@ -11,9 +11,9 @@ Before you can start developing, you must install Bittensor SDK and then create 
 
 ## Supported Python versions
 
-- bittensor (SDK): Python 3.9-3.12 (reference: https://github.com/opentensor/bittensor/blob/master/pyproject.toml#L14)
-- bittensor-cli: Python 3.9-3.12 (reference: https://github.com/opentensor/btcli/blob/main/pyproject.toml#L15 )
-- bittensor-wallet: Python 3.9-3.12 (reference: https://github.com/opentensor/btwallet/blob/main/pyproject.toml#L11)
+- bittensor (SDK): Python 3.9-3.13 (reference: https://github.com/opentensor/bittensor/blob/master/pyproject.toml#L14)
+- bittensor-cli: Python 3.9-3.13 (reference: https://github.com/opentensor/btcli/blob/main/pyproject.toml#L15 )
+- bittensor-wallet: Python 3.9-3.13 (reference: https://github.com/opentensor/btwallet/blob/main/pyproject.toml#L11)
 
 ## Upgrade the Bittensor SDK
 
