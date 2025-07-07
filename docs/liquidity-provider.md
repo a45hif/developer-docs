@@ -172,7 +172,7 @@ Create a liquidity position with `add_liquidity`.
 await subtensor.add_liquidity(
     wallet=wallet,
     netuid=netuid,
-    liquidity=Balance.from_tao(1000),
+    liquidity=Balance.from_tao(1.0),
     price_low=Balance.from_tao(1.5),
     price_high=Balance.from_tao(2.0),
     wait_for_inclusion=True,
@@ -192,7 +192,7 @@ await subtensor.modify_liquidity(
     wallet=wallet,
     netuid=netuid,
     position_id=position_id,
-    liquidity_delta=Balance.from_tao(500),
+    liquidity_delta=Balance.from_tao(0.5),
     wait_for_inclusion=True,
     wait_for_finalization=False,
     period=None
