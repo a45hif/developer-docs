@@ -47,7 +47,7 @@ This command downloads the `subtensor-localnet` Docker image, making it availabl
 
 ### 2. Run the container
 
-There are many ways to run the `subtensor-localnet` Docker image, depending on your development and testing needs. The two most common approaches involve running the chain with either _fast blocks_ or _non-fast blocks_. Each approach offers different trade-offs in speed, realism, and network behavior.
+Subtensor can either be run in _fast blocks_ mode, which has advantages for development and testing purposes, or _non-fast blocks_.
 Below are examples of how to run the container using each mode:
 
 - Fast blocks: Fast block mode reduces block processing time to _250ms per block_, enabling rapid chain progression. It allows faster feedback cycles for operations such as staking, subnet creation, and registration, making them ideal for local testing scenarios. To run the container in fast block mode, run the following command in your terminal:
