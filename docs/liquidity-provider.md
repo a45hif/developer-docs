@@ -199,7 +199,7 @@ await subtensor.modify_liquidity(
     period=None
 )
 
-# Removing liquidity (negative delta)
+# Subtracting liquidity (negative delta)
 await subtensor.modify_liquidity(
     wallet=wallet,
     netuid=netuid,
