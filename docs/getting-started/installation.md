@@ -2,17 +2,20 @@
 title: "Install Bittensor SDK"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Install Bittensor SDK
 
 Before you can start developing, you must install Bittensor SDK and then create Bittensor wallet.
 
 ## Supported Python versions
 
-- bittensor (SDK): Python 3.9-3.11 (reference: https://github.com/opentensor/bittensor/blob/master/setup.py#L86-L88)
-- bittensor-cli: Python 3.9-3.12 (reference: https://github.com/opentensor/btcli/blob/main/setup.py#L91-L94 )
-- bittensor-wallet: Python 3.9-3.12 (reference: https://github.com/opentensor/btwallet/blob/main/pyproject.toml#L34-L37)
+- bittensor (SDK): Python 3.9-3.13 (reference: https://github.com/opentensor/bittensor/blob/master/pyproject.toml#L14)
+- bittensor-cli: Python 3.9-3.13 (reference: https://github.com/opentensor/btcli/blob/main/pyproject.toml#L15 )
+- bittensor-wallet: Python 3.9-3.13 (reference: https://github.com/opentensor/btwallet/blob/main/pyproject.toml#L11)
 
-## Upgrade
+## Upgrade the Bittensor SDK
 
 If you already installed Bittensor SDK, make sure you upgrade to the latest version. Run the below command:
 
@@ -20,154 +23,181 @@ If you already installed Bittensor SDK, make sure you upgrade to the latest vers
 python3 -m pip install --upgrade bittensor
 ```
 
-## Developer reference
-
-For a full developer reference, see the [Bittensor SDK section](../bt-api-ref.md).
-
 ## Install on macOS and Linux
 
-You can install Bittensor on your local machine in either of the following ways. **Make sure you verify your installation after you install**.
-- [Install using a Bash command](#install-using-a-bash-command).
-- [Install from source](#install-from-source)
+You can install Bittensor on your macOS or Linux machine using any one of the available options. **Make sure you verify your installation after you install**.
 
-### Install using a Bash command
+:::warning Rust Required on Linux
+To install the Bittensor SDK on Linux, you must have Rust installed. For information on Rust installation and setup, see the [official Rust documentation](https://www.rust-lang.org/tools/install).
+:::
 
-This is the most straightforward method. It is recommended for a beginner as it will pre-install requirements like Python, if they are not already present on your machine. Copy and paste the following `bash` command into your terminal:
+:::tip Create and activate a virtual environment
+To avoid dependency issues while installing the Bittensor SDK, we recommend [creating](https://docs.python.org/3/library/venv.html#creating-virtual-environments) and [activating](https://docs.python.org/3/library/venv.html#how-venvs-work) a Python Virtual environment on your machine before installing the SDK. To do this, ensure you have Python3 installed on your local machine using the following command:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/opentensor/bittensor/master/scripts/install.sh)"
+python3 --version
 ```
 
-:::warning For Ubuntu-Linux users
-If you are using Ubuntu-Linux, the script will prompt for `sudo` access to install all required apt-get packages.
-:::
-:::tip Create and activate a virtual environment
-
-    - Create Python virtual environment. Follow [this guide on python.org](https://docs.python.org/3/library/venv.html#creating-virtual-environments).
-
-    - Activate the new environment. Follow [this guide on python.org](https://docs.python.org/3/library/venv.html#how-venvs-work)
-:::
-
-### Install Python virtual environment
+Then run the following command in your terminal:
 
 ```bash
 python3 -m venv btsdk_venv
 source btsdk_venv/bin/activate
 ```
 
-### Install from source
+:::
 
-1. Clone the Bittensor repo
+<Tabs>
+  <TabItem value="pypi" label="Using Pypi">
+    You can install Bittensor via the Python Package Index using any of the below options:
 
-```bash
-git clone https://github.com/opentensor/bittensor.git
-```
-2. Change to the Bittensor directory:
+    - **Install SDK**: Run the below command to install Bittensor SDK in the above virtual environment. This will install `btcli` also.
 
-```bash
-cd bittensor
-```
-3. Install
+      ```python
+      pip install bittensor
+      ```
 
-- **Install SDK**: Run the below command to install Bittensor SDK in the above virtual environment. This will also install `btcli`.
-```python
-pip install .
-```
+    - **Install SDK with `torch`**: Install Bittensor SDK with [`torch`](https://pytorch.org/docs/stable/torch.html).
 
-- **Install SDK with `torch`**: Install Bittensor SDK with [`torch`](https://pytorch.org/docs/stable/torch.html).
+      ```python
+      pip install bittensor[torch]
+      ```
 
-   ```python
-    pip install bittensor[torch]
-    ```
-  In some environments the above command may fail, in which case run the command with added quotes as shown below:
+      If the command fails in your environment, try enclosing the argument in quotes as shown:
 
-  ```python
-    pip install "bittensor[torch]"
-    ```
+      ```python
+        pip install "bittensor[torch]"
+      ```
 
-### Install from PyPi
+      <!-- Cubit installation can be removed when Bittensor SDK no longer supports 3.9 & 3.10-->
 
-You can install Bittensor using any of the below options:
+    - **Install SDK with `cubit`**: Install Bittensor SDK with [`cubit`](https://github.com/opentensor/cubit).
 
-- **Install SDK**: Run the below command to install Bittensor SDK in the above virtual environment. This will install `btcli` also.
-```python
-pip install bittensor
-```
+      1. Install `cubit` first. See the [Install](https://github.com/opentensor/cubit?tab=readme-ov-file#install) section. **Only Python 3.9 and 3.10 versions are supported**.
+      2. Then install SDK with `pip install bittensor`.
 
-- **Install SDK with `torch`**: Install Bittensor SDK with [`torch`](https://pytorch.org/docs/stable/torch.html).
+  </TabItem>
 
-   ```python
-    pip install bittensor[torch]
-    ```
-  In some environments the above command may fail, in which case run the command with added quotes as shown below:
+  <TabItem value="bash" label="Using Bash">
+    This is the most straightforward method. It is recommended for a beginner as it will pre-install requirements for the Bittensor SDK like Python, if they are not already present on your machine. Copy and paste the following `bash` command into your terminal:
 
-  ```python
-    pip install "bittensor[torch]"
+    ```bash
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/opentensor/bittensor/master/scripts/install.sh)"
     ```
 
-- **Install SDK with `cubit`**: Install Bittensor SDK with [`cubit`](https://github.com/opentensor/cubit).
+    :::warning For Ubuntu-Linux users
+    If you are using Ubuntu-Linux, the script will prompt for `sudo` access to install all required apt-get packages.
+    :::
 
-  1. Install `cubit` first. See the [Install](https://github.com/opentensor/cubit?tab=readme-ov-file#install) section. **Only Python 3.9 and 3.10 versions are supported**. 
-  2. Then install SDK with `pip install bittensor`.
+</TabItem>
 
+  <TabItem value="source" label="Install from Source">
+
+    1. Clone the Bittensor repo
+
+      ```bash
+      git clone https://github.com/opentensor/bittensor.git
+      ```
+
+    2. Change to the Bittensor directory:
+
+      ```bash
+      cd bittensor
+      ```
+
+    3. Install the SDK using any one of the following options:
+
+    - **Install SDK**: Run the below command to install Bittensor SDK in the above virtual environment. This will also install `btcli`.
+
+      ```python
+      pip install .
+      ```
+
+    - **Install SDK with `torch`**: Install Bittensor SDK with [`torch`](https://pytorch.org/docs/stable/torch.html).
+
+      ```python
+      pip install bittensor[torch]
+      ```
+
+      If the command fails in your environment, try enclosing the argument in quotes as shown:
+
+      ```python
+        pip install "bittensor[torch]"
+      ```
+
+  </TabItem>
+
+</Tabs>
 
 ## Install on Windows
 
-To install and run Bittensor SDK on Windows you must install [**WSL 2** (Windows Subsystem for Linux)](https://learn.microsoft.com/en-us/windows/wsl/about) on Windows and select [Ubuntu Linux distribution](https://github.com/ubuntu/WSL/blob/main/docs/guides/install-ubuntu-wsl2.md). 
+To install and run Bittensor SDK on Windows you must install [**WSL 2** (Windows Subsystem for Linux)](https://learn.microsoft.com/en-us/windows/wsl/about) on Windows and select [Ubuntu Linux distribution](https://github.com/ubuntu/WSL/blob/main/docs/guides/install-ubuntu-wsl2.md).
 
 After you installed the above, follow the same installation steps described above in [Install on macOS and Linux](#install-on-macos-and-linux).
 
 :::danger Limited support on Windows
 While wallet transactions like delegating, transfer, registering, staking can be performed on a Windows machine using WSL 2, the mining and validating operations are not recommended and are not supported on Windows machines.
- :::
-
+:::
 
 ## Verify the installation
 
-You can verify your installation in either of the two ways as shown below:
+You can verify your installation in either of the following ways shown:
 
-### Verify using `btsdk` version
-
+<Tabs>
+<TabItem value="btsdk" label="Using BTSDK version" >
+Run the following command in your terminal:
 ```python
 python3 -m bittensor
 ```
+The response will show you the `<version number>` of the `btsdk` you just installed as shown:
 
 ```bash
 Bittensor SDK version: <version number>
 ```
 
-The above command will show you the `<version number>` of the `btsdk` you just installed.
+</TabItem>
+<TabItem value="python-intepreter" label="Python Interpreter" >
 
-
-### Verify using Python interpreter
-
-1. Launch the Python interpreter on your terminal.   
+1.  Launch the Python interpreter on your terminal.
 
     ```bash
     python3
     ```
-2. Enter the following two lines in the Python interpreter.
-   
+
+2.  Enter the following two lines in the Python interpreter:
+
     ```python
     import bittensor as bt
     print( bt.__version__ )
     ```
+
     The Python interpreter output will look like below:
 
     ```python
     >>> print( bt.__version__ )
     <version number>
     ```
-You will see the version number you installed in place of `<version number>`. 
-### Verify by listing axon information
 
-You can also verify the Bittensor installation by listing the axon information for the neurons. Enter the following lines in the Python interpreter.
+You will see the version number you installed in place of `<version number>`.
+
+</TabItem>
+<TabItem value="axon-info" label="Axon information" >
+You can also verify the Bittensor installation by listing the axon information for the neurons.
+
+First, launch the Python interpreter in your terminal:
+
+```bash
+python3
+```
+
+Next, enter the following lines in the Python interpreter:
 
 ```python
 import bittensor as bt
 metagraph = bt.metagraph(1)
 metagraph.axons[:10]
 ```
+
 The Python interpreter output will look like below.
 
 ```bash
@@ -175,3 +205,9 @@ The Python interpreter output will look like below.
 >>>
 ```
 
+</TabItem>
+</Tabs>
+
+## Developer reference
+
+For a full developer reference of the Bittensor SDK, see the [Bittensor SDK section](../bt-api-ref.md).
