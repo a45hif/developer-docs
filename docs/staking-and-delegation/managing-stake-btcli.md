@@ -191,7 +191,21 @@ The columns are as follows:
 Would you like to continue? [y/n]:
 ```
 
-If you confirm, the staking operation will execute. After completion
+If you confirm, the staking operation will execute.
+
+### Staking into multiple nodes
+
+You can also stake into multiple nodes by running the following command in your terminal:
+
+```shell
+btcli stake add -n 4,14,70
+```
+
+The command accepts a comma-separated list of the subnets you wish to stake into. If you want to stake the same amount of TAO into all subnets, you can include the `--amount` flag as shown:
+
+```shell
+btcli stake add -n 4,14,70 --amount 100
+```
 
 ## View your current stakes
 

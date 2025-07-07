@@ -7,7 +7,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Understanding Neurons
 
-The design of Bittensor subnets is inspired by the structure of a simple neural network, with each **neuron** being either a miner or validator.
+
+The design of Bittensor subnets is inspired by the structure of a simple neural network, with each **neuron** being either a miner or validator. Each neuron is identified by a unique UID within its subnet and associated with a hotkey-coldkey pair for authentication and operations.
 
 :::tip Neuron requirements
 See [minimum compute requirements](https://github.com/opentensor/bittensor-subnet-template/blob/main/min_compute.yml) for compute, memory, bandwidth and storage requirements for neurons.
@@ -17,11 +18,70 @@ See [minimum compute requirements](https://github.com/opentensor/bittensor-subne
 
 Neurons in a subnet operate within a server-client architecture:
 
-- Axon (Server): Miners deploy Axon servers to receive and process data from validators.
-- Dendrite (Client): Validators use Dendrite clients to transmit data to miners.
-- Synapse (Data Object): Encapsulates and structures data exchanged between neurons.
+- **Axon (Server)**: Miners deploy Axon servers to receive and process data from validators
+- **Dendrite (Client)**: Validators use Dendrite clients to transmit data to miners  
+- **Synapse (Data Object)**: Encapsulates and structures data exchanged between neurons
 
 Additionally, the Metagraph serves as a global directory for managing subnet nodes, while the Subtensor connects neurons to the blockchain.
+
+## Complete Neuron Lifecycle
+
+1. **Registration** → Neuron registers via PoW or burned registration
+2. **UID Assignment** → Neuron receives unique UID within subnet
+3. **Immunity Period** → Neuron is protected from pruning for configurable blocks
+4. **Performance Building** → Neuron accumulates rank, trust, consensus, and incentive
+5. **Validator Permit** → Top K neurons by stake receive validator permits
+6. **Weight Setting** → Permitted neurons can set weights and participate in consensus
+7. **Bond Formation** → Validators form bonds to miners based on performance
+8. **Emission Distribution** → Neurons receive TAO emissions based on performance
+9. **Performance Monitoring** → Neuron performance is continuously evaluated
+10. **Pruning Risk** → Low-performing neurons risk replacement by new registrations
+
+## Managing Neurons
+
+### Registration and UID Assignment
+
+Neurons register with subnets through proof-of-work or burned registration methods, receiving a unique UID (User ID) within their subnet. The registration process follows an append-or-replace algorithm where new neurons either expand the subnet or replace existing low-performing neurons.
+
+See:
+- [Miner Registration](../miners/#miner-registration)
+- [Validator Registration](../validators/#validator-registration)
+
+### Performance Metrics
+
+Neuron performance is measured through multiple metrics:
+- **Rank**: Final performance score after consensus weight clipping
+	See: [Rank](../glossary/#rank)
+- **Consensus**: Stake-weighted median of weights serving as clipping threshold
+	See: [Consensus score](../glossary/#consensus-score)
+- **Trust**: Consensus alignment measure for miners
+	See: [Trust](../glossary/#trust)
+- **Validator Trust**: Consensus alignment measure for validators
+	See: [Validator Trust](../glossary/#validator-trust)
+- **Incentive**: Normalized reward allocation for miners
+	See: [Incentive](../glossary/#incentive)
+
+### Validator Permits and Access Control
+
+Top K neurons by stake weight receive validator permits, allowing them to:
+- Set weights and participate in consensus
+- Form bonds to miners based on performance assessment
+- Contribute to active stake calculations
+
+Only permitted neurons can set non-self weights, though all neurons can set self-weights regardless of permit status.
+
+<!-- TODO: Add detailed implementation sections from glossary:
+- Neuron Data Structures (NeuronInfo vs NeuronInfoLite)
+- Blockchain Storage Implementation (Core Storage Maps, Performance Metrics Storage)
+- Registration Process (PoW, Burned, Root registration methods)
+- Lifecycle Management (Append vs Replace, Pruning Algorithm, Immunity Period)
+- API and Retrieval (Python SDK methods, Blockchain RPC methods)
+- State Management (Active Status, Validator Permits, Performance Metrics)
+- Network Operations (Weight Setting, Bond Formation)
+- Testing and Validation (Registration testing, Lifecycle testing, Mock implementation)
+- Mathematical Insights and Security Properties
+- Complete Neuron Lifecycle flow
+-->
 
 ## Neuron-to-neuron communication
 
@@ -76,6 +136,8 @@ A synapse is a data object. Subnet validators and subnet miners use Synapse data
 
 For example, in the [Text Prompting Subnet](https://github.com/macrocosm-os/prompting/blob/414abbb72835c46ccc5c652e1b1420c0c2be5c03/prompting/protocol.py#L27), the subnet validator creates a `Synapse` object, called `PromptingSynapse`, with three fields—`roles`, `messages`, and `completion`. The fields `roles` and `messages` are set by the subnet validator during the initialization of this Prompting data object, and they cannot be changed after that. A third field, `completion`, is mutable. When a subnet miner receives this Prompting object from the subnet validator, the subnet miner updates this `completion` field. The subnet validator then reads this updated `completion` field.
 
-## The Neuron Metagraph
+## The Metagraph
 
-A metagraph is a data structure that contains comprehensive information about current state of the subnet. When you inspect the metagraph of a subnet, you will find detailed information on all the nodes (neurons) in the subnet. A subnet validator should first sync with a subnet's metagraph to know all the subnet miners that are in the subnet. The metagraph can be inspected without participating in a subnet.
+The metagraph is a data structure that contains comprehensive information about current state of the subnet. When you inspect the metagraph of a subnet, you will find detailed information on all the nodes (neurons) in the subnet. A subnet validator should first sync with a subnet's metagraph to know all the subnet miners that are in the subnet. The metagraph can be inspected without participating in a subnet.
+
+See [The Subnet Metagraph](../subnets/metagraph)

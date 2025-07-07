@@ -41,7 +41,7 @@ const sidebars = {
         "learn/anatomy-of-incentive-mechanism",
         "emissions",
         "yuma-consensus",
-
+        "subnets/yc3-blog",
       ],
     },
     {
@@ -87,13 +87,16 @@ const sidebars = {
       collapsible: true,
       collapsed: true,
       items: [
+        "subnets/metagraph",
         "subnets/create-a-subnet",
+        'liquidity-provider',
         "subnets/subnet-creators-btcli-guide",
         "subnets/subnet-hyperparameters",
         "subnets/working-with-subnets",
         "subnets/walkthrough-prompting",
         "tutorials/basic-subnet-tutorials",
         "tutorials/ocr-subnet-tutorial",
+        "subnets/yuma3-migration-guide"
       ],
     },
     {
