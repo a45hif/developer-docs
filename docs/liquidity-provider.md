@@ -6,41 +6,33 @@ title: Provisioning Liquidity to Subnets
 
 ## Overview
 
-The Liquidity Provider (LP) feature allows users to become providers of trading liquidity for specific subnets, within specified price ranges for the subnet $\alpha$ token. This system is based on Uniswap V3's concentrated liquidity model and enables users to earn fees from trading activity.
+The Liquidity Position feature allows users to provide trading liquidity for specific subnets, within specified price ranges for the subnet $\alpha$ token. This system is based on Uniswap V3's concentrated liquidity model and enables providers to earn fees from trading activity.
 
-### Key Concepts
+By creating a liquidity position (LP), any TAO holder can contribute to the health of a subnet by providing liquidity for efficient trading, thereby earning fees from trading activity.
 
-#### Liquidity Positions
-A liquidity position represents a user's contribution to a trading pool within a specific price range. Each position has:
+Liquidity providers participate by creating liquidity positions (LPs). Each LP is defined by its:
 - **Price Range**: Defined by `price_low` and `price_high` in TAO
-- **Liquidity Amount**: The total liquidity provided (in RAO)
+- **Liquidity Amount**: The total liquidity provided
 - **Position ID**: Unique identifier for the position
 - **Fee Tracking**: Separate tracking for TAO and Alpha fees earned
 
-#### Price Ranges and Ticks
-The system uses a tick-based pricing mechanism based on Uniswap V3:
-- **Ticks**: Discrete price points with 0.01% spacing (PRICE_STEP = 1.0001)
-- **Price Range**: Each position covers a range of ticks
-- **Concentrated Liquidity**: Liquidity is only active within the specified range
+### Liquidity Positions vs. Staking
 
-### Use case
+While both staking and liquidity provision involve committing tokens to support the Bittensor network, they serve different purposes and operate through distinct mechanisms.
 
-#### For TAO holders
-- Provide liquidity in expected price ranges
-- Earn fees from trading activity
-- Participate in market making
+**Staking** is designed to support validators and miners by providing them with consensus power. When you stake TAO to a validator, you're essentially voting for that validator's participation in the subnet's consensus mechanism. The validator's total stake (including your delegation) determines their share of emissions and influence in the network.
 
-#### For subnet creators
-- Enable user liquidity provision
-- Increase trading volume and liquidity
-- Improve price discovery
+Stakers earn emissions off of their stake, which are distributed each tempo.
+
+**Liquidity provision**, on the other hand, is focused on market making and trading facilitation. By providing liquidity to a subnet's trading pool, you're enabling other users to trade between TAO and the subnet's Alpha tokens. This creates a more liquid market and improves price discovery for the subnet's token.
+
+Liquidity providers earn fees when others stake or unstake within the price range defined on the position.
 
 :::note
 Subnet creators can enable and disable user liquidity provision via the `toggle_user_liquidity` function.
-:::
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L187-L232)
-
+:::
 
 ## Tokenomics
 
@@ -112,18 +104,6 @@ def to_token_amounts(
 - **Narrow Ranges**: Higher fee concentration but more likely to become single-token when price moves
 - **Wide Ranges**: Lower fee concentration but more likely to maintain mixed token composition
 
-## Liquidity Positions vs. Staking
-
-While both staking and liquidity provision involve committing tokens to support the Bittensor network, they serve different purposes and operate through distinct mechanisms.
-
-**Staking** is designed to support validators and miners by providing them with consensus power. When you stake TAO to a validator, you're essentially voting for that validator's participation in the subnet's consensus mechanism. The validator's total stake (including your delegation) determines their share of emissions and influence in the network.
-
-Stakers earn emissions off of their stake, which are distributed each tempo.
-
-**Liquidity provision**, on the other hand, is focused on market making and trading facilitation. By providing liquidity to a subnet's trading pool, you're enabling other users to trade between TAO and the subnet's Alpha tokens. This creates a more liquid market and improves price discovery for the subnet's token.
-
-Liquidity providers earn fees when others stake or unstake within the price range defined on the position.
-
 
 ## Liquidity Position Lifecycle
 
@@ -148,20 +128,41 @@ Position management through `modify_liquidity` allows you to adjust existing pos
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L74-L125)
 
-### Fee Accumulation
+### Fee Accumulation and Distribution
 
-As staking and unstaking on the relevant subnet token occur, within your position's price range, *fees* accumulate to your position. The blockchain maintains global fee counters (`FeeGlobalTao`, `FeeGlobalAlpha`) and individual ticks track fees collected at specific price points. 
+Fees are generated when users perform swaps (trading TAO for Alpha or vice versa) within your position's price range. The fee accumulation and distribution system works as follows:
 
-Fees earned by each position are calculated using `calculate_fees()` [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/utils/liquidity.py#L130-L158). Fee distribution is proportional to liquidity providers based on their share of total liquidity in the active price range and the duration their liquidity was active during trading.
+#### Fee Generation
+Fees are calculated per swap transaction using the subnet's fee rate (default 0.3% or 196/65535) [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/impls.rs#L554-L566). When a swap occurs, the `add_fees()` function distributes the fee proportionally to all active liquidity providers based on their share of the current liquidity [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/impls.rs#L567-L597).
+
+#### Fee Tracking
+The system maintains two levels of fee tracking:
+- **Global Fee Counters**: `FeeGlobalTao` and `FeeGlobalAlpha` track total fees accumulated across the entire subnet [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L80-L84)
+- **Tick-Level Tracking**: Individual ticks record the global fee state when they are crossed, enabling precise fee calculation for positions [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/position.rs#L130-L140)
+
+#### Fee Calculation
+Each position calculates its earned fees using the `collect_fees()` method, which:
+1. Determines the fees accumulated within the position's price range
+2. Subtracts previously collected fees to get the new fees earned
+3. Multiplies by the position's liquidity share to get the final fee amount [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/position.rs#L110-L128)
+
+#### Fee Distribution
+**Fees are NOT distributed automatically per tempo like emissions.** Instead, fees are only distributed when you actively interact with your position:
+
+- **When modifying a position** (adding or removing liquidity): All accumulated fees are automatically collected and sent to your wallet [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L520-L535)
+- **When removing a position entirely**: All accumulated fees are collected along with your position's tokens [See source code](https://github.com/opentensor/subtensor/blob/devnet-ready/pallets/swap/src/pallet/mod.rs#L410-L415)
+
+This means you must actively manage your positions to claim your earned fees - they remain locked in the position until you perform a position operation.
+
+:::tip Fee Claiming Strategy
+Since fees are only distributed when you interact with your position, consider periodically modifying your position (even with 0 delta) to claim accumulated fees without changing your liquidity.
+:::
 
 ### Removing a Position
 
 When a position is destroyed/removed, the position's liquidity is converted back to tokens based on the current subnet price relative to your position's price range. The position is then deleted from the system.
 
 [See source code](https://github.com/opentensor/bittensor/blob/staging/bittensor/core/extrinsics/asyncex/liquidity.py#L127-L185)
-
-
-
 
 
 ## Managing positions
