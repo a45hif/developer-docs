@@ -1744,15 +1744,17 @@ btcli subnets list
 btcli subnets list --live
 ```
 
-Output Columns: Netuid - Subnet identifier number
-Name - Subnet name with currency symbol (τ/α/β etc)
-Price (τ_in/α_in) - Exchange rate (TAO per alpha token)
-Market Cap (α \* Price) - Total value in TAO (alpha tokens × price)
-Emission (τ) - TAO rewards emitted per block to subnet
-P (τ_in, α_in) - Pool reserves (Tao reserves, alpha reserves) in liquidity pool
-Stake (α_out) - Total staked alpha tokens across all hotkeys (alpha outstanding)
-Supply (α) - Circulating alpha token supply
-Tempo (k/n) - Block interval for subnet updates
+**Output Columns:**
+
+- **Netuid** - Subnet identifier number
+- **Name** - Subnet name with currency symbol (τ/α/β etc)
+- **Price** (τ_in/α_in) - Exchange rate (TAO per alpha token)
+- **Market Cap** (α \* Price) - Total value in TAO (alpha tokens × price)
+- **Emission** (τ) - TAO rewards emitted per block to subnet
+- **P** (τ_in, α_in) - Pool reserves (Tao reserves, alpha reserves) in liquidity pool
+- **Stake** (α_out) - Total staked alpha tokens across all hotkeys (alpha outstanding)
+- **Supply** (α) - Circulating alpha token supply
+- **Tempo** (k/n) - Block interval for subnet updates
 
 **Example:**
 
