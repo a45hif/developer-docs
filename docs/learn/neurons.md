@@ -140,4 +140,4 @@ For example, in the [Text Prompting Subnet](https://github.com/macrocosm-os/prom
 
 The metagraph is a data structure that contains comprehensive information about current state of the subnet. When you inspect the metagraph of a subnet, you will find detailed information on all the nodes (neurons) in the subnet. A subnet validator should first sync with a subnet's metagraph to know all the subnet miners that are in the subnet. The metagraph can be inspected without participating in a subnet.
 
-See [The Subnet Metagraph](../subnets/metagraph)
+See [The Subnet Metagraph](../../subnets/metagraph)
