@@ -93,7 +93,7 @@ Returns: A list of DynamicInfo objects (detailed below).
 #### `subnet`
 ```python
 subnet(
-    netuid: int, 
+    netuid: int,
     block_number: Optional[int] = None
 ) -> DynamicInfo
 
@@ -106,7 +106,7 @@ Returns a DynamicInfo object describing the subnet’s current state.
 #### `metagraph`
 ```python
 metagraph(
-    netuid: int, 
+    netuid: int,
     block: Optional[int] = None
 ) -> bittensor.Metagraph
 ```
@@ -199,8 +199,8 @@ print("alpha_to_tao", subnet.alpha_to_tao(100))
 #### `get_stake`
 ```python
 get_stake(
-    hotkey_ss58: str, 
-    coldkey_ss58: str, 
+    hotkey_ss58: str,
+    coldkey_ss58: str,
     netuid: int
 ) -> bittensor.Balance
 
@@ -218,9 +218,9 @@ Parameters:
 
 ```python
 async add_stake(
-    wallet, 
-    hotkey: str, 
-    netuid: int, 
+    wallet,
+    hotkey: str,
+    netuid: int,
     tao_amount: Union[float, bittensor.Balance, int]
 )
 ```
@@ -235,9 +235,9 @@ Parameters:
 #### `unstake`
 ```python
 unstake(
-    wallet, 
-    hotkey: str, 
-    netuid: int, 
+    wallet,
+    hotkey: str,
+    netuid: int,
     amount: Union[float, bittensor.Balance, int]
 )
 
@@ -255,7 +255,7 @@ Parameters:
 #### `get_balance`
 ```python
 get_balance(
-    address: str, 
+    address: str,
     block: Optional[int] = None
 ) -> bittensor.Balance
 
@@ -306,20 +306,25 @@ stake = {} # dictionary to store the stake for each netuid
 
 while total_spend < 3:
     for netuid in to_buy:
+        if total_spend >= 3:
+            break
+
         subnet = sub.subnet(netuid)
-        print(f"slippage for subnet {netuid}", subnet.slippage(increment))
-        sub.add_stake( 
-            wallet = wallet, 
-            netuid = netuid, 
-            hotkey = subnet.owner_hotkey, 
-            tao_amount = increment, 
+        print(f"slippage for subnet {netuid}", subnet.slippage(bt.Balance.from_tao(increment)))
+
+        sub.add_stake(
+            wallet = wallet,
+            netuid = netuid,
+            hotkey_ss58 = subnet.owner_hotkey,
+            tao_amount = bt.Balance.from_tao(increment)
         )
 
         current_stake = sub.get_stake(
             coldkey_ss58 = wallet.coldkeypub.ss58_address,
             hotkey_ss58 = subnet.owner_hotkey,
-            netuid = netuid,
+            netuid = netuid
         )
+
         stake[netuid] = current_stake
         total_spend += increment
         print (f'netuid {netuid} price {subnet.price} stake {current_stake}')
@@ -363,20 +368,25 @@ stake = {} # dictionary to store the stake for each netuid
 
 while total_sell < 3:
     for netuid in to_sell:
-        subnet = sub.subnet(netuid)
-        print(f"slippage for subnet {netuid}", subnet.alpha_slippage(increment))
+        if total_sell >= 3:
+            break
 
-        sub.remove_stake( 
-            wallet = wallet, 
-            netuid = netuid, 
-            hotkey = subnet.owner_hotkey, 
-            amount = increment, 
+        subnet = sub.subnet(netuid)
+        print(f"slippage for subnet {netuid}", subnet.alpha_slippage(bt.Balance.from_tao(increment)).set_unit(netuid))
+
+        sub.unstake(
+            wallet = wallet,
+            netuid = netuid,
+            hotkey_ss58 = subnet.owner_hotkey,
+            amount = bt.Balance.from_tao(increment).set_unit(netuid)
         )
+
         current_stake = sub.get_stake(
             coldkey_ss58 = wallet.coldkeypub.ss58_address,
             hotkey_ss58 = subnet.owner_hotkey,
-            netuid = netuid,
+            netuid = netuid
         )
+
         stake[netuid] = current_stake
         total_sell += increment
         print (f'netuid {netuid} price {subnet.price} stake {current_stake}')
@@ -412,8 +422,8 @@ You can register your hotkey on a subnet using the `burned_register` method. Thi
 #### `burned_register`
 ```python
 burned_register(
-    wallet, 
-    netuid: int, 
+    wallet,
+    netuid: int,
 ) -> bool
 ```
 
@@ -446,7 +456,7 @@ reg = sub.burned_register(wallet=wallet, netuid=3)
 #### `get_netuids_for_hotkey`
 ```python
 get_netuids_for_hotkey(
-    hotkey: str, 
+    hotkey: str,
 ) -> list[int]
 
 ```
@@ -534,7 +544,7 @@ async def main():
 
         all_sn_dynamic_info = {info.netuid: info for info in all_sn_dynamic_info_list}
         daily_blocks = (60 * 60 * 24) / BLOCKTIME  # Number of blocks per day
-        
+
 
         print(f"Hotkey: {HOTKEY}")
 
@@ -542,10 +552,10 @@ async def main():
         metagraphs = await asyncio.gather(*[ subtensor.metagraph(netuid=id) for id in NETUIDS])
         for id in NETUIDS:
             print(f"UID: {id}")
-            
+
             metagraph = metagraphs[id]
             tempo_multiplier = daily_blocks / metagraph.tempo
-            
+
             subnet_info = all_sn_dynamic_info.get(id)
 
             uid = metagraph.hotkeys.index(HOTKEY) if HOTKEY in metagraph.hotkeys else None
